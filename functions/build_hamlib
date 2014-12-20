@@ -84,7 +84,7 @@ function post_build_test1() {
 
 # get counter info
 	_LINES=$(wc -l < "$_TMP/counter")
-	if [[ $_LINES -ge "18" ]]; then
+	if [[ $_LINES -ge "16" ]]; then
 		echo "All Critical Files Found"
 		echo
 	else

@@ -7,8 +7,6 @@ bin/rotctl
 bin/rotctld
 lib/libhamlib.a
 lib/libhamlib.la
-lib/libhamlib++.a
-lib/libhamlib++.la
 lib/pkgconfig/hamlib.pc
 include/hamlib/rig.h
 include/hamlib/rigclass.h

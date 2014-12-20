@@ -207,11 +207,9 @@ if [[ $SMSELECT = "A" ]]; then
 			echo '------------------------------------------------'
 			source "$_FUNC"/build_hamlib
 			build_hamlib
-			echo
 			) 2>&1 | tee -a $_LOGS/setup.log
 
 			# If we got this far, we should be able to build apps
-			clear
 			echo
 			echo '------------------------------------------------'	
 			echo " JTSDK-NIX $_DISTRIBUTOR Setup is Finished"
