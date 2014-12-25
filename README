@@ -1,34 +1,23 @@
-= JTSDK-NIX v1.0.0
+= JTSDK
 
 == INTRODUCITON
 
-JTSDK-NIX is a collection of Bash scripts designed to assist
+JTSDK is a collection of Bash scripts designed to assist
 users in building (compiling) the various WSJT applicaitons
 used by Amateur Radio Operators. For detailed information
-regaurding the applications themselves, see
+regaurding the applications themselves.
+
+* trunk/linux severs as the main line of development
+* braches/<version-number> are release worthy 
+
+For most users, the /branch versions are what users should be using
+as the trunk may be in a state where it does not function as expected.
+
 
 WSJT Home Page:
-http://www.physics.princeton.edu/pulsar/K1JT/
-
-This document serves a quick start guide only. For full
-instruction, see:
+* http://www.physics.princeton.edu/pulsar/K1JT/
 
 Program Development:
-www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
-
-== SYSTEM REQUIRMENTS
-
-== INSTALLATION
-
-== UPDATES
-
-== UNINSTALL
-
-
-
-
-
-
-
+* www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
 
 
