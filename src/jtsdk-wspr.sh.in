@@ -108,7 +108,7 @@ echo '-----------------------------------------------------'
 echo ' RUN CONFIGURE'
 echo '-----------------------------------------------------'
 echo ''
-./configure --prefix="$INSTALLD" --with-python3=@PYTHON3@ --with-f2py3=@F2PY3@
+./configure --prefix="$INSTALLD" --with-python3=@PYTHON3@ --with-f2py=@F2PY3@
 
 echo
 echo '-----------------------------------------------------'

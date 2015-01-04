@@ -358,7 +358,7 @@ case "$OPTION" in
 			echo " Install .....: $INSTALLD"
 			echo ''
 		fi		
-		echo "TO RUN $APP_NAME"
+		echo " TO RUN $APP_NAME"
 		echo " cd ..........: $INSTALLD/bin"
 		echo " Type, .......: ./$APP_NAME"
 		echo ''
