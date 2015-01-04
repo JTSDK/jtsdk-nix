@@ -1,23 +1,33 @@
-= JTSDK
-
-== INTRODUCITON
+JTSDK v1.0.0
 
 JTSDK is a collection of Bash scripts designed to assist
 users in building (compiling) the various WSJT applicaitons
-used by Amateur Radio Operators. For detailed information
-regaurding the applications themselves.
+used by Amateur Radio Operators.
 
-* trunk/linux severs as the main line of development
-* braches/<version-number> are release worthy 
+Supported Distros
+* Debian .........: Jessie
+* Ubuntu .........: 14.04
+* Mint ...........: 17
+* Fedora .........: (planned for 1.0.1 release)
+* Slackware ......: (planned for 1.0.1 release)
+* Arch ...........: (planned for 1.0.2 release)
+* Gentoo .........: (planned for 1.0.2 release)
+* FreeBSD ........: (planned for 1.0.3 release)
 
-For most users, the /branch versions are what users should be using
-as the trunk may be in a state where it does not function as expected.
-
-
+Note(s): 
+ [1] Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+ 
 WSJT Home Page:
-* http://www.physics.princeton.edu/pulsar/K1JT/
+http://www.physics.princeton.edu/pulsar/K1JT/
 
-Program Development:
-* www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
+WSJT Program Development:
+www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
+
+
+
+
+ 
+
+
 
 

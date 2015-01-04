@@ -1,0 +1,378 @@
+#! /usr/bin/env bash
+#
+# Name			: jtsdk-wsjtx.sh
+# Execution		: As normal user type: jtsdk-wspr.sh
+# Copyright		: @JTSDK_COPYRIGHT@
+# Contributors	: @JTSDK_AUTHORS@
+# Comment		: Part of the JTSDK Linux Project
+#                 This script builds both:
+#                 WSJT-X 1.5.0 development branch
+#                 WSJT-X 1.4.0 RC branch
+#
+# @PROGRAM@ is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation either version 3 of the License, or
+# (at your option) any later version. 
+#
+# @PROGRAM@ is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-------------------------------------------------------------------------#
+
+# common vars
+OPT1=$1
+OPT2=$2
+SRCD=@SRCD@
+JJ=@JJJJ@
+
+# hamlib path variables
+HL3SRC=@HL3SRC@
+HL3B=@HL3B@
+HL3I=@HL3I@
+
+################################################################################
+# FUNCTOINS
+################################################################################
+
+# simple hamlib test
+hamlib_test() {
+clear
+echo '-------------------------------------------'
+echo ' Testing Hamlib3'
+echo '-------------------------------------------'
+echo
+
+if [[ -f $HL3I/bin/rigctl ]] ; then
+
+	TEST=$($HL3I/bin/rigctl -m1 f)
+
+	if [ "$TEST" == "145000000" ] ; then
+		echo " Rig Control ......: OK"
+		echo ' Tested With ......: rigctl -m1 f'
+		echo ' Expected Result ..: 145000000'
+		echo " Returned Result ..: $TEST"
+	else
+		echo "Rig Controll Test .. FAILED"
+		echo
+		echo "If you have not built hamlib3 yet:"
+		echo ''
+		echo '1. Return to the Main Menu.'
+		echo "2. Select Hamlib3 to build it."
+		echo '3. Then try to build WSJT-X again'
+		echo 
+		read -p "Press [Enter] to continue ..."
+		exit
+	fi
+else
+		echo "Cannot Find ( rigctl binary )"
+		echo
+		echo "If you have not built hamlib3 yet:"
+		echo ''
+		echo '1. Return to the Main Menu.'
+		echo "2. Select Hamlib3 to build it."
+		echo '3. Then try to build WSJT-X again'
+		echo 
+		read -p "Press [Enter] to continue ..."
+		exit
+fi
+
+}
+
+check_svn() {
+
+if [[ ! -d $APP_SRC/.svn ]]
+then
+	echo
+	echo "Checking Out New Version of $APP_NAME"
+	cd $SRCD
+	svn co $URL
+else
+	# Yy / Nn answer to update from svn	
+	while [ 1 ]
+	do
+		echo
+		read -p "Update from SVN Before Building? [ Y/N ]: " yn
+		case $yn in
+		
+		[Yy]* )
+			cd $APP_SRC 
+			echo "Updating ( $APP_NAME )"
+			svn cleanup && svn update
+			break ;;
+		
+		[Nn]* )
+			break ;;
+		
+		* )
+			clear
+			echo "Please use "Y" yes or "N" No." ;;
+		esac
+	done
+fi
+}
+
+cli_help() {
+clear
+echo \
+'
+-----------------------------------------------------
+ COMMAND LINE HELP MENU
+-----------------------------------------------------
+
+ To use jtsdk-wsjtx from the command line, the 
+ following sytnax applies:
+
+ jtsdk-wsjtx [ OPT-1 ] [ OPT-2 ]
+ 
+ OPT-1 = ( rc | dev | help ) 
+ OPT-2 = ( release | debug ) 
+
+  help .....: Display this help page
+  rc .......: Release Candidate Branch ( 1.4 )
+  dev ......: Latest Development Branch ( 1.5 )
+  release ..: Release Target
+  debug ....: Debug Target
+
+ Examples:
+  WSJT-X 1.5.0-devel ..: jtsdk-wsjtx dev release
+  WSJT-X 1.4.0 RC .....: jtsdk-wsjtx rc release
+
+'
+
+exit 0
+}
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
+
+case "$OPT1" in
+	dev|devel|-d|-D ) # $1 from jtsdk main
+		APP_NAME=wsjtx
+		APP_SRC_NAME=wsjtx
+		DEV=1.5.0
+		APP_SRC=@SRCD@/$APP_SRC_NAME
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx"
+
+		# setup variables based on $2 from jtsdk main
+		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
+			BUILDD=@WSJTXBD@
+			INSTALLD=@WSJTXID@
+			OPTION="Debug"
+
+		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
+			BUILDD=@WSJTXBR@
+			INSTALLD=@WSJTXIR@
+			OPTION="Release"
+
+		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
+			BUILDD=@WSJTXBR@
+			INSTALLD=@WSJTXIR@
+			OPTION="package"
+			PKGD=@WSJTXPD@
+
+		else
+			cli_help
+		fi
+	;;
+
+	rc|RC|-rc|-RC ) # $1 from jtsdk main
+
+		APP_NAME=wsjtx
+		DEV=1.4.0
+		APP_SRC_NAME=wsjtx-1.4
+		APP_SRC=@SRCD@/$APP_SRC_NAME
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.4"
+
+		# setup variables based on $2 from jtsdk main
+		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
+			BUILDD=@WSJTXRCBD@
+			INSTALLD=@WSJTXRCID@
+			OPTION="Debug"
+
+		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
+			BUILDD=@WSJTXRCBR@
+			INSTALLD=@WSJTXRCIR@
+			OPTION="Release"
+
+		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
+			BUILDD=@WSJTXRCBR@
+			INSTALLD=@WSJTXRCIR@
+			OPTION="package"
+			PKGD=@WSJTXRCPD@
+	
+		else
+			cli_help
+		fi
+	;;
+
+	--help|help|-h|-H )
+		cli_help ;;
+
+	* )
+		cli_help
+	;;
+esac
+
+# Make sure directories are present, in case they were deleted
+mkdir -p "$BUILDD" >/dev/null 2>&1
+mkdir -p "$INSTALLD" >/dev/null 2>&1
+mkdir -p "$PKGD" >/dev/null 2>&1
+
+# check hamlib for Release, Debug and Package
+# then ask to update from SVN
+hamlib_test
+
+# Ask to update from SVN first
+echo
+echo '-----------------------------------------------------'
+echo " STARTING BUILD for ( $APP_NAME-$DEV $OPTION )"
+echo '-----------------------------------------------------'
+check_svn
+
+# Utility program to test Discrete Fourier transforms (DFTs)
+# Build the utility with Release & Debug targets, not Package
+
+# exit on errors
+set -e
+
+# CHKFFT only exists in the development branch
+if [[ $OPT1 = "wsjtx-1.5.0" ]] ; then
+case "$OPTION" in
+	Release|Debug )
+		echo
+		echo '-----------------------------------------------------'
+		echo " BUILDING ( CHKFFT ) "
+		echo '-----------------------------------------------------'
+		cd $APP_SRC/lib
+		echo 'Compiling CHKFFT'
+		if [[ -f chkfft ]] ; then
+			echo 'Removing Previous Build'
+			rm chkfft >/dev/null 2>&1
+			rm -f *.o >/dev/null 2>&1
+		fi
+		echo 'Compiling CHKFFT'
+		gfortran -o chkfft chkfft.f90 four2a.f90 f77_wisdom.f90 gran.c -lfftw3f
+		echo 'Copying Support Files'
+		cp -uR chkfft "$INSTALLD" >/dev/null 2>&1
+		cp -uR chkfft.txt "$INSTALLD" >/dev/null 2>&1
+		cp -uR nfft.dat "$INSTALLD" >/dev/null 2>&1
+		cp -uR nfft.out "$INSTALLD" >/dev/null 2>&1
+		echo 'Finished'
+		;;
+	* )
+	;;
+esac
+fi
+
+# start configuring the main build
+echo
+echo '-----------------------------------------------------'
+echo " CONFIGURING ( $APP_NAME-$DEV $OPTION )"
+echo '-----------------------------------------------------'
+echo
+
+# configuration options release target
+if [[ $OPTION = "Release" ]] ; then
+cd "$BUILDD"
+cmake -G "Unix Makefiles" \
+-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
+-D WSJT_INCLUDE_KVASD=ON \
+-D WSJT_SKIP_MANPAGES=ON \
+-D CMAKE_BUILD_TYPE="$OPTION" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
+
+# configuration options for debug target
+elif [[ $OPTION = "Debug" ]] ; then
+cd "$BUILDD"
+cmake -G "Unix Makefiles" \
+-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
+-D WSJT_CREATE_WINMAIN=ON \
+-D WSJT_INCLUDE_KVASD=ON \
+-D WSJT_SKIP_MANPAGES=ON \
+-D CMAKE_BUILD_TYPE="$OPTION" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
+
+# configuration options for package target
+elif [[ $OPTION = "package" ]] ; then
+cd "$BUILDD"
+cmake -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
+-D WSJT_INCLUDE_KVASD=ON \
+-D CMAKE_COLOR_MAKEFILE=ON \
+-D CMAKE_BUILD_TYPE="$OPTION" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
+
+else
+	echo 'Bad Configure Type.'
+	echo 'Check JTSDK main script for errors'
+	echo ''
+	read -p "Press [ Enter ] to exit $0"
+	clean_exit
+fi
+
+# build the target
+
+echo
+echo '-----------------------------------------------------'
+echo " BUILDING ( $APP_NAME-$DEV $OPTION )"
+echo '-----------------------------------------------------'
+echo
+cd "$BUILDD"
+case "$OPTION" in
+	Release|Debug )
+	make -s clean
+	cmake --build . --target install -- -j "$JJ" ;;
+
+	package )
+	make -s clean
+	cmake --build . --target package -- -j "$JJ"
+	if [[ $? = "0" ]] ; then
+		cp -rf "$BUILDD"/wsjtx*.deb "$PKGD"/
+	fi ;;
+
+	*)
+	;;
+esac
+
+# Finished
+echo
+echo '-----------------------------------------------------'
+echo " BUILD SUMMARY ( $APP_NAME-$DEV $OPTION )"
+echo '-----------------------------------------------------'
+echo ''
+
+case "$OPTION" in
+
+	Release|Debug )
+		echo " Build Type ..: $OPTION"
+		echo " Source ......: $APP_SRC"
+		echo " Build .......: $BUILDD"
+		echo " Install .....: $INSTALLD"
+		echo ''
+		echo ' CHKFFT Utility Program'
+		echo " Install .....: $INSTALLD"
+		echo ''
+		echo "TO RUN $APP_NAME"
+		echo " cd ..........: $INSTALLD/bin"
+		echo " Type, .......: ./$APP_NAME"
+		echo ''
+		read -p "Press [ Enter ] to continue.."
+	;;
+
+	package )
+		PKG_NAME=$(ls -m1 $PKGD)
+		echo " Type ......: $OPTION"
+		echo " Name ......: $PKG_NAME"
+		echo " Location ..: $PKGD"
+		echo ''
+		read -p "Press [ Enter ] to continue .."
+	;;
+	* )
+	;;
+esac
+
+exit 0

@@ -1,0 +1,303 @@
+#! /usr/bin/env bash
+#
+# Name			: jtsdk-hamlib3.sh
+# Execution		: As normal user type: jtsdk-hamlib3.sh
+# Copyright		: @COPYRIGHT@
+# Contributors	: @AUTHORS@
+# Comment		: Part of the @PROGRAM@ Linux Project
+#
+# @PROGRAM@ is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation either version 3 of the License, or
+# (at your option) any later version. 
+#
+# @PROGRAM@ is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-------------------------------------------------------------------------#
+
+set -e
+
+# home directory paths
+HOMEDIR=@HOMEDIR@
+SRCD=@SRCD@
+HL3SRC=@HL3SRC@
+HL3B=@HL3B@
+HL3I=@HL3I@
+LOGS=@LOGD@
+TMP=@TMPD@
+MKRD=@MKRD@
+
+# misc variables
+JJ=@JJJJ@
+GITV=$(dpkg --get-selections |grep git |awk 'FNR==1 {print $2}')
+HAMLIBURL="git://git.code.sf.net/u/bsomervi/hamlib"
+LOG="$LOGS"/hamlib-build.log
+
+make_pkg_list() {
+
+if [ -f "$TMP"/pkg_list_hamlib3 ]; then rm -f "$TMP"/pkg_list_hamlib3 ; fi
+touch "$TMP"/pkg_list_hamlib3
+
+(
+cat <<'EOF_HAMLIB3'
+bin/rigctl
+bin/rigctld
+bin/rigmem
+bin/rigsmtr
+bin/rigswr
+bin/rotctl
+bin/rotctld
+lib/libhamlib.a
+lib/libhamlib.la
+lib/pkgconfig/hamlib.pc
+include/hamlib/rig.h
+include/hamlib/rigclass.h
+include/hamlib/rig_dll.h
+include/hamlib/riglist.h
+include/hamlib/rotator.h
+include/hamlib/rotclass.h
+include/hamlib/rotlist.h
+EOF_HAMLIB3
+) > "$TMP"/pkg_list_hamlib3
+
+}
+
+# git check local function
+git_check() {
+echo "Checking Git .."
+if [[ $GITV == "install" ]]; then
+	echo "Found Git .. OK"
+else
+	echo
+	echo "GIT ERROR"
+	echo
+	echo "Git was not found, please check your installation"
+	echo "and ensure Git can be used from ( $USER ) account"
+	echo
+	read -p "Press [Enter] continue .."
+	echo
+	clean_exit
+fi
+}
+
+# check local git clone is up to date
+update_chk() {
+echo ".. Checking Local Hamlib3"
+
+# clone or update hamlib
+if [[ ! -d $HL3SRC ]] ; then
+	echo ".. Hamlib3 was not fouud"
+	echo ".. Cloning G4WJS's Hamlib (this a can take few minutes, be patient)"
+	git clone "$HAMLIBURL" g4wjs-hamlib	
+
+# checkout integration
+	echo ".. Checkout Integration"	
+	echo
+	cd g4wjs-hamlib
+	git checkout integration
+	echo
+else
+	cd $HL3SRC
+	GITSTATUS=$(git status -uno |awk 'FNR==2 {print $4}')
+
+	if [[ $GITSTATUS == "up-to-date" ]]; then
+		echo ".. Local Hamlib3 Looks Up-To-Date"
+	else
+		echo ".. Local Hamlib3 requires updates"
+		git pull
+	fi
+fi
+}
+
+# post build test-1 (file check)
+post_build_test1() {
+echo
+echo '[1]' "Test-1 (file check)"
+rm -rf "$TMP"/counter && touch "$TMP"/counter
+
+# check that files exist at least
+while read f; do
+	if [[ -f $HL3I/$f ]]; then
+		echo .. "$f" ... OK
+		echo "$f" >> "$TMP"/counter
+	else
+		echo "$f" is ... MISSING
+	fi
+done < "$TMP"/pkg_list_hamlib3
+
+# get counter info
+LINES=$(wc -l < "$TMP"/counter)
+if [[ $LINES -ge "16" ]]; then
+	echo "All Critical Files Found"
+	echo
+	T1_STATUS=OK
+else
+	echo
+	echo "Something went wrong with the build."
+	echo "The build script will exit. Check the"
+	echo "build log to investigate possible cause."
+	echo
+	echo "Log: $LOG"
+	echo 
+	read -p "Press [Enter] to continue ..."
+fi
+}
+
+# post build test2 (rigctl test)
+post_build_test2() {
+
+echo '[2]' "Test-2 (rigctl check)"
+TEST2=$($HL3I/bin/rigctl -m1 f)
+
+if [[ $TEST2 == "145000000" ]]; then
+	echo " Rig Control ......: OK"
+	echo ' Tested With ......: rigctl -m1 f'
+	echo ' Expected Result ..: 145000000'
+	echo " Returned Result ..: $TEST2"
+	echo ''
+	T2_STATUS=OK
+else
+	echo "Rig Controll .. FAILED"
+	echo "The build script will exit. Check the"
+	echo "build log."
+	echo
+	echo "Log: $LOG"
+	echo 
+	echo "to investigate the cause."
+	echo 
+	read -p "Press [Enter] to continue ..."
+	clean_exit
+fi
+}
+
+# update and build
+update_and_build() {
+cd "$HL3B"
+echo ".. Running Make Clean"
+echo
+make -s clean
+echo
+echo ".. Cleanup complete"
+echo ".. Starting Configure Process"
+echo
+"$HL3SRC"/autogen.sh --prefix="$HL3I" \
+--disable-winradio --disable-shared --enable-static \
+--without-cxx-binding \
+LDFLAGS='-Wl,-gc-sections' \
+CFLAGS='-fdata-sections -ffunction-sections'
+echo ".. Configure Process Complete"
+echo ".. Starting Make Process"
+echo
+make -s -j"$JJ"
+echo
+echo ".. Make Process Complete"
+echo ".. Installing Hamlib3 to:"
+echo ".. $INSTALLD"
+make -s install-strip
+}
+
+# new build
+new_build() {
+mkdir -p "$SRCD"/build/hamlib
+cd "$SRCD"/build/hamlib
+echo ".. Starting Configure Process"
+echo
+"$HL3SRC"/autogen.sh --prefix="$HL3I" \
+--disable-winradio --disable-shared --enable-static \
+--without-cxx-binding \
+LDFLAGS='-Wl,-gc-sections' \
+CFLAGS='-fdata-sections -ffunction-sections'
+echo
+echo ".. Configuration Complete"
+echo ".. Starting Make Process"
+echo
+make -s -j"$JJ"
+echo
+echo ".. Make Process Complete"
+echo ".. Installing Hamlib3 to:"
+echo ".. $HL3I"
+make -s install-strip
+}
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
+clear
+echo "-------------------------------------------"
+echo "Building G4WJS Version of Hamlib3"
+echo "-------------------------------------------"
+echo
+
+# setup the log
+if [[ -f $LOG ]]; then
+	mv $LOG $LOG-$(date +"%Y%m%d%H%M")
+	touch $LOG
+else
+	touch $LOG
+fi
+
+# make package list
+make_pkg_list
+
+cd "$SRCD"
+update_chk
+
+# configure hamlib
+if [[ -d $HL3B || $($HL3I/bin/rigctl -m1 f) == "145000000" ]]; then
+	while [ 1 ]
+	do
+		echo
+		read -p "Hamlib Seems Ok, Rebuild Anyway [ Y/N ]:" yn
+				case $yn in
+		[Yy]* )
+			echo
+			update_chk
+			update_and_build
+			echo
+			echo '---------------------------------------'	
+			echo " @PROGRAM@ Performing Post Build Checks"
+			echo '---------------------------------------'			
+			post_build_test1
+			post_build_test2
+			break ;;
+		[Nn]* )
+			exit 0
+		;;
+		* )
+			clear
+			echo "Please use "Y" yes or "N" No."
+		;;
+		esac
+	done
+else
+	new_build
+	echo
+	echo '--------------------------------------'
+	echo " @PROGRAM Performing Post Build Check"
+	echo '--------------------------------------'
+	post_build_test1
+	post_build_test2
+fi
+
+echo
+echo '------------------------------------------------'
+echo " @PROGRAM@ Finished Building ( Hamlib3 )"
+echo '------------------------------------------------'
+echo ''
+echo "Test 1 ...: $T1_STATUS"
+echo "Test 2 ...: $T2_STATUS"
+echo "Source ...: $HL3SRC"
+echo "Build ....: $HL3B"
+echo "Install ..: $HL3I"
+echo "Pkg-Cfg ..: $HL3I/lib/pkgconfig/hamlib3.pc"
+echo ''
+echo ''
+read -p "Press [Enter] to continue .."
+
+exit 0
+

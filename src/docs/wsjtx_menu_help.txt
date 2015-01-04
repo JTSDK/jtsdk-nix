@@ -1,0 +1,64 @@
+WSJT-X 1.5.0 Devel BUILD HELP MENU
+
+NAVIGATION:
+ You can  move  through the file by using the cursor, page-up, 
+ page-down, arrow UP/DWN and HOME/END keys available on most keyboards.
+ If the lines are too long to be displayed in the box, the LEFT/RIGHT keys
+ can be used to scroll the text region horizontally.
+
+
+BUILD INFORMATION
+ The following builds are availble for WSJTX:
+
+* Release ...... Build Standard Release Target
+* Debug ........ Build Debug Release Target
+* Package ...... Build NSIS Installer Package (On Hold)
+* Super Build .. Build Hamlib3 and WSJTX (On Hold)
+
+** On Hold means the builds are still under development.
+
+INSTALL LOCATIONS
+ All of the builds, including the package installer, are located
+ in subfolders under wsjtx. If you did not change the default
+ home direcotry during configure, the following applies:
+ 
+ Source ...: /home/$USER/jtsdk/src/wsjtx
+ Release ..: /home/$USER/jtsdk/wsjtx/install/release/{bin,share}
+ Debug ....: /home/$USER/jtsdk/wsjtx/install/debug/{bin,share}
+ Package ..: /home/$USER/jtsdk/wsjtx/install/package
+ 
+ Build Trees follow the same convension:
+ Release ..: /home/$USER/jtsdk/wsjtx/build/release/{bin,share}
+ Debug ....: /home/$USER/jtsdk/wsjtx/build/debug/{bin,share}
+
+ Note: The Package build tree will use the Relese build directory
+ and a tmp location while compiling the installer.
+
+
+RUN AFTER BUILD
+ To run WSJT-X after a build, browse to the install locaiton
+ and double-click on the 'wsjtx' binary in the../bin
+ directory
+
+
+HAMLIB3 INFORMATION
+ WSJTX requires a staic build of Hamlib3. You must build
+ Hamlib3 before building a Release, Debug or Package target.
+ The Super Build Script downloads and Builds Hamlib3 during
+ the build process., so it it not necessary to pre-build
+ Hamlib3 when using the Super Build script. The Hamlib3
+ locations are as follows:
+ 
+ Source ...: /home/$USER/jtsdk/src/g4wjs-hamlib
+ Build ....: /home/$USER/jtsdk/src/build/hamlib3
+ Install ..: /home/$USER/jtsdk/hamlib3
+
+
+ADDITIONAL RESOURCES
+ 
+WSJT Home Page:
+* http://www.physics.princeton.edu/pulsar/K1JT/
+
+WSJT Program Development:
+* www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
+

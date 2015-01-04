@@ -1,0 +1,58 @@
+JTSDK MAIN MENU HELP FILE
+
+NAVIGATION:  You can  move  through the file by using the cursor, page-up, 
+page-down, arrow UP/DWN and HOME/END keys available on most keyboards.
+If the lines are too long to be displayed in the box, the LEFT/RIGHT keys
+can be used to scroll the text region horizontally.
+
+
+INTRODUCTION
+
+ JTSDK allows you to build all of the WSJT applicaitons though
+ an easy to use menu system. Several build options exist for each
+ applicaiton. The outlines the available builds.
+
+ Note: Except for the WSJT-X Super-Build, WSJT-X 1.5.0 and WSJT-X 1.4.0 RC3
+ require Hamlib3 to be built before running any of the builds. If it is not
+ found in the default location, a message will be displayed prompting you
+ to perform the build first.
+
+BUILD DESCRIPTIONS
+
+ WSJT-X 1.5.0 (devel) and WSJT-X 1.4.0 (RC3)
+ 
+ There are (3) primary build types for WSJT-X 1.5.0 and 1.4.0 RC3
+ * Release ..: Standard Install Release Build
+ * Debug ....: Standard Build With Standard Debugging Enabled
+ * Package ..: Builds A Distribution Installer
+ 
+ The distribution ( package ) installer is only available for
+ select Linux and Mac distributions. At the time of this writing
+ the package target supports:
+ 
+ Debian Based ..: Debian, Ubuntu, Mint etc.
+ RPM Based .....: Fedora, OpenSUSE, etc
+ 
+
+ WSJT (devel) and WSPR (devel)
+ 
+ Both WSJT and WSPR have many targets each. Currenly, the build script
+ simply builds the install target. Later version will include the
+ individual targets for each applicaiton. 
+ 
+ 
+ WSPR-X (devel) and MAP65 (devel)
+
+ Currently, WSPR-X and MAP65 cannot be built on Linux without applying several
+ patches to accomidate changes from Windows. As such, the builds are
+ classed as "under development"  at this time. When the source codes has been
+ updated to build on Linux, the builds will be enabled.
+
+
+ADDITIONAL RESOURCES
+ 
+ WSJT Home Page:
+ * http://www.physics.princeton.edu/pulsar/K1JT/
+
+ WSJT Program Development:
+ * www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
