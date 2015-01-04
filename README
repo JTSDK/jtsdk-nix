@@ -1,16 +1,44 @@
-JTSDK Original
+JTSDK-NIX Original
 
 ** No longer being maintained.
 
 This version was the original set of scripts brought over
-from the WSJT project: branches/jtsdk/nix
+from the WSJT project: branches/jtsdk/nix. Some updates,
+though minor, may have been applied, but should be minimal.
+
+This version of was known to work with:
+
+Ubuntu 14.04
+Mint-16 / 17
+
+It should be able to build :
+WSPR: latest dev branch
+WSJT: latest dev branch
+WSJTX: latest dev branch install release target
+
+Package dependencies were problematic with WSPR and WSJT, specifically
+
+python3-pil
+python3-pil.imagetk
+python3-tk
+python3-numpy
+
+The main problems were package versions and naming between the various 
+Debian based distributions.
 
 This version uses a setup.sh script to install dependencies 
 and build Hamlib3. It is being left for historical reference
 only.
 
-For the latest version of JTSDK, see:
+This build also contains a script in ./scripts that should, 
+with little to no modification, build either
 
+WSJT-X v1.5-devel
+WSJT-X v.1.4 Release Candidate
+
+Assuming you ahve all the dependencies met for a proper build.See 
+comments in the script for usage.
+
+For the latest version of JTSDK, see:
 * Devel: http://sourceforge.net/p/jtsdk/jtsdk/HEAD/tree/trunk/linux/
-* JTSDK v.1: http://sourceforge.net/p/jtsdk/jtsdk/HEAD/tree/branches/linux-1.0/
 

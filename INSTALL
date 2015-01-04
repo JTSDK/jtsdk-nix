@@ -1,0 +1,39 @@
+BASIC INSTALL INSTRUCTIONS
+
+** No longer being maintained.
+
+This version of was known to work with:
+
+Ubuntu 14.04
+Mint-16 / 17
+
+In it's current state, the script(s) should be able to build:
+
+WSPR: latest dev branch
+WSJT: latest dev branch
+WSJTX: latest dev branch install release target
+
+A secondary script is available in:
+
+../scripts/wsjtx-build.sh
+
+wsjtx-build.sh is a stand alone script for building WSJT-X version 1.4 and
+1.5 only. If you have the dependencies met, it should flow straight through.
+Check the script itself for further details.
+
+[1] Download from SVN, no tar.gz is provided.
+
+svn export https://svn.code.sf.net/p/jtsdk/jtsdk/branches/linux-orig jtsdk-nix
+
+[2] cd ./jtsdk-nix
+[3] ./setup.sh
+
+Note: The setup script attempts to install the required dependencies
+and build Hamlib3 from (G4WJS). If there were no errors, run the main
+script, then select an application to build:
+
+[4] ./jtsdk.sh
+
+For the latest version of JTSDK, see:
+* Devel: http://sourceforge.net/p/jtsdk/jtsdk/HEAD/tree/trunk/linux/
+
