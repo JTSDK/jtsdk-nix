@@ -68,32 +68,41 @@ HL3I="$HOMEDIR/hamlib3"
 # ------------------------------------------------------------------------------
 #  Application Install Paths ( used in build scripts )
 # ------------------------------------------------------------------------------
+
 # install directories
 WSJTI="$HOMEDIR/wsjt/install"
 WSPRI="$HOMEDIR/wspr/install"
 
+# WSJTX 1.5.0 devel
 WSJTXIR="$HOMEDIR/wsjtx/install/release"
 WSJTXID="$HOMEDIR/wsjtx/install/debug"
 
-WSJTXRCIR="$HOMEDIR/wsjtrc/install/release"
-WSJTXRCID="$HOMEDIR/wsjtrc/install/debug"
+# WSJTX 1.4.0 RC
+WSJTXRCIR="$HOMEDIR/wsjtxrc/install/release"
+WSJTXRCID="$HOMEDIR/wsjtxrc/install/debug"
 
+# WSPR
 WSPRXIR="$HOMEDIR/wsprx/install/release"
 WSPRXID="$HOMEDIR/wsprx/install/debug"
 
+# MAP65
 MAP65IR="$HOMEDIR/map65/install/release"
 MAP65ID="$HOMEDIR/map65/install/debug"
 
 # build directories
+# WSJTX 1.5.0 devel
 WSJTXBR="$HOMEDIR/wsjtx/build/release"
 WSJTXBD="$HOMEDIR/wsjtx/build/debug"
 
-WSJTXRCBR="$HOMEDIR/wsjtrc/build/release"
-WSJTXRCBD="$HOMEDIR/wsjtrc/build/debug"
+# WSJTX 1.4 RC
+WSJTXRCBR="$HOMEDIR/wsjtxrc/build/release"
+WSJTXRCBD="$HOMEDIR/wsjtxrc/build/debug"
 
+# WSPRX
 WSPRXBR="$HOMEDIR/wsprx/build/release"
 WSPRXBD="$HOMEDIR/wsprx/build/debug"
 
+# MAP65
 MAP65BR="$HOMEDIR/map65/build/release"
 MAP65BD="$HOMEDIR/map65/build/debug"
 
