@@ -7,7 +7,7 @@ case "${DISTRO}" in
 		distrosd=$(lsb_release -sd)
 		distrov=$(lsb_release -sr)
 		case "${distrov}" in
-			17.0|17.0.1|17.0.2|17.0.3|17.0.4|17.0.4 )
+			17.0|17.1|17.2|17.3|17.4|17.4 )
 				AC_PATH_PROG([PKGMGR], [apt-get],[]) 
 
 				# establish base package list
