@@ -106,7 +106,7 @@ else
 	GITSTATUS=$(git status -uno |awk 'FNR==2 {print $4}')
 
 	if [[ $GITSTATUS == "up-to-date" ]]; then
-		echo ".. Local Hamlib3 Looks Up-To-Date"
+		echo ".. Local Hamlib3 source is Up-To-Date"
 	else
 		echo ".. Local Hamlib3 requires updates"
 		git pull
@@ -248,7 +248,7 @@ cd "$SRCD"
 update_chk
 
 # configure hamlib
-if [[ -d $HL3B || $($HL3I/bin/rigctl -m1 f) == "145000000" ]]; then
+if [[ -d $HL3B ]] && [[ $($HL3I/bin/rigctl -m1 f) == "145000000" ]]; then
 	while [ 1 ]
 	do
 		echo
