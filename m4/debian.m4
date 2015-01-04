@@ -11,12 +11,12 @@ case "${DISTRO}" in
 				AC_PATH_PROG([PKGMGR], [apt-get],[]) 
 
 				# establish base package list
-				BASE_LIST='asciidoc automake gcc clang-3.5 cmake dialog docbook-xsl \
-g++ gettext gfortran git libtool libfftw3-dev libgfortran3:i386 libusb-dev \
-libhamlib-dev libhamlib-utils libsamplerate0-dev pkg-config portaudio19-dev \
-python-dev python3-dev python3-pil python3-pil.imagetk python3-tk python3-numpy \
-python3-pip python3-setuptools qtmultimedia5-dev subversion texinfo xsltproc \
-packaging-dev xsltproc'
+				BASE_LIST='automake gcc clang-3.5 cmake dialog g++ gettext \
+gfortran git libtool libfftw3-dev libgfortran3:i386 libusb-dev libhamlib-dev \
+libhamlib-utils libsamplerate0-dev pkg-config portaudio19-dev python-dev \
+python3-dev python3-pil python3-pil.imagetk python3-tk python3-numpy \
+python3-pip python3-setuptools qtmultimedia5-dev subversion texinfo \
+packaging-dev'
 
 			# sort the listing into a file
 			if test -f needed.txt ; then rm -f needed.txt ; fi
