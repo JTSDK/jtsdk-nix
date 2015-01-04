@@ -9,8 +9,11 @@ case "${DISTRO}" in
 		case "${distrov}" in
 			17.0|17.1|17.2|17.3|17.4|17.4 )
 				AC_PATH_PROG([PKGMGR], [apt-get],[]) 
-
 				# establish base package list
+				# TO_DO: Test native install package requirments
+				#        using both Pulseaudio and ALSA.
+				#        Default insrall was Pulseaudio which
+				#        required libjack-dev and libjack0
 				BASE_LIST='automake gcc clang-3.5 cmake dialog g++ gettext \
 gfortran git libtool libfftw3-dev libgfortran3:i386 libusb-dev libhamlib-dev \
 libhamlib-utils libjack-dev libjack0 libsamplerate0-dev pkg-config portaudio19-dev \

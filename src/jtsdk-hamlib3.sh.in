@@ -278,7 +278,7 @@ else
 	new_build
 	echo
 	echo '--------------------------------------'
-	echo " @PROGRAM Performing Post Build Check"
+	echo " @PROGRAM@ Performing Post Build Check"
 	echo '--------------------------------------'
 	post_build_test1
 	post_build_test2

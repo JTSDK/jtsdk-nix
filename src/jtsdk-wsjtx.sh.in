@@ -353,9 +353,11 @@ case "$OPTION" in
 		echo " Build .......: $BUILDD"
 		echo " Install .....: $INSTALLD"
 		echo ''
-		echo ' CHKFFT Utility Program'
-		echo " Install .....: $INSTALLD"
-		echo ''
+		if [[ $DEV = "1.5.0" ]] ; then
+			echo ' CHKFFT Utility Program'
+			echo " Install .....: $INSTALLD"
+			echo ''
+		fi		
 		echo "TO RUN $APP_NAME"
 		echo " cd ..........: $INSTALLD/bin"
 		echo " Type, .......: ./$APP_NAME"

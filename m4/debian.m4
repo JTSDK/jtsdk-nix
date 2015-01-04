@@ -9,8 +9,9 @@ case "${DISTRO}" in
 		case "${distrov}" in
 			8.0|8.1|8.2|8.3|8.4 )
 				AC_PATH_PROG([PKGMGR], [apt-get],[]) 
-
 				# establish base package list
+				# TO_DO: Test native install package requirments
+				#        using both Pulseaudio and ALSA
 				BASE_LIST='automake gcc clang-3.5 cmake dialog g++ gettext \
 gfortran git libtool libfftw3-dev libgfortran3:i386 libusb-dev libhamlib-dev \
 libhamlib-utils libsamplerate0-dev pkg-config portaudio19-dev python-dev \
