@@ -69,9 +69,9 @@ EOF_HAMLIB3
 
 # git check local function
 git_check() {
-echo "Checking Git .."
+echo "Checking Git..."
 if [[ $GITV == "install" ]]; then
-	echo "Found Git .. OK"
+	echo "Found Git..."
 else
 	echo
 	echo "GIT ERROR"
@@ -87,17 +87,16 @@ fi
 
 # check local git clone is up to date
 update_chk() {
-echo ".. Checking Local Hamlib3"
+echo "Checking Hamlib3 source tree"
 
 # clone or update hamlib
 if [[ ! -d $HL3SRC ]] ; then
-	echo ".. Hamlib3 was not fouud"
-	echo ".. Cloning G4WJS's Hamlib (this a can take few minutes, be patient)"
+	echo "Hamlib3 was not fouud"
+	echo "Cloning Hamlib3 (this a can take few minutes, be patient)"
 	git clone "$HAMLIBURL" g4wjs-hamlib	
 
 # checkout integration
-	echo ".. Checkout Integration"	
-	echo
+	echo "Checkout Integration"	
 	cd g4wjs-hamlib
 	git checkout integration
 	echo
@@ -106,9 +105,10 @@ else
 	GITSTATUS=$(git status -uno |awk 'FNR==2 {print $4}')
 
 	if [[ $GITSTATUS == "up-to-date" ]]; then
-		echo ".. Local Hamlib3 source is Up-To-Date"
+		echo "Local Hamlib3 source is Up-To-Date"
+		echo
 	else
-		echo ".. Local Hamlib3 requires updates"
+		echo "Hamlib3 updates available"
 		git pull
 	fi
 fi
@@ -178,26 +178,25 @@ fi
 # update and build
 update_and_build() {
 cd "$HL3B"
-echo ".. Running Make Clean"
+echo "Running Make Clean"
 echo
 make -s clean
 echo
-echo ".. Cleanup complete"
-echo ".. Starting Configure Process"
+echo "Cleanup complete"
+echo "Starting Configure Process"
 echo
 "$HL3SRC"/autogen.sh --prefix="$HL3I" \
 --disable-winradio --disable-shared --enable-static \
 --without-cxx-binding \
 LDFLAGS='-Wl,-gc-sections' \
 CFLAGS='-fdata-sections -ffunction-sections'
-echo ".. Configure Process Complete"
-echo ".. Starting Make Process"
-echo
+echo "Configure Process Complete"
+echo "Starting Make Process"
 make -s -j"$JJ"
 echo
-echo ".. Make Process Complete"
-echo ".. Installing Hamlib3 to:"
-echo ".. $INSTALLD"
+echo "Make Process Complete"
+echo "Installing Hamlib3 to:"
+echo "$INSTALLD"
 make -s install-strip
 }
 
@@ -205,7 +204,9 @@ make -s install-strip
 new_build() {
 mkdir -p "$SRCD"/build/hamlib
 cd "$SRCD"/build/hamlib
-echo ".. Starting Configure Process"
+echo "-------------------------------------------"
+echo " Starting Configure Process"
+echo "-------------------------------------------"
 echo
 "$HL3SRC"/autogen.sh --prefix="$HL3I" \
 --disable-winradio --disable-shared --enable-static \
@@ -213,14 +214,18 @@ echo
 LDFLAGS='-Wl,-gc-sections' \
 CFLAGS='-fdata-sections -ffunction-sections'
 echo
-echo ".. Configuration Complete"
-echo ".. Starting Make Process"
+echo "Configuration Complete"
+echo
+echo "-------------------------------------------"
+echo " Starting Make Process"
+echo "-------------------------------------------"
 echo
 make -s -j"$JJ"
 echo
-echo ".. Make Process Complete"
-echo ".. Installing Hamlib3 to:"
-echo ".. $HL3I"
+echo "-------------------------------------------"
+echo " Installing Hamlib3"
+echo "-------------------------------------------"
+echo
 make -s install-strip
 }
 
@@ -229,7 +234,7 @@ make -s install-strip
 ################################################################################
 clear
 echo "-------------------------------------------"
-echo "Building G4WJS Version of Hamlib3"
+echo " Building G4WJS Version of Hamlib3"
 echo "-------------------------------------------"
 echo
 
@@ -248,11 +253,10 @@ cd "$SRCD"
 update_chk
 
 # configure hamlib
-if [[ -d $HL3B ]] && [[ $($HL3I/bin/rigctl -m1 f) == "145000000" ]]; then
+if [[ -d $HL3B ]] && [[ $($HL3I/bin/rigctl -m1 f) == "145000000" ]] >/dev/null 2>&1 ; then
 	while [ 1 ]
 	do
-		echo
-		read -p "Hamlib Seems Ok, Rebuild Anyway [ Y/N ]:" yn
+		read -p "Hamlib seems Ok, rebuild anyway [ Y/N ]:" yn
 				case $yn in
 		[Yy]* )
 			echo
