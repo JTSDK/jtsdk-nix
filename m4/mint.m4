@@ -7,7 +7,7 @@ case "${DISTRO}" in
 		distrosd=$(lsb_release -sd)
 		distrov=$(lsb_release -sr)
 		case "${distrov}" in
-			17.0|17.1|17.2|17.3|17.4|17.4 )
+			17.0|17.1 )
 				AC_PATH_PROG([PKGMGR], [apt-get],[]) 
 				# establish base package list
 				# TO_DO: Test native install package requirments
@@ -18,8 +18,8 @@ case "${DISTRO}" in
 gfortran git libtool libfftw3-dev libgfortran3:i386 libusb-dev libhamlib-dev \
 libhamlib-utils libjack-dev libjack0 libsamplerate0-dev pkg-config portaudio19-dev \
 python-dev python3-dev python3-pil python3-pil.imagetk python3-tk python3-numpy \
-python3-pip python3-setuptools qtmultimedia5-dev subversion texinfo \
-packaging-dev'
+python3-pip python3-setuptools libqt5multimedia5-plugins qtmultimedia5-dev \
+subversion texinfo packaging-dev'
 
 			# sort the listing into a file
 			if test -f needed.txt ; then rm -f needed.txt ; fi
@@ -50,9 +50,9 @@ packaging-dev'
 			fi			
 		;;
 		* )
-			AC_MSG_WARN([Wrong Distribution: ${DISTRO}])
 			ACTUAL=$(lsb_release -si)
 			if test $(lsb_release -si) != "Mint"; then
+				AC_MSG_WARN([Wrong Distribution ${DISTRO}])
 				echo ''
 				echo 'Are you sure you set the correct distribution name?'
 				echo " Set Name .....: --with-distro=$DISTRO"
@@ -60,6 +60,7 @@ packaging-dev'
 				echo ''
 				echo ''
 			else
+				AC_MSG_WARN([Unsupported Version: ${distrov}])
 				echo ''
 				echo ' Supported Versions for Mint:'
 				echo ''

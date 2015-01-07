@@ -16,8 +16,8 @@ case "${DISTRO}" in
 gfortran git libtool libfftw3-dev libgfortran3:i386 libusb-dev libhamlib-dev \
 libhamlib-utils libsamplerate0-dev pkg-config portaudio19-dev python-dev \
 python3-dev python3-pil python3-pil.imagetk python3-tk python3-numpy \
-python3-pip python3-setuptools qtmultimedia5-dev subversion texinfo \
-packaging-dev'
+python3-pip python3-setuptools libqt5multimedia5-plugins qtmultimedia5-dev \
+subversion texinfo packaging-dev'
 
 			# sort the listing into a file
 			if test -f needed.txt ; then rm -f needed.txt ; fi
@@ -48,9 +48,9 @@ packaging-dev'
 			fi			
 		;;
 		* )
-			AC_MSG_WARN([Wrong Distribution: ${DISTRO}])
 			ACTUAL=$(lsb_release -si)
 			if test $(lsb_release -si) != "Ubuntu"; then
+				AC_MSG_WARN([Wrong Distribution ${DISTRO}])
 				echo ''
 				echo 'Are you sure you set the correct distribution name?'
 				echo " Set Name .....: --with-distro=$DISTRO"
@@ -58,6 +58,7 @@ packaging-dev'
 				echo ''
 				echo ''
 			else
+				AC_MSG_WARN([Unsupported Version: ${distrov}])
 				echo ''
 				echo ' Supported Versions for Ubuntu:'
 				echo ''
