@@ -1,0 +1,52 @@
+JTSDK v2.0.0-B2 is a collection of Bash scripts designed to assist
+users in building (compiling) the various WSJT applicaitons
+used by Amateur Radio Operators.
+
+SUPPORTED DISTROS & BUILDS
+* Ubuntu .. 14.04 .. WSJT, WSPR, WSJTX
+* Mint .... 17.1 ... WSJT, WSPR, WSJTX
+* Debian .. 8.0 .... WSJTX Only
+
+** Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+
+BASIC INSTALL INSTRUCTIONS (example is for Ubuntu)
+-Download jtsdk-v2.0.0-b2.tar.gz
+-Extract: tar -xf jtsdk-v2.0.0-b2.tar.gz
+
+1. Open a Terminal:
+2. Type: cd ./jtsdk-v2.0.0-b2
+3. Type: ./autogen.sh --with-distro=ubuntu --enable-parallel=yes
+4. Type: make
+5. Type: sudo make install
+6. Type: jtsdk
+
+Note(s):
+ a.) During the make process, if your system needs additional packages,
+you will be prompted to "re-run" autogeh.sh after running the make command.
+This is to ensure all needed packages are picked up by the configure script
+after installation.
+
+ b). If building WSJT-X, build Hamlib3 first, then build WSJTX
+
+ c). At present, MAP65 and WSPRX builds have been disabled until
+ the source trees have be updated to allow building both Windows and
+ Linux.
+ 
+ d). Due to package incompatibilities with Debian Jessie, WSJT
+ and WSPR will compile, but may give you runtime errors.
+
+
+SUPPORT
+
+If you have problems with the JTSDK, please report them to the WSJT-Devel 
+List at: < wsjt-devel@lists.sourceforge.net >
+
+
+WSJT INFORMATION
+
+WSJT Home Page:
+http://www.physics.princeton.edu/pulsar/K1JT/
+
+WSJT Program Development:
+www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
+

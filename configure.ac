@@ -2,10 +2,10 @@
 # Process this file with autoconf -*- autoconf -*-
 # ------------------------------------------------------------------------------
 AC_PREREQ([2.69])
-AC_INIT([JTSDK],[1.0.0],[wsjt-devel@lists.sourceforge.net],[],
+AC_INIT([JTSDK],[2.0.0-B2],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
-JTSDK_COPYRIGHT="Copyright (C) 2014 Joseph H Taylor, Jr, K1JT"
+JTSDK_COPYRIGHT="Copyright (C) 2015 Joseph H Taylor, Jr, K1JT"
 
 # ------------------------------------------------------------------------------
 #  canonical host information
@@ -163,7 +163,10 @@ The Following distribuitons are currently supported:
  * debian, mint, ubuntu
  * ubuntu includes, xubuntu, lubuntu and kubuntu
 
- Usage Example:
+ Usage:
+ ./autogen.sh --with-distro=<distribution>
+
+ Example:
  ./autogen.sh --with-distro=ubuntu
  
 ]) 	;;
@@ -175,12 +178,15 @@ else
 	echo ' configure the Makefiles. Supported Distributions:'
 	echo ''
 	echo '  Distribution   Version'
-	echo '   debian         Jessie'
-	echo '   ubuntu         14.04'
-	echo '   mint           17'
+	echo '   debian         Jessie  (8.0)'
+	echo '   ubuntu         Trusty  (14.04)'
+	echo '   mint           Rebecca (17.1)'
 	echo ''
-	echo '   ** Ubuntu includes Xubuntu, Lubuntu, Kubuntu'
-	echo '   ** You do not need to specify the version'
+	echo '   Note(s):'
+	echo '    1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu'
+	echo '    2. You do not need to specify the version'
+	echo ''
+	echo '   Usage: ./autogen.sh --with-distro=<distribution>'
 	echo ''
 	echo '   Example:'
 	echo '   ./autogen.sh --with-distro=ubuntu'

@@ -1,33 +1,26 @@
-JTSDK v1.0.0
-
-JTSDK is a collection of Bash scripts designed to assist
+JTSDK v2.0.0-B2 is a collection of Bash scripts designed to assist
 users in building (compiling) the various WSJT applicaitons
 used by Amateur Radio Operators.
 
-Supported Distros
-* Debian .........: Jessie
-* Ubuntu .........: 14.04
-* Mint ...........: 17
-* Fedora .........: (planned for 1.0.1 release)
-* Slackware ......: (planned for 1.0.1 release)
-* Arch ...........: (planned for 1.0.2 release)
-* Gentoo .........: (planned for 1.0.2 release)
-* FreeBSD ........: (planned for 1.0.3 release)
+SUPPORTED DISTROS & BUILDS
+* Ubuntu .. 14.04 .. WSJT, WSPR, WSJTX
+* Mint .... 17.1 ... WSJT, WSPR, WSJTX
+* Debian .. 8.0 .... WSJTX Only
 
 Note(s): 
- [1] Ubuntu includes Xubuntu, Lubuntu, Kubuntu
- 
+ a). Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+ b). Due to package incompatibilities with Debian Jessie, WSJT
+ and WSPR will compile, but may give you runtime errors.
+
+SUPPORT
+If you have problems with the JTSDK, please report them to the WSJT-Devel 
+List at: < wsjt-devel@lists.sourceforge.net >
+
+WSJT INFORMATION
 WSJT Home Page:
 http://www.physics.princeton.edu/pulsar/K1JT/
 
 WSJT Program Development:
 www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
-
-
-
-
- 
-
-
 
 
