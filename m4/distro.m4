@@ -24,7 +24,7 @@ dialog g++ gettext gfortran git libtool libfftw3-dev libgfortran3:i386 \
 libusb-dev libhamlib-dev libhamlib-utils libsamplerate0-dev pkg-config \
 portaudio19-dev python-dev python3-dev python3-pil python3-pil.imagetk \
 python3-tk python3-numpy python3-pip python3-setuptools qtmultimedia5-dev \
-subversion texinfo xsltproc'
+libqt5serialport5-dev subversion texinfo xsltproc'
 				AC_SUBST([PKGLIST], [${PKG_LIST}]) ;;
 			* )
 					AC_MSG_WARN([Unsupported Version: ${desc}])
@@ -48,7 +48,7 @@ dialog g++ gettext gfortran git libtool libfftw3-dev libgfortran3:i386 \
 libusb-dev libhamlib-dev libhamlib-utils libsamplerate0-dev pkg-config \
 portaudio19-dev python-dev python3-dev python3-pil python3-pil.imagetk \
 python3-tk python3-numpy python3-pip python3-setuptools qtmultimedia5-dev \
-subversion texinfo xsltproc'
+libqt5serialport5-dev subversion texinfo xsltproc'
 					AC_SUBST([PKGLIST], [${PKG_LIST}]) ;;
 				* )
 					AC_MSG_WARN([Unsupported Version: ${desc}])
@@ -73,7 +73,7 @@ dialog g++ gettext gfortran git libtool libfftw3-dev libgfortran3:i386 \
 libusb-dev libhamlib-dev libhamlib-utils libsamplerate0-dev pkg-config \
 portaudio19-dev python-dev python3-dev python3-pil python3-pil.imagetk \
 python3-tk python3-numpy python3-pip python3-setuptools qtmultimedia5-dev \
-subversion texinfo xsltproc'
+libqt5serialport5-dev subversion texinfo xsltproc'
 					AC_SUBST([PKGLIST], [${PKG_LIST}]) ;;
 				* )
 					AC_MSG_WARN([Unsupported Version: ${desc}])
