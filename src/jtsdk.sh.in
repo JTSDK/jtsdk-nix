@@ -83,11 +83,13 @@ MENUMSG="            Key the letter then hit [ENTER]\n\
 # applicaiton menu title's
 WSJTXTITLE=" WSJT-X BUILD MENU"
 WSJTXRCTITLE=" WSJT-X RC BUILD MENU"
+WSJTXEXPTITLE=" WSJT-X EXP BUILD MENU"
 
 # help menu lang
 HTITLE="APPLICATION BUILD HELP DOCUMENT"
 WSJTXHELPTITLE="WSJT-X BUILD HELP"
 WSJTXRCHELPTITLE="WSJT-X RC BUILD HELP"
+WSJTXEXPHELPTITLE="WSJT-X EXP BUILD HELP"
 
 # setup check lang
 SETUPTITLE="  SETUP REQUIRED"
@@ -103,11 +105,21 @@ touch @TMPD@/MMenu.tmp
 cat << 'EOF' > @TMPD@/MMenu.tmp 
 "1" "WSJT ..... v10.0  (devel)" \
 "2" "WSPR ..... v4.0.0 (devel)" \
-"3" "WSJT-X ... v1.5.0 (devel)" \
-"4" "WSJT-X ... v1.4.0 (RC3)" \
-"5" "Hamlib3 .. v3.0.0 (devel)" \
+"3" "WSJT-X ... v1.6.0 (exp)" \
+"4" "WSJT-X ... v1.5.0 (devel)" \
+"5" "WSJT-X ... v1.4.0 (RC)" \
+"6" "Hamlib3 .. v3.0.0 (devel)" \
 "H" "Help" \
 "E" "Exit"
+EOF
+
+# WSJTX 1.6.0 exp menu
+touch @TMPD@/WSJTXEXPMenu.tmp
+cat << 'EOF' > @TMPD@/WSJTXEXPMenu.tmp 
+"1" "Release Target" \
+"2" "Debug Target" \
+"H" "Help" \
+"B" "Back"
 EOF
 
 # WSJTX 1.5.0 devel menu
@@ -380,12 +392,13 @@ make_dialogrc
 HELP="$DOCS"/main_menu_help.txt
 WSJTXHELP="$DOCS"/wsjtx_menu_help.txt
 WSJTXRCHELP="$DOCS"/wsjtxrc_menu_help.txt
+WSJTXEXPHELP="$DOCS"/wsjtxexp_menu_help.txt
 
 # MAIN MANU --------------------------------------------------------------------
 while [ 0 ]; do
 
 dialog --ok-label SELECT --nocancel --backtitle "$BACKTITLE" --title \
-"$MMTITLE" --menu "$MENUMSG" 15 60 20 --file "$TMP/MMenu.tmp" 2> "$TMP/selection"
+"$MMTITLE" --menu "$MENUMSG" 17 60 20 --file "$TMP/MMenu.tmp" 2> "$TMP/selection"
 
 MMSELECT=$(head -c 1 < $TMP/selection)
 
@@ -399,8 +412,40 @@ elif [[ $MMSELECT = "2" ]]; then
 	jtsdk-wspr.sh
 	continue
 
-# WSJT-X 1.5.0 Menu (devel) ----------------------------------------------------
+
+# WSJT-X 1.6.0 Menu (exp)-------------------------------------------------------
 	elif [[ $MMSELECT = "3" ]]; then
+
+dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
+"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 18 --file "$TMP/WSJTXEXPMenu.tmp" 2> "$TMP/buildselect"
+
+	BUILDSELECT=$(head -c 1 < $TMP/buildselect)
+
+	# Release
+	if [[ $BUILDSELECT = "1" ]]; then
+		jtsdk-wsjtx exp release
+		continue
+
+	# Debug
+	elif [[ $BUILDSELECT = "2" ]]; then
+		jtsdk-wsjtx exp debug
+		continue
+
+	# Help
+	elif [[ $BUILDSELECT = "H" ]]; then
+dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" \
+--textbox "$WSJTXEXPHELP" 20 80
+
+	# Back ( return to main menu )
+	elif [[ $BUILDSELECT = "B" ]]; then
+		rm -f "$TMP/buildselect"
+		continue
+	fi
+# End WSJT-X 1.6.0 Menu---------------------------------------------------------
+
+
+# WSJT-X 1.5.0 Menu (devel) ----------------------------------------------------
+	elif [[ $MMSELECT = "4" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 "$WSJTXTITLE" --menu "$MENUMSG" 12 60 18 --file "$TMP/WSJTXMenu.tmp" 2> "$TMP/buildselect"
@@ -417,11 +462,6 @@ dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 		jtsdk-wsjtx dev debug
 		continue
 
-	# Package (On Hold)
-#	elif [[ $BUILDSELECT = "3" ]]; then
-#		jtsdk-wsjtx.sh wsjtx-1.5.0 Package
-#		continue
-
 	# Help
 	elif [[ $BUILDSELECT = "H" ]]; then
 dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
@@ -436,7 +476,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
 
 
 # WSJT-X 1.4.0 RC Menu ---------------------------------------------------------
-	elif [[ $MMSELECT = "4" ]]; then
+	elif [[ $MMSELECT = "5" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 "$WSJTXRCTITLE" --menu "$MENUMSG" 12 60 18 --file "$TMP/WSJTXMenu.tmp" 2> "$TMP/buildselect"
@@ -453,11 +493,6 @@ dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 		jtsdk-wsjtx rc debug
 		continue
 
-	# Package (On Hold)
-#	elif [[ $BUILDSELECT = "3" ]]; then
-#		jtsdk-wsjtx.sh wsjtx-1.4.0 Package
-#		continue
-
 	# Help
 	elif [[ $BUILDSELECT = "H" ]]; then
 dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
@@ -471,18 +506,21 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
 	fi
 # End WSJT-X 1.4.0 Menu---------------------------------------------------------
 
-# Build Hamlib3
-   elif [[ $MMSELECT = "5" ]]; then
+
+# Build Hamlib3-----------------------------------------------------------------
+   elif [[ $MMSELECT = "6" ]]; then
 	jtsdk-hamlib3.sh
 	continue
 
-# Help File
+
+# Help File---------------------------------------------------------------------
    elif [[ $MMSELECT = "H" ]]; then
 dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" \
 --textbox "$HELP" 20 80
 	continue
 
-# Exit @PROGRAM@
+
+# Exit @PROGRAM@----------------------------------------------------------------
   elif [[ $MMSELECT = "E" ]]; then
    clean_exit
    fi

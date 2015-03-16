@@ -1,11 +1,12 @@
 #! /usr/bin/env bash
 #
 # Name			: jtsdk-wsjtx.sh
-# Execution		: As normal user type: jtsdk-wspr.sh
+# Execution		: As normal user type: jtsdk-wsjtx.sh
 # Copyright		: @JTSDK_COPYRIGHT@
 # Contributors	: @JTSDK_AUTHORS@
 # Comment		: Part of the JTSDK Linux Project
-#                 This script builds both:
+#                 This script builds:
+#                 WSJT-X 1.6.0 exp branch
 #                 WSJT-X 1.5.0 development branch
 #                 WSJT-X 1.4.0 RC branch
 #
@@ -138,6 +139,7 @@ echo \
   debug ....: Debug Target
 
  Examples:
+  WSJT-X 1.6.0-devel ..: jtsdk-wsjtx exp release
   WSJT-X 1.5.0-devel ..: jtsdk-wsjtx dev release
   WSJT-X 1.4.0 RC .....: jtsdk-wsjtx rc release
 
@@ -151,6 +153,34 @@ exit 0
 ################################################################################
 
 case "$OPT1" in
+	exp|EXP|-e|-E ) # $1 from jtsdk main
+		APP_NAME=wsjtx
+		APP_SRC_NAME=wsjtx_exp
+		DEV=1.6.0
+		APP_SRC=@SRCD@/$APP_SRC_NAME
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx_exp"
+
+		# setup variables based on $2 from jtsdk main
+		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
+			BUILDD=@WSJTXEXPBD@
+			INSTALLD=@WSJTXEXPID@
+			OPTION="Debug"
+
+		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
+			BUILDD=@WSJTXEXPBR@
+			INSTALLD=@WSJTXEXPIR@
+			OPTION="Release"
+
+		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
+			BUILDD=@WSJTXEXPBR@
+			INSTALLD=@WSJTXEXPIR@
+			OPTION="package"
+			PKGD=@WSJTXEXPPD@
+
+		else
+			cli_help
+		fi
+	;;
 	dev|devel|-d|-D ) # $1 from jtsdk main
 		APP_NAME=wsjtx
 		APP_SRC_NAME=wsjtx
@@ -179,9 +209,7 @@ case "$OPT1" in
 			cli_help
 		fi
 	;;
-
 	rc|RC|-rc|-RC ) # $1 from jtsdk main
-
 		APP_NAME=wsjtx
 		DEV=1.4.0
 		APP_SRC_NAME=wsjtx-1.4

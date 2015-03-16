@@ -73,6 +73,10 @@ HL3I="$HOMEDIR/hamlib3"
 WSJTI="$HOMEDIR/wsjt/install"
 WSPRI="$HOMEDIR/wspr/install"
 
+# WSJTX 1.6.0 devel (adds JT4 Mode)
+WSJTXEXPIR="$HOMEDIR/wsjtxexp/install/release"
+WSJTXEXPID="$HOMEDIR/wsjtxexp/install/debug"
+
 # WSJTX 1.5.0 devel
 WSJTXIR="$HOMEDIR/wsjtx/install/release"
 WSJTXID="$HOMEDIR/wsjtx/install/debug"
@@ -90,6 +94,10 @@ MAP65IR="$HOMEDIR/map65/install/release"
 MAP65ID="$HOMEDIR/map65/install/debug"
 
 # build directories
+# WSJTX 1.6.0 exp (add JT4 mode)
+WSJTXEXPBR="$HOMEDIR/wsjtxexp/build/release"
+WSJTXEXPBD="$HOMEDIR/wsjtxexp/build/debug"
+
 # WSJTX 1.5.0 devel
 WSJTXBR="$HOMEDIR/wsjtx/build/release"
 WSJTXBD="$HOMEDIR/wsjtx/build/debug"
@@ -108,6 +116,7 @@ MAP65BD="$HOMEDIR/map65/build/debug"
 
 # package directories
 WSJTXPD="$HOMEDIR/wsjtx/package"
+WSJTXEXPPD="$HOMEDIR/wsjtxexp/package"
 WSJTXRCPD="$HOMEDIR/wsjtxrc/package"
 
 # ------------------------------------------------------------------------------
@@ -266,9 +275,15 @@ AC_SUBST([ADOCD], ["$ADOCD"])
 AC_SUBST([WSJTI], ["$WSJTI"])
 AC_SUBST([WSPRI], ["$WSPRI"])
 
+# WSJTX-EXP v1.6.0 
+AC_SUBST([WSJTXEXPIR], ["$WSJTXEXPIR"])
+AC_SUBST([WSJTXEXPID], ["$WSJTXEXPID"])
+
+# WSJTX v1.5.0
 AC_SUBST([WSJTXIR], ["$WSJTXIR"])
 AC_SUBST([WSJTXID], ["$WSJTXID"])
 
+# WSJTX v1.4.0 Release Candidate
 AC_SUBST([WSJTXRCIR], ["$WSJTXRCIR"])
 AC_SUBST([WSJTXRCID], ["$WSJTXRCID"])
 
@@ -279,9 +294,16 @@ AC_SUBST([MAP65IR], ["$MAP65IR"])
 AC_SUBST([MAP65ID], ["$MAP65ID"])
 
 # application build subs
+
+# WSJTX v1.6.0 EXP
+AC_SUBST([WSJTXEXPBR], ["$WSJTXEXPBR"])
+AC_SUBST([WSJTXEXPBD], ["$WSJTXEXPBD"])
+
+# WSJTX v1.5.0
 AC_SUBST([WSJTXBR], ["$WSJTXBR"])
 AC_SUBST([WSJTXBD], ["$WSJTXBD"])
 
+# WSJTX v1.4.0 RC
 AC_SUBST([WSJTXRCBR], ["$WSJTXRCBR"])
 AC_SUBST([WSJTXRCBD], ["$WSJTXRCBD"])
 
@@ -293,7 +315,9 @@ AC_SUBST([MAP65BD], ["$MAP65BD"])
 
 # package subs
 AC_SUBST([WSJTXPD], ["$WSJTXPD"])
+AC_SUBST([WSJTXEXPPD], ["$WSJTXEXPPD"])
 AC_SUBST([WSJTXRCPD], ["$WSJTXRCPD"])
+
 
 # hamlib3 subs
 AC_SUBST([HL3SRC], ["$HL3SRC"])
