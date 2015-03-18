@@ -51,7 +51,7 @@ HAMLIB3 INFORMATION
  locations are as follows:
  
  Source ...: /home/$USER/jtsdk/src/g4wjs-hamlib
- Build ....: /home/$USER/jtsdk/src/build/hamlib3
+ Build ....: /home/$USER/jtsdk/src/build/hamlib
  Install ..: /home/$USER/jtsdk/hamlib3
 
 
