@@ -165,6 +165,7 @@ if [[ -f $HL3SRC/autogen.sh ]]; then
 	git pull
 	git checkout integration
 else
+	if [[ -d $HL3SRC ]]; then rm -rf $HL3SRC ; fi
 	cd $SRCD
 	git clone git://git.code.sf.net/u/bsomervi/hamlib g4wjs-hamlib
 	cd $SRCD/g4wjs-hamlib
