@@ -40,6 +40,13 @@ URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
 APP_NAME=wspr
 APP_SRC="$SRCD/$APP_NAME"
 
+# Foreground colours
+C_R='\033[01;31m'		# red
+C_G='\033[01;32m'		# green
+C_Y='\033[01;33m'		# yellow
+C_C='\033[01;36m'		# cyan
+C_NC='\033[01;37m'		# no color
+
 ################################################################################
 # FUNCTOINS
 ################################################################################
@@ -85,13 +92,13 @@ fi
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 clear
 echo '-----------------------------------------------------'
-echo " STARTING BUILD for ( $APP_NAME )"
+echo -e ${C_Y}"STARTING BUILD for ( $APP_NAME )"${C_NC}
 echo '-----------------------------------------------------'
 check_svn
 
 echo
 echo '-----------------------------------------------------'
-echo ' RUN AUTORECONF'
+echo -e ${C_Y}' RUN AUTORECONF'${C_NC}
 echo '-----------------------------------------------------'
 cd "$APP_SRC"
 # clelan first
@@ -105,14 +112,14 @@ autoreconf -f -i
 
 echo
 echo '-----------------------------------------------------'
-echo ' RUN CONFIGURE'
+echo -e ${C_Y}'RUN CONFIGURE'${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 ./configure --prefix="$INSTALLD" --with-python3=@PYTHON3@ --with-f2py=@F2PY3@
 
 echo
 echo '-----------------------------------------------------'
-echo ' COMPILE and INSTALL TARGETS'
+echo -e ${C_Y}'COMPILE and INSTALL TARGETS'${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 # get the targets from Makefile all: line into an array
@@ -172,7 +179,7 @@ chown -R "$USER":"$USER" "$INSTALLD"
 # Finished
 echo
 echo '-----------------------------------------------------'
-echo " BUILD SUMMARY for ( $APP_NAME )"
+echo -e ${C_G}"BUILD SUMMARY for ( $APP_NAME )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 echo " Build Type ..: Release"

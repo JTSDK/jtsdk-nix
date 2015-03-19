@@ -35,6 +35,13 @@ HL3SRC=@HL3SRC@
 HL3B=@HL3B@
 HL3I=@HL3I@
 
+# Foreground colours
+C_R='\033[01;31m'		# red
+C_G='\033[01;32m'		# green
+C_Y='\033[01;33m'		# yellow
+C_C='\033[01;36m'		# cyan
+C_NC='\033[01;37m'		# no color
+
 ################################################################################
 # FUNCTOINS
 ################################################################################
@@ -43,7 +50,7 @@ HL3I=@HL3I@
 hamlib_test() {
 clear
 echo '-------------------------------------------'
-echo ' Testing Hamlib3'
+echo -e ${C_Y}' Testing Hamlib3'${C_NC}
 echo '-------------------------------------------'
 echo
 
@@ -258,7 +265,7 @@ hamlib_test
 # Ask to update from SVN first
 echo
 echo '-----------------------------------------------------'
-echo " STARTING BUILD for ( $APP_NAME-$DEV $OPTION )"
+echo -e ${C_Y}" STARTING BUILD for ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
 check_svn
 
@@ -274,7 +281,7 @@ case "$OPTION" in
 	Release|Debug )
 		echo
 		echo '-----------------------------------------------------'
-		echo " BUILDING ( CHKFFT ) "
+		echo -e ${C_Y}" BUILDING ( CHKFFT )" ${C_NC}
 		echo '-----------------------------------------------------'
 		cd $APP_SRC/lib
 		echo 'Compiling CHKFFT'
@@ -300,7 +307,7 @@ fi
 # start configuring the main build
 echo
 echo '-----------------------------------------------------'
-echo " CONFIGURING ( $APP_NAME-$DEV $OPTION )"
+echo -e ${C_Y}" CONFIGURING ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
 echo
 
@@ -346,7 +353,7 @@ fi
 
 echo
 echo '-----------------------------------------------------'
-echo " BUILDING ( $APP_NAME-$DEV $OPTION )"
+echo -e ${C_Y}" BUILDING ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
 echo
 cd "$BUILDD"
@@ -369,7 +376,7 @@ esac
 # Finished
 echo
 echo '-----------------------------------------------------'
-echo " BUILD SUMMARY ( $APP_NAME-$DEV $OPTION )"
+echo -e ${C_G}" BUILD SUMMARY ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 
