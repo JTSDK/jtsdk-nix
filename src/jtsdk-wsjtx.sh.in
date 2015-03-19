@@ -276,27 +276,26 @@ check_svn
 set -e
 
 # CHKFFT only exists in the development branch
-if [[ $OPT1 = "wsjtx-1.5.0" ]] ; then
+if [[ $DEV = "1.5.0" ]] ; then
 case "$OPTION" in
-	Release|Debug )
+	Debug )
 		echo
 		echo '-----------------------------------------------------'
 		echo -e ${C_Y}" BUILDING ( CHKFFT )" ${C_NC}
 		echo '-----------------------------------------------------'
 		cd $APP_SRC/lib
-		echo 'Compiling CHKFFT'
 		if [[ -f chkfft ]] ; then
-			echo 'Removing Previous Build'
+			echo 'Removing Previous CHKFFT Build'
 			rm chkfft >/dev/null 2>&1
-			rm -f *.o >/dev/null 2>&1
+				rm -f *.o >/dev/null 2>&1
 		fi
 		echo 'Compiling CHKFFT'
 		gfortran -o chkfft chkfft.f90 four2a.f90 f77_wisdom.f90 gran.c -lfftw3f
 		echo 'Copying Support Files'
-		cp -uR chkfft "$INSTALLD" >/dev/null 2>&1
-		cp -uR chkfft.txt "$INSTALLD" >/dev/null 2>&1
-		cp -uR nfft.dat "$INSTALLD" >/dev/null 2>&1
-		cp -uR nfft.out "$INSTALLD" >/dev/null 2>&1
+		cp -uR chkfft "$INSTALLD/bin" >/dev/null 2>&1
+		cp -uR chkfft.txt "$INSTALLD/bin" >/dev/null 2>&1
+		cp -uR nfft.dat "$INSTALLD/bin" >/dev/null 2>&1
+		cp -uR nfft.out "$INSTALLD/bin" >/dev/null 2>&1
 		echo 'Finished'
 		;;
 	* )
@@ -388,7 +387,7 @@ case "$OPTION" in
 		echo " Build .......: $BUILDD"
 		echo " Install .....: $INSTALLD"
 		echo ''
-		if [[ $DEV = "1.5.0" ]] ; then
+		if [[ $OPTION = "Debug" ]] ; then
 			echo ' CHKFFT Utility Program'
 			echo " Install .....: $INSTALLD"
 			echo ''
