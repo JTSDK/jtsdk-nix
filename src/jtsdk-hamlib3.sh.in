@@ -34,9 +34,19 @@ MKRD=@MKRD@
 
 # misc variables
 JJ=@JJJJ@
-GITV=$(dpkg --get-selections |grep git |awk 'FNR==1 {print $2}')
 HAMLIBURL="git://git.code.sf.net/u/bsomervi/hamlib"
 LOG="$LOGS"/hamlib-build.log
+PKG_NAME=Hamlib3
+TODAY=$(date +"%d-%m-%Y")
+TIMESTAMP=$(date +"%d-%m-%Y at %R")
+BUILDER=$(whoami)
+
+# Foreground colours
+C_R='\033[01;31m'		# red
+C_G='\033[01;32m'		# green
+C_Y='\033[01;33m'		# yellow
+C_C='\033[01;36m'		# cyan
+C_NC='\033[01;37m'		# no color
 
 make_pkg_list() {
 
@@ -65,53 +75,6 @@ include/hamlib/rotlist.h
 EOF_HAMLIB3
 ) > "$TMP"/pkg_list_hamlib3
 
-}
-
-# git check local function
-git_check() {
-echo "Checking Git..."
-if [[ $GITV == "install" ]]; then
-	echo "Found Git..."
-else
-	echo
-	echo "GIT ERROR"
-	echo
-	echo "Git was not found, please check your installation"
-	echo "and ensure Git can be used from ( $USER ) account"
-	echo
-	read -p "Press [Enter] continue .."
-	echo
-	clean_exit
-fi
-}
-
-# check local git clone is up to date
-update_chk() {
-echo "Checking Hamlib3 source tree"
-
-# clone or update hamlib
-if [[ ! -d $HL3SRC ]] ; then
-	echo "Hamlib3 was not fouud"
-	echo "Cloning Hamlib3 (this a can take few minutes, be patient)"
-	git clone "$HAMLIBURL" g4wjs-hamlib	
-
-# checkout integration
-	echo "Checkout Integration"	
-	cd g4wjs-hamlib
-	git checkout integration
-	echo
-else
-	cd $HL3SRC
-	GITSTATUS=$(git status -uno |awk 'FNR==2 {print $4}')
-
-	if [[ $GITSTATUS == "up-to-date" ]]; then
-		echo "Local Hamlib3 source is Up-To-Date"
-		echo
-	else
-		echo "Hamlib3 updates available"
-		git pull
-	fi
-fi
 }
 
 # post build test-1 (file check)
@@ -175,68 +138,17 @@ else
 fi
 }
 
-# update and build
-update_and_build() {
-cd "$HL3B"
-echo "Running Make Clean"
-echo
-make -s clean
-echo
-echo "Cleanup complete"
-echo "Starting Configure Process"
-echo
-"$HL3SRC"/autogen.sh --prefix="$HL3I" \
---disable-winradio --disable-shared --enable-static \
---without-cxx-binding \
-LDFLAGS='-Wl,-gc-sections' \
-CFLAGS='-fdata-sections -ffunction-sections'
-echo "Configure Process Complete"
-echo "Starting Make Process"
-make -s -j"$JJ"
-echo
-echo "Make Process Complete"
-echo "Installing Hamlib3 to:"
-echo "$INSTALLD"
-make -s install-strip
-}
-
-# new build
-new_build() {
-mkdir -p "$SRCD"/build/hamlib
-cd "$SRCD"/build/hamlib
-echo "-------------------------------------------"
-echo " Starting Configure Process"
-echo "-------------------------------------------"
-echo
-"$HL3SRC"/autogen.sh --prefix="$HL3I" \
---disable-winradio --disable-shared --enable-static \
---without-cxx-binding \
-LDFLAGS='-Wl,-gc-sections' \
-CFLAGS='-fdata-sections -ffunction-sections'
-echo
-echo "Configuration Complete"
-echo
-echo "-------------------------------------------"
-echo " Starting Make Process"
-echo "-------------------------------------------"
-echo
-make -s -j"$JJ"
-echo
-echo "-------------------------------------------"
-echo " Installing Hamlib3"
-echo "-------------------------------------------"
-echo
-make -s install-strip
-}
-
 ################################################################################
 # START MAIN SCRIPT
 ################################################################################
 clear
 echo "-------------------------------------------"
-echo " Building G4WJS Version of Hamlib3"
+echo -e ${C_Y} " BUILDING [ $PKG_NAME ]"${C_NC}
 echo "-------------------------------------------"
 echo
+
+# make package list
+make_pkg_list
 
 # setup the log
 if [[ -f $LOG ]]; then
@@ -246,51 +158,143 @@ else
 	touch $LOG
 fi
 
-# make package list
-make_pkg_list
-
-cd "$SRCD"
-update_chk
-
-# configure hamlib
-if [[ -d $HL3B ]] && [[ $($HL3I/bin/rigctl -m1 f) == "145000000" ]] >/dev/null 2>&1 ; then
-	while [ 1 ]
-	do
-		read -p "Hamlib seems Ok, rebuild anyway [ Y/N ]:" yn
-				case $yn in
-		[Yy]* )
-			echo
-			update_chk
-			update_and_build
-			echo
-			echo '---------------------------------------'	
-			echo " @PROGRAM@ Performing Post Build Checks"
-			echo '---------------------------------------'			
-			post_build_test1
-			post_build_test2
-			break ;;
-		[Nn]* )
-			exit 0
-		;;
-		* )
-			clear
-			echo "Please use "Y" yes or "N" No."
-		;;
-		esac
-	done
+cd $HOMEDIR
+mkdir -p $HL3B
+if [[ -f $HL3SRC/autogen.sh ]]; then
+	cd $HL3SRC
+	git pull
+	git checkout integration
 else
-	new_build
-	echo
-	echo '--------------------------------------'
-	echo " @PROGRAM@ Performing Post Build Check"
-	echo '--------------------------------------'
-	post_build_test1
-	post_build_test2
+	cd $SRCD
+	git clone git://git.code.sf.net/u/bsomervi/hamlib g4wjs-hamlib
+	cd $SRCD/g4wjs-hamlib
+	git checkout integration
 fi
 
-echo
+# Run configure
+cd $HL3B
+echo ''
+echo '---------------------------------------------------------------'
+echo -e ${C_Y} " CONFIGURING [ $PKG_NAME ]"${C_NC}
+echo '---------------------------------------------------------------'
+echo ''
+if [ "$1" = "shared" ]; then
+
+	# Build shared
+	echo -en ".. Build Type: " && echo -e ${C_G}'Shared'${C_NC}
+	echo ''
+	$HL3SRC/autogen.sh --prefix=$HL3I \
+	--enable-shared \
+	--disable-static \
+	--disable-winradio \
+	--without-cxx-binding \
+	CC='gcc' \
+	CXX='g++' \
+	CFLAGS='-fdata-sections -ffunction-sections' \
+	LDFLAGS='-Wl,--gc-sections'
+
+else
+
+	# Build Static ( default )
+	echo -en ".. Build Type: " && echo -e ${C_G}'Static'${C_NC}
+	echo ''
+	$HL3SRC/autogen.sh --prefix=$HL3I \
+	--disable-shared \
+	--enable-static \
+	--disable-winradio \
+	--without-cxx-binding \
+	CC='gcc' \
+	CXX='g++' \
+	CFLAGS='-fdata-sections -ffunction-sections' \
+	LDFLAGS='-Wl,--gc-sections'
+fi
+
+# Make clean check
+if [ -f $HL3B/tests/rigctld ];
+then
+	echo ''
+	echo '---------------------------------------------------------------'
+	echo -e ${C_Y} " RUNNING MAKE CLEAN [ $PKG_NAME ]"${C_NC}
+	echo '---------------------------------------------------------------'
+	echo ''
+	make clean
+fi
+
+# Run make
+echo ''
+echo '----------------------------------------------------------------'
+echo -e ${C_Y} " RUNNING MAKE ALL [ $PKG_NAME ]"${C_NC}
+echo '----------------------------------------------------------------'
+echo ''
+make -j"$JJ"
+
+# Run make install-strip
+echo ''
+echo '----------------------------------------------------------------'
+echo -e ${C_Y} " INSTALLING [ $PKG_NAME ]"${C_NC}
+echo '----------------------------------------------------------------'
+echo ''
+make install-strip
+
+# Run simple post build tests
+echo ''
+echo '----------------------------------------------------------------'
+echo -e ${C_Y} " TESTING [ $PKG_NAME ]"${C_NC}
+echo '----------------------------------------------------------------'
+post_build_test1
+post_build_test2
+
+# Generate README if build finishes .. OK ..
+if [ $? = "0" ];
+then
+
+	if [ -f $HL3I/$PKG_NAME.build.info ]; then rm -f $HL3I/$PKG_NAME.build.info ; fi
+
+	echo ''
+	echo '---------------------------------------------------------------'
+	echo -e ${C_Y} " ADDING BUILD INFO [ $PKG_NAME.build.info ] "${C_NC}
+	echo '---------------------------------------------------------------'
+	echo ''
+	echo '  Creating Hamlib3 Build Info File'
+
+# Generate Build Info File
+(
+cat <<EOF
+
+# Package Information
+Build Date...: $TIMESTAMP
+Builder......: $BUILDER
+Prefix.......: $HL3I
+Pkg Name.....: $PKG_NAME
+Pkg Version..: development
+
+# Source Location and Integration
+Git URL......: git://git.code.sf.net/u/bsomervi/hamlib
+Git Extra....: git checkout integration'
+
+# Configure Options <for Static>
+autogen.sh --prefix=$PREFIX --disable-shared --enable-static \
+--disable-winradio --without-cxx-binding CC=$TC/gcc.exe \
+CXX=$TC/g++.exe CFLAGS='-fdata-sections -ffunction-sections' \
+LDFLAGS='-Wl,--gc-sections'
+
+# Configure Options <for Shared>
+autogen.sh --prefix=$PREFIX --disable-static --enable-shared \
+--disable-winradio --without-cxx-binding CC=$TC/gcc.exe \
+CXX=$TC/g++.exe CFLAGS='-fdata-sections -ffunction-sections' \
+LDFLAGS='-Wl,--gc-sections'
+
+# Build Commands
+make
+make install-strip
+
+EOF
+) > $HL3I/$PKG_NAME.build.info
+fi
+
+echo ''
 echo '------------------------------------------------'
-echo " @PROGRAM@ Finished Building ( Hamlib3 )"
+echo -e ${C_G} " FINISHED BUILDING  [ $PKG_NAME ]"${C_NC}
 echo '------------------------------------------------'
 echo ''
 echo "Test 1 ...: $T1_STATUS"
