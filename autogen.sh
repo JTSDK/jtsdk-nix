@@ -22,8 +22,15 @@
 
 set -e
 
-_BASED=$(exec pwd)
-_PROGRAM=JTSDK
+BASED=$(exec pwd)
+PROGRAM=JTSDK
+
+# Foreground colours
+C_R='\033[01;31m'	# red
+C_G='\033[01;32m'	# green
+C_Y='\033[01;33m'	# yellow
+C_C='\033[01;36m'	# cyan
+C_NC='\033[01;37m'	# no color
 
 autogen_help() {
 clear
@@ -55,7 +62,7 @@ exit 0
 }
 
 # Start main script
-cd $_BASED
+cd $BASED
 
 if [ "$1" = "help" ] ; then
 	autogen_help
@@ -67,7 +74,7 @@ fi
 if test "$?" -eq 1; then
 	clear
 	echo
-	echo "You must have autoconf installed to compile $_PROGRAM."
+	echo "You must have autoconf installed to compile $PROGRAM."
 	echo "Install the appropriate package for your distribution,"
 	echo
 	exit 1
@@ -77,20 +84,20 @@ fi
 if test -f ./Makefile -a ./configure ; then
 	clear
 	echo '---------------------------------------------------'
-	echo "Checking for Old Makefile & Configure Script"
+	echo ${C_Y}"Checking for Old Makefile & Configure Script"${C_NC}
 	echo '---------------------------------------------------'
 	echo ''
 	echo 'Found old files, running make clean first'
 	echo ''
 	make -s clean
 	echo '---------------------------------------------------'
-	echo "Running ( autoconf -f -i ) to process configure.ac"
+	echo ${C_Y}"Running ( autoconf -f -i ) to process configure.ac"${C_NC}
 	echo '---------------------------------------------------'
 	autoconf -f -i
 else
 	clear
 	echo '---------------------------------------------------'
-	echo "Running ( autoconf -f -i ) to process configure.ac"
+	echo ${C_Y}"Running ( autoconf -f -i ) to process configure.ac"${C_NC}
 	echo '---------------------------------------------------'
 	autoconf -f -i
 fi
@@ -116,6 +123,6 @@ else
 	echo "Using ./configure $@"
 fi
 
-$_BASED/configure "$@"
+$BASED/configure "$@"
 
 exit 0

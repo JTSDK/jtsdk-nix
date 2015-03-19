@@ -78,11 +78,18 @@ PKGLIST		:=	@PKGLIST@
 SCRIPTS		:=	$(wildcard src/*.sh)
 PKGS		:=	$(wildcard ./orig*.txt)
 
+# Foreground colours
+C_R			:=	'\033[01;31m'	# red
+C_G			:=	'\033[01;32m'	# green
+C_Y			:=	'\033[01;33m'	# yellow
+C_C			:=	'\033[01;36m'	# cyan
+C_NC		:=	'\033[01;37m'	# no color
+
 # Targets
 all: install-dep
 	@echo ''
 	@echo '---------------------------------------------------------------'
-	@echo ' Dependency Installation Summary'
+	@echo -e $(C_Y)' Dependency Installation Summary'$(C_NC)
 	@echo '---------------------------------------------------------------'
 	@echo ''	
 	@echo ' To Ensure All ( New ) Dependencies are Picked up, type:'
@@ -98,7 +105,7 @@ all: install-dep
 install-dep:
 	@clear
 	@echo '---------------------------------------------'
-	@echo " Install Package Dependencies"
+	@echo -e $(C_Y)" Install Package Dependencies"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
 	@sudo -k
@@ -131,7 +138,7 @@ mainsymlink:
 install: mainsymlink
 	@clear
 	@echo '---------------------------------------------'
-	@echo " Installing @PROGRAM@ @VERSION@"
+	@echo -e $(C_Y)" Installing @PROGRAM@ @VERSION@"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo '..Installing Directories'
@@ -189,7 +196,7 @@ install: mainsymlink
 uninstall:
 	@clear
 	@echo '---------------------------------------------'
-	@echo " Uninstall @PROGRAM@ @VERSION@"
+	@echo -e $(C_Y)" Uninstall @PROGRAM@ @VERSION@"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo '..Removing installed scripts'
@@ -227,7 +234,7 @@ clean:
 simulate:
 	@clear
 	@echo '----------------------------------------------------------'
-	@echo ' Simulate Package Installation'
+	@echo -e $(C_Y)' Simulate Package Installation'$(C_NC)
 	@echo '----------------------------------------------------------'
 	@echo ''
 	@sudo -k
@@ -245,7 +252,7 @@ simulate:
 	@sudo -k
 	@echo ''
 	@echo '----------------------------------------------------------'
-	@echo ' Finished Simulate Package Installation'
+	@echo -e $(C_y)' Finished Simulate Package Installation'$(C_NC)
 	@echo '----------------------------------------------------------'
 	@echo ''
 	@echo ' To perform real installation, type ..: make'

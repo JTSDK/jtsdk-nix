@@ -360,11 +360,11 @@ echo "
 -------------------------------------------------
 "
 else
+echo ''
+echo '-------------------------------------------------'
+echo 'Configuration Summary'
+echo '-------------------------------------------------'
 echo "
--------------------------------------------------
-
-Configuration Summary
-
  Package: ...........: ${PROGRAM} ${VERSION}
  Distribution .......: ${DESC} ${HOST_CPU}
  Install prefix .....: ${PREFIX}
@@ -373,6 +373,5 @@ Configuration Summary
 
  To Install ,type ...: sudo make install
 
--------------------------------------------------
 "
 fi
