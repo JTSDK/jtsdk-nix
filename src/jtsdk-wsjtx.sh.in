@@ -71,19 +71,19 @@ if [[ -f $HL3I/bin/rigctl ]] ; then
 		echo '1. Return to the Main Menu.'
 		echo "2. Select Hamlib3 to build it."
 		echo '3. Then try to build WSJT-X again'
-		echo 
+		echo ''
 		read -p "Press [Enter] to continue ..."
 		exit
 	fi
 else
 		echo "Cannot Find ( rigctl binary )"
-		echo
+		echo ''
 		echo "If you have not built hamlib3 yet:"
 		echo ''
 		echo '1. Return to the Main Menu.'
 		echo "2. Select Hamlib3 to build it."
 		echo '3. Then try to build WSJT-X again'
-		echo 
+		echo ''
 		read -p "Press [Enter] to continue ..."
 		exit
 fi
@@ -94,7 +94,7 @@ check_svn() {
 
 if [[ ! -d $APP_SRC/.svn ]]
 then
-	echo
+	echo ''
 	echo "Checking Out New Version of $APP_NAME"
 	cd $SRCD
 	svn co $URL
@@ -102,7 +102,7 @@ else
 	# Yy / Nn answer to update from svn	
 	while [ 1 ]
 	do
-		echo
+		echo ''
 		read -p "Update from SVN Before Building? [ Y/N ]: " yn
 		case $yn in
 		
@@ -263,7 +263,7 @@ mkdir -p "$PKGD" >/dev/null 2>&1
 hamlib_test
 
 # Ask to update from SVN first
-echo
+echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" STARTING BUILD for ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
@@ -279,12 +279,13 @@ set -e
 if [[ $DEV = "1.5.0" ]] ; then
 case "$OPTION" in
 	Debug )
-		echo
+		echo ''
 		echo '-----------------------------------------------------'
 		echo -e ${C_Y}" BUILDING ( CHKFFT )" ${C_NC}
 		echo '-----------------------------------------------------'
 		cd $APP_SRC/lib
 		if [[ -f chkfft ]] ; then
+		echo ''
 			echo 'Removing Previous CHKFFT Build'
 			rm chkfft >/dev/null 2>&1
 				rm -f *.o >/dev/null 2>&1
@@ -350,11 +351,11 @@ fi
 
 # build the target
 
-echo
+echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" BUILDING ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
-echo
+echo ''
 cd "$BUILDD"
 case "$OPTION" in
 	Release|Debug )
@@ -373,7 +374,7 @@ case "$OPTION" in
 esac
 
 # Finished
-echo
+echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_G}" BUILD SUMMARY ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
@@ -385,11 +386,11 @@ case "$OPTION" in
 		echo " Build Type ..: $OPTION"
 		echo " Source ......: $APP_SRC"
 		echo " Build .......: $BUILDD"
-		echo " Install .....: $INSTALLD"
+		echo " Install .....: $INSTALLD/bin"
 		echo ''
 		if [[ $OPTION = "Debug" ]] ; then
 			echo ' CHKFFT Utility Program'
-			echo " Install .....: $INSTALLD"
+			echo " Install .....: $INSTALLD/bin/chkfft"
 			echo ''
 		fi		
 		echo " TO RUN $APP_NAME"

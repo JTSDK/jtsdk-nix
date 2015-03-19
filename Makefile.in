@@ -138,7 +138,7 @@ mainsymlink:
 install: mainsymlink
 	@clear
 	@echo '---------------------------------------------'
-	@echo -e $(C_Y)" Installing @PROGRAM@ @VERSION@"$(C_NC)
+	@echo -e $(C_G)" Installing @PROGRAM@ @VERSION@"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo '..Installing Directories'
@@ -252,7 +252,7 @@ simulate:
 	@sudo -k
 	@echo ''
 	@echo '----------------------------------------------------------'
-	@echo -e $(C_y)' Finished Simulate Package Installation'$(C_NC)
+	@echo -e $(C_G)' Finished Simulate Package Installation'$(C_NC)
 	@echo '----------------------------------------------------------'
 	@echo ''
 	@echo ' To perform real installation, type ..: make'
