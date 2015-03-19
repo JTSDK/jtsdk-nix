@@ -86,17 +86,17 @@ rm -rf "$TMP"/counter && touch "$TMP"/counter
 # check that files exist at least
 while read f; do
 	if [[ -f $HL3I/$f ]]; then
-		echo .. "$f" ... OK
+		echo -e " $f"'..'${C_G}'OK'${C_NC}
 		echo "$f" >> "$TMP"/counter
 	else
-		echo "$f" is ... MISSING
+		echo -e "$f"'..'${C_R}' MISSING '${C_NC}
 	fi
 done < "$TMP"/pkg_list_hamlib3
 
 # get counter info
 LINES=$(wc -l < "$TMP"/counter)
 if [[ $LINES -ge "16" ]]; then
-	echo "All Critical Files Found"
+	echo -e ${C_G}" Passed"${C_NC}
 	echo
 	T1_STATUS=OK
 else
@@ -122,6 +122,7 @@ if [[ $TEST2 == "145000000" ]]; then
 	echo ' Tested With ......: rigctl -m1 f'
 	echo ' Expected Result ..: 145000000'
 	echo " Returned Result ..: $TEST2"
+	echo -e ${C_G}' Passed'${C_NC}
 	echo ''
 	T2_STATUS=OK
 else
