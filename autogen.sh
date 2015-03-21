@@ -64,21 +64,22 @@ exit 0
 # Start main script
 cd $BASED
 
-if [ "$1" = "help" ] ; then
-	autogen_help
-else
-	autoconf --version > /dev/null 2>&1
-fi
+# Display Autogen help message
+if [ "$1" = "help" ] ; then autogen_help ; fi
 
-# message if autoconf was found "0"=OK, "1"=Not Found
-if test "$?" -eq 1; then
+# Test if autoconf is installed
+autoconf --version > /dev/null 2>&1 || {
 	clear
-	echo
+	echo ''
 	echo "You must have autoconf installed to compile $PROGRAM."
-	echo "Install the appropriate package for your distribution,"
-	echo
+	echo 'Install the appropriate package for your distribution.'
+	echo ''
+	echo 'For Debian, Mint and Ubuntu, try:'
+	echo ''
+	echo 'sudo apt-get install autoconf'
+	echo ''
 	exit 1
-fi
+}
 
 # run make clean if makefile and configure are found
 if test -f ./Makefile -a ./configure ; then
