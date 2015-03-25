@@ -67,7 +67,7 @@ SIGCAUGHTMSG="\n   Signal Caught, Performing Cleanup Routine"
 CLEANTMP=" CLEANING TMP"
 CLEANTMPMSG="\n         Cleaning Up Temporary Files"
 RESETOPT=" RESET OPTIONS"
-RESETOPTMSG="\n         Restteing Used Bash Options"
+RESETOPTMSG="\n         Restting Used Bash Options"
 CLEANVAR=" CLEANING VARS"
 CLEANVARMSG="\n             Unset Used Variables"
 
