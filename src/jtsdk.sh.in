@@ -3,6 +3,7 @@
 # Name			: @PROGRAM@ @VERSION@
 # Execution		: As normal user type: jtsdk
 # Copyright		: @COPYRIGHT@
+# License		: @LICENSE@
 # Contributors	: @AUTHORS@
 # Comment		: Part of the JTSDK Linux Project
 #
@@ -25,7 +26,7 @@ set -e
 # set reasonable menu height & width.
 # This is an ANSI sequence, and should
 # work in most Xterm windows
-echo -e "\e[8;30;100t"
+echo -e "\e[8;35;110t"
 
 # host informaiton
 HOST_OS=@HOST_OS@
@@ -67,7 +68,7 @@ SIGCAUGHTMSG="\n   Signal Caught, Performing Cleanup Routine"
 CLEANTMP=" CLEANING TMP"
 CLEANTMPMSG="\n         Cleaning Up Temporary Files"
 RESETOPT=" RESET OPTIONS"
-RESETOPTMSG="\n         Restting Used Bash Options"
+RESETOPTMSG="\n         Resetting Used Bash Options"
 CLEANVAR=" CLEANING VARS"
 CLEANVARMSG="\n             Unset Used Variables"
 
@@ -279,38 +280,6 @@ exit
 }
 
 
-# app check --------------------------------------------------------------------
-app_chk() {
-# To be used at a later date
-# system utils
-    export LC_ALL=C
-    _BASH=$(bash --version |awk 'FNR==1 {print $4}')
-    _BINUTILS=$(ld --version | head -n1 | cut -d" " -f3-)
-    _BISON=$(bison --version | head -n1)
-    _BZ2=$( bzip2 --version 2>&1 < /dev/null |awk 'FNR==1 {print $7}')
-    _COREUTILS=$(chown --version |awk 'FNR==1 {print $4}')
-    _FIND=$(find --version |awk 'FNR {print $4}')
-    _DIFF=$(diff --version |awk 'FNR==1 {print $4}')
-    _PATCH=$(patch --version |awk 'FNR==1 {print $4}')
-    _GREP=$(grep --version |awk 'FNR==1 {print $4}')
-    _GZIP=$(grep --version |awk 'FNR==1 {print $4}')	
-	_CMAKE=$(cmake --version)
-	_QMAKE=$(qmake -v |awk 'FNR==1') 
-	
-# compiler related
-	_GCC=$(gcc --version |awk 'FNR==1 {print $4}')
-	_GPP=$(g++ --version |awk 'FNR==1 {print $4}')
-	_CLANG=$(clang --version |awk 'FNR==1 {print $9}' |cut -c 1-3)
-	_LDDN=$(ldd --version |awk 'FNR==1 {print $3}') 
-	_LDDV=$(ldd --version |awk 'FNR==1 {print $5}')
- 	_M4=$(m4 --version |awk 'FNR==1 {print $4}')
-	_MAKE=$(make --version |awk 'FNR==1 {print $3}')
-	_SED=$(sed --version |awk 'FNR==1 {print $4}')
-	_TAR=$(tar --version |awk 'FNR==1 {print $4}')
-	_XZ=$(xz --version |awk 'FNR==1 {print $4}')
-}
-
-
 #--dialog rc file---------------------------------------------------------------
 make_dialogrc() {
 
@@ -395,6 +364,7 @@ WSJTXRCHELP="$DOCS"/wsjtxrc_menu_help.txt
 WSJTXEXPHELP="$DOCS"/wsjtxexp_menu_help.txt
 
 # MAIN MANU --------------------------------------------------------------------
+clear
 while [ 0 ]; do
 
 dialog --ok-label SELECT --nocancel --backtitle "$BACKTITLE" --title \
