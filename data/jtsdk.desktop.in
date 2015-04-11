@@ -7,4 +7,4 @@ Exec=bash -c '@BINDIR@/jtsdk'
 Terminal=true
 Categories=Development
 Keywords=Scientific;Hamradio;Radio;Signal;WSJTX;WSJT;WSPR;MAP65;WSPRX
-Icon=jtsdk
+Icon=jtsdk.xpm

@@ -8,45 +8,85 @@ can be used to scroll the text region horizontally.
 
 INTRODUCTION
 
- JTSDK allows you to build all of the WSJT applicaitons though
+ JTSDK allows you to build all of the WSJT applications though
  an easy to use menu system. Several build options exist for each
- applicaiton. The outlines the available builds.
+ application.
 
- Note: Except for the WSJT-X Super-Build, WSJT-X 1.5.0 and WSJT-X 1.4.0 RC3
- require Hamlib3 to be built before running any of the builds. If it is not
+ Except for the WSJT-X Super-Build, all WSJT-X builds require Hamlib3
+ to be built before running then application build. If it is not
  found in the default location, a message will be displayed prompting you
  to perform the build first.
 
+ If the user has the knowledge, there is nothing stopping them from building
+ the packages from the command line after JTSDK installation. In fact,
+ many developers prefer this method as it allows for much greater control over
+ the various aspects of the build.
+
+
 BUILD DESCRIPTIONS
 
- WSJT-X 1.5.0 (devel) and WSJT-X 1.4.0 (RC3)
+ WSJT-X 1.5 (devel) and WSJT-X 1.4 (Release)
  
- There are (3) primary build types for WSJT-X 1.5.0 and 1.4.0 RC3
+ There are (3) primary build types:
  * Release ..: Standard Install Release Build
  * Debug ....: Standard Build With Standard Debugging Enabled
  * Package ..: Builds A Distribution Installer
  
+ WSJT-X v1.5 is currently the head of the development branch. It is
+ updated often and the current plan it to start producing RC's (Release
+ Candidates) from this branch in preparation to formally release v1.5.
+
+ Early in April-2015, WSJT-X v1.4 was formally released and placed in
+ a dormant mode with respect to development activity. Unless there is
+ a specific issue that cannot be resolved in the v1.5 branch, you should
+ not expect allot activity in the branch.
+
  The distribution ( package ) installer is only available for
  select Linux and Mac distributions. At the time of this writing
  the package target supports:
  
  Debian Based ..: Debian, Ubuntu, Mint etc.
- RPM Based .....: Fedora, OpenSUSE, etc
- 
+ RPM Based .....: Fedora, OpenSUSE etc
 
- WSJT (devel) and WSPR (devel)
+
+ WSJT-X 1.6 (exp)
+
+ This is an experimental branch for testing new concepts, ideas and code.
+ It is subject to frequent updates, all of which may not land in a final
+ release version.
  
- Both WSJT and WSPR have many targets each. Currenly, the build script
- simply builds the install target. Later version will include the
- individual targets for each applicaiton. 
+ There are (2) primary build types:
+ * Release ..: Standard Install Release Build
+ * Debug ....: Standard Build With Standard Debugging Enabled
+
+
+ WSJT v10 and WSPR v4.0
+ 
+ Both WSJT and WSPR have many targets each. Currently, the build script
+ simply builds the install target. Later versions will include the
+ individual targets for each application. 
  
  
- WSPR-X (devel) and MAP65 (devel)
+ WSPR-X and MAP65
 
  Currently, WSPR-X and MAP65 cannot be built on Linux without applying several
- patches to accomidate changes from Windows. As such, the builds are
+ patches to accommodate changes from Windows. As such, the builds are
  classed as "under development"  at this time. When the source codes has been
  updated to build on Linux, the builds will be enabled.
+
+ Hamlib3
+
+ Hamlib3 is a custom Git repository maintained by Bill (G4WJS). Updates to
+ this repo may eventually land in the Official Hamlib libraries, however,
+ when the updates will be included is unknown. 
+
+ There is only one target type for building Hamlib3. Simply selecting the
+ will line in the menu will build and install it locally for use with all
+ the WSJT-X versions. You should re-build Hamlib3 often, and in particular,
+ before build any of the WSJT-X versions.
+
+ Updates happen often, so updating the build each time you run JTSDK is 
+ good routine to get in to.
 
 
 ADDITIONAL RESOURCES
