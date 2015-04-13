@@ -14,12 +14,13 @@ case "${DISTRO}" in
 				#        using both Pulseaudio and ALSA.
 				#        Default insrall was Pulseaudio which
 				#        required libjack-dev and libjack0
-				BASE_LIST='automake gcc clang-3.5 cmake dialog g++ gettext \
-gfortran git libtool libfftw3-dev libusb-dev libhamlib-dev libhamlib-utils \
-libjack-dev libjack0 libsamplerate0-dev pkg-config portaudio19-dev \
-python-dev python3-dev python3-pil python3-pil.imagetk python3-tk python3-numpy \
-python3-pip python3-setuptools libqt5multimedia5-plugins qtmultimedia5-dev \
-libqt5serialport5-dev subversion texinfo packaging-dev'
+
+BASE_LIST='automake clang-3.5 cmake dialog g++ gcc gettext gfortran git libfftw3-dev \
+libhamlib-dev libhamlib-utils libjack0 libjack-dev libqt5multimedia5-plugins \
+libqt5serialport5-dev libsamplerate0-dev libtool libusb-dev packaging-dev \
+pkg-config portaudio19-dev python3-dev python3-numpy python3-pil \
+python3-pil.imagetk python3-pip python3-setuptools python3-tk python-dev \
+qtmultimedia5-dev source-highlight subversion texinfo'
 
 			# sort the listing into a file
 			if test -f needed.txt ; then rm -f needed.txt ; fi
