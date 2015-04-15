@@ -1,39 +1,71 @@
-JTSDK v2.0.0-B2 is a collection of Bash scripts designed to assist
-users in building (compiling) the various WSJT applicaitons
-used by Amateur Radio Operators.
+JTSDK v2.0.0 is a collection of Bash scripts designed to assist
+users in compiling the various WSJT applications used by
+Amateur Radio Operators.
 
-SUPPORTED DISTROS & BUILDS
-* Ubuntu .. 14.04 .. WSJT, WSPR, WSJTX
-* Mint .... 17.1 ... WSJT, WSPR, WSJTX
-* Debian .. 8.0 .... WSJTX Only
 
-** Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+SUPPORTED DISTRIBUTIONS
 
-BASIC INSTALL INSTRUCTIONS (example is for Ubuntu)
--Download jtsdk-v2.0.0-b2.tar.gz
--Extract: tar -xf jtsdk-v2.0.0-b2.tar.gz
+* Ubuntu .. 14.04* .. WSJT, WSPR, WSJTX
+* Mint .... 17.1* ... WSJT, WSPR, WSJTX
+* Debian .. 8.* ..... WSJTX Only
 
-1. Open a Terminal:
-2. Type: cd ./jtsdk-v2.0.0-b2
-3. Type: ./autogen.sh --with-distro=ubuntu --enable-parallel=yes
-4. Type: make
-5. Type: sudo make install
-6. Type: jtsdk
+Note: Ubuntu includes Xubuntu, Lubuntu, Kubuntu
 
-Note(s):
- a.) During the make process, if your system needs additional packages,
-you will be prompted to "re-run" autogeh.sh after running the make command.
-This is to ensure all needed packages are picked up by the configure script
-after installation.
 
- b). If building WSJT-X, build Hamlib3 first, then build WSJTX
+INSTALL INSTRUCTIONS
 
- c). At present, MAP65 and WSPRX builds have been disabled until
- the source trees have be updated to allow building both Windows and
- Linux.
- 
- d). Due to package incompatibilities with Debian Jessie, WSJT
- and WSPR will compile, but may give you runtime errors.
+* Download jtsdk-2.0.0.tar.gz
+* Extract: tar -xf jtsdk-2.0.0.tar.gz
+* Type: cd ./jtsdk-v2.0.0
+
+For Ubuntu, Type:
+./autogen.sh --with-distro=ubuntu --enable-parallel=yes
+
+For Mint 17.1, Type:
+./autogen.sh --with-distro=mint --enable-parallel=yes
+
+For Debian, Type:
+./autogen.sh --with-distro=debian --enable-parallel=yes
+
+* Then Type: make
+
+* If there were no errors after make, re-run the autogen.sh command
+  us used above. In this example, we're using Ubuntu:
+
+  ./autogen.sh --with-distro=ubuntu --enable-parallel=yes
+  
+* Type: sudo make install
+
+If there were no errors, the installation is finished.
+
+
+TO RUN JTSDK:
+
+In a terminal ( Ctrl+Alt+T )
+* Type: jtsdk
+
+
+APPLICATION BUILD NOTES
+
+* If building WSJT-X, build Hamlib3 first, then build WSJT-X
+* WSPR and WSJT do not require Hamlib3
+* To update your builds, simply run JTSDK, and select the package
+* Ensure you update Hamlib3 often, as updates are frequently posted.
+
+
+POTENTIAL ISSUES
+
+* Due to package incompatibilities with Debian Jessie (8.0), WSJT
+  and WSPR will compile, but may give you runtime errors. Solutions
+  to this are being worked on, but at the present time, we do not
+  have a valid fix. Tis problem is a packaging issue, not an WSPR or
+  WSJT bug.
+
+* The Mint 17.1 Cinnamon Desktop install python-numpy as part of it's
+  desktop environment. If you encounter PObject errors when running
+  WSPR or WSJT, more than likely this is the cause. WSPR and WSJT requires
+  python3-numpy. TO resolve, remove python-numpy, but be warned, this may
+  cause unexpected behavior in your Desktop Environment.
 
 
 SUPPORT
