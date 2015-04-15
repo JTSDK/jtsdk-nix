@@ -8,25 +8,20 @@ NAVIGATION:
 
 
 BUILD INFORMATION
- The following builds are availble for WSJT-X:
+ The following builds are available for WSJT-X:
 
-* Release ...... Build Standard Release Target
-* Debug ........ Build Debug Release Target
-* Package ...... Build NSIS Installer Package (On Hold)
-* Super Build .. Build Hamlib3 and WSJTX (On Hold)
-
-** On Hold means the builds are still under development.
+* Release ...... Install Release Target
+* Debug ........ Install Debug Target
 
 
 INSTALL LOCATIONS
  All of the builds, including the package installer, are located
- in subfolders under wsjtx. If you did not change the default
- home direcotry during configure, the following applies:
+ in sub-folders under wsjtx. If you did not change the default
+ home directory during configure, the following applies:
  
  Source ...: /home/$USER/jtsdk/src/wsjtx_exp
  Release ..: /home/$USER/jtsdk/wsjtxexp/install/release/{bin,share}
  Debug ....: /home/$USER/jtsdk/wsjtxexp/install/debug/{bin,share}
- Package ..: /home/$USER/jtsdk/wsjtxexp/install/package
  
  Build Trees follow the same convension:
  Release ..: /home/$USER/jtsdk/wsjtxexp/build/release/{bin,share}
@@ -37,7 +32,7 @@ INSTALL LOCATIONS
 
 
 RUN AFTER BUILD
- To run WSJT-X after a build, browse to the install locaiton
+ To run WSJT-X after a build, browse to the install location
  and double-click on the 'wsjtx' binary in the../bin
  directory
 

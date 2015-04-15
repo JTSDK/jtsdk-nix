@@ -8,7 +8,7 @@ can be used to scroll the text region horizontally.
 
 INTRODUCTION
 
- JTSDK allows you to build all of the WSJT applications though
+ JTSDK allows you to build most of the WSJT applications through
  an easy to use menu system. Several build options exist for each
  application.
 
@@ -28,22 +28,21 @@ BUILD DESCRIPTIONS
  WSJT-X 1.5 (devel) and WSJT-X 1.4 (Release)
  
  There are (3) primary build types:
- * Release ..: Standard Install Release Build
- * Debug ....: Standard Build With Standard Debugging Enabled
- * Package ..: Builds A Distribution Installer
+ * Release ..: Install Release
+ * Debug ....: Install Release With Debugging Enabled
+ * Package ..: Distribution Package
  
- WSJT-X v1.5 is currently the head of the development branch. It is
+ WSJT-X v1.5 is currently the head of the development. It is
  updated often and the current plan it to start producing RC's (Release
  Candidates) from this branch in preparation to formally release v1.5.
 
  Early in April-2015, WSJT-X v1.4 was formally released and placed in
- a dormant mode with respect to development activity. Unless there is
- a specific issue that cannot be resolved in the v1.5 branch, you should
- not expect allot activity in the branch.
+ a dormant state with respect to development. Unless there is a specific
+ issue that cannot be resolved in the v1.5 branch, you should not expect
+ much activity in the branch.
 
- The distribution ( package ) installer is only available for
- select Linux and Mac distributions. At the time of this writing
- the package target supports:
+ The distribution ( package ) is only available for select Linux and Mac
+ distributions. At the time of this writing, the package target supports:
  
  Debian Based ..: Debian, Ubuntu, Mint etc.
  RPM Based .....: Fedora, OpenSUSE etc
@@ -56,23 +55,23 @@ BUILD DESCRIPTIONS
  release version.
  
  There are (2) primary build types:
- * Release ..: Standard Install Release Build
- * Debug ....: Standard Build With Standard Debugging Enabled
+ * Release ..: Install Release
+ * Debug ....: Install Release With Debugging Enabled
 
 
  WSJT v10 and WSPR v4.0
  
- Both WSJT and WSPR have many targets each. Currently, the build script
- simply builds the install target. Later versions will include the
+ Both WSJT and WSPR have many targets. Currently, the build script
+ simply builds the install target. Later versions JTSDK will include
  individual targets for each application. 
  
  
  WSPR-X and MAP65
 
- Currently, WSPR-X and MAP65 cannot be built on Linux without applying several
- patches to accommodate changes from Windows. As such, the builds are
- classed as "under development"  at this time. When the source codes has been
- updated to build on Linux, the builds will be enabled.
+ WSPR-X and MAP65 cannot be built on Linux without applying several
+ patches. As such, the builds are classed as "under development" at
+ this time. When the source codes has been updated to build on Linux,
+ the builds will be enabled.
 
  Hamlib3
 
@@ -80,13 +79,9 @@ BUILD DESCRIPTIONS
  this repo may eventually land in the Official Hamlib libraries, however,
  when the updates will be included is unknown. 
 
- There is only one target type for building Hamlib3. Simply selecting the
- will line in the menu will build and install it locally for use with all
- the WSJT-X versions. You should re-build Hamlib3 often, and in particular,
- before build any of the WSJT-X versions.
-
- Updates happen often, so updating the build each time you run JTSDK is 
- good routine to get in to.
+ There is only one target type for building Hamlib3. Selecting the build from
+ the menu is all that is required. You should re-build Hamlib3 often, in
+ particular, before building any of the WSJT-X versions.
 
 
 ADDITIONAL RESOURCES
