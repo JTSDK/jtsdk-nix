@@ -21,7 +21,7 @@ INSTALL INSTRUCTIONS
 For Ubuntu, Type:
 ./autogen.sh --with-distro=ubuntu --enable-parallel=yes
 
-For Mint 17.1, Type:
+For Mint, Type:
 ./autogen.sh --with-distro=mint --enable-parallel=yes
 
 For Debian, Type:
@@ -30,7 +30,7 @@ For Debian, Type:
 * Then Type: make
 
 * If there were no errors after make, re-run the autogen.sh command
-  us used above. In this example, we're using Ubuntu:
+  used above. In this example, we're using Ubuntu:
 
   ./autogen.sh --with-distro=ubuntu --enable-parallel=yes
   
@@ -47,9 +47,9 @@ In a terminal ( Ctrl+Alt+T )
 
 APPLICATION BUILD NOTES
 
-* If building WSJT-X, build Hamlib3 first, then build WSJT-X
-* WSPR and WSJT do not require Hamlib3
-* To update your builds, simply run JTSDK, and select the package
+* If building WSJT-X, build Hamlib3 first, then build WSJT-X.
+* WSPR and WSJT do not require Hamlib3.
+* To update your builds, simply run JTSDK, and select the package.
 * Ensure you update Hamlib3 often, as updates are frequently posted.
 
 
@@ -61,10 +61,10 @@ POTENTIAL ISSUES
   have a valid fix. Tis problem is a packaging issue, not an WSPR or
   WSJT bug.
 
-* The Mint 17.1 Cinnamon Desktop install python-numpy as part of it's
+* The Mint 17.1 Cinnamon Desktop installs python-numpy as part of it's
   desktop environment. If you encounter PObject errors when running
   WSPR or WSJT, more than likely this is the cause. WSPR and WSJT requires
-  python3-numpy. TO resolve, remove python-numpy, but be warned, this may
+  python3-numpy. To resolve, remove python-numpy, but be warned, this may
   cause unexpected behavior in your Desktop Environment.
 
 
