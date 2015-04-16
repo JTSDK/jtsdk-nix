@@ -184,7 +184,7 @@ install: mainsymlink
 	@$(MKDIR) -p $(DESTDIR)$(DOCDIR)
 	@echo '..Installing Misc Files'
 	@install -m 644 src/docs/* $(DESTDIR)$(DOCDIR)
-	@install -m 644 AUTHORS ChangeLog COPYING COPYRIGHT CREDITS README TO-DO $(DESTDIR)$(DOCDIR)
+	@install -m 644 AUTHORS ChangeLog COPYING COPYRIGHT README TO-DO $(DESTDIR)$(DOCDIR)
 	@install -m 644 data/jtsdk.desktop $(DESTDIR)$(DTDIR)
 	@install -m 644 data/jtsdk.xpm $(DESTDIR)$(ICOND)
 	@echo '..Finished'
