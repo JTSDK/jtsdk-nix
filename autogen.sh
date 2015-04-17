@@ -67,14 +67,62 @@ cd $BASED
 # Display Autogen help message
 if [ "$1" = "help" ] ; then autogen_help ; fi
 
+# Test if subversion is installed
+svn --version > /dev/null 2>&1 || {
+	clear
+	echo 'PACKAGE DEPENDENCY ERROR'
+	echo ''
+	echo 'You must have the package Subvesion installed to'
+	echo "checkout and compile $PROGRAM. Please install the"
+	echo 'appropriate package for your distribution.'	
+	echo ''
+	echo 'For Debian, Ubuntu, Mint, try:'
+	echo ''
+	echo 'sudo apt-get install subvesion'
+	echo ''
+	exit 1
+}
+
+# Test if lsb-release is installed
+lsb_release -v > /dev/null 2>&1 || {
+	clear
+	echo 'PACKAGE DEPENDENCY ERROR'
+	echo ''
+	echo 'You must have the package lsb-release installed to'
+	echo "compile $PROGRAM. Please install the appropriate package"
+	echo 'for your distribution.'	
+	echo ''
+	echo 'For Debian, Ubuntu, Mint, try:'
+	echo ''
+	echo 'sudo apt-get install lsb-release'
+	echo ''
+	exit 1
+}
+
+# Test if a basic C Compiler is availabe
+gcc --version > /dev/null 2>&1 || {
+	clear
+	echo 'PACKAGE DEPENDENCY ERROR'
+	echo ''
+	echo "You must have a C compiler installed to compile $PROGRAM."
+	echo 'Please install the appropriate package for your distribution.'
+	echo ''
+	echo 'For Debian, Ubuntu, Mint, try:'
+	echo ''
+	echo 'sudo apt-get install gcc'	
+	echo ''
+	exit 1
+}
+
 # Test if autoconf is installed
 autoconf --version > /dev/null 2>&1 || {
 	clear
+	echo 'PACKAGE DEPENDENCY ERROR'
 	echo ''
 	echo "You must have autoconf installed to compile $PROGRAM."
 	echo 'Install the appropriate package for your distribution.'
 	echo ''
-	echo 'For Debian, Mint and Ubuntu, try:'
+	echo 'For Debian, Ubuntu, Min, try:'
 	echo ''
 	echo 'sudo apt-get install autoconf'
 	echo ''

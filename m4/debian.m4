@@ -12,12 +12,13 @@ case "${DISTRO}" in
 				# establish base package list
 				# TO_DO: Test native install package requirments
 				#        using both Pulseaudio and ALSA
-BASE_LIST='automake clang-3.5 cmake dialog g++ gcc gettext gfortran git libfftw3-dev \
-libhamlib-dev libhamlib-utils libqt5multimedia5-plugins libqt5serialport5-dev \
-libsamplerate0-dev libtool libusb-dev packaging-dev pkg-config portaudio19-dev \
-python3-dev python3-numpy python3-pil python3-pil.imagetk python3-pip \
-python3-setuptools python3-tk python-dev qtmultimedia5-dev source-highlight \
-subversion texinfo'
+BASE_LIST='automake clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
+libfreetype6 libhamlib-dev libhamlib-utils libjpeg8 liblcms2-2 \
+libqt5multimedia5-plugins libqt5serialport5-dev libsamplerate0-dev \
+libtiff5-dev libtool libusb-dev libwebp5 libwebpmux1 mime-support \
+libwww-perl packaging-dev pkg-config portaudio19-dev python3-dev python3-numpy \
+python3-pip python3-setuptools python3-tk python-dev qtmultimedia5-dev \
+source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
 
 			# sort the listing into a file
 			if test -f needed.txt ; then rm -f needed.txt ; fi

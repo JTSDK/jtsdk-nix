@@ -15,7 +15,7 @@ case "${DISTRO}" in
 				#        Default insrall was Pulseaudio which
 				#        required libjack-dev and libjack0
 
-BASE_LIST='automake clang-3.5 cmake dialog g++ gcc gettext gfortran git libfftw3-dev \
+BASE_LIST='automake clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
 libhamlib-dev libhamlib-utils libjack0 libjack-dev libqt5multimedia5-plugins \
 libqt5serialport5-dev libsamplerate0-dev libtool libusb-dev packaging-dev \
 pkg-config portaudio19-dev python3-dev python3-numpy python3-pil \
