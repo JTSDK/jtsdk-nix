@@ -7,17 +7,18 @@ case "${DISTRO}" in
 	distrosd=$(lsb_release -sd)
 	distrov=$(lsb_release -sr)
 
-pilpkgs='python3-pil python3-pil.imagetk libfreetype6-dev libjpeg-dev liblcms2-dev \
-libtiff5-dev libwebp-dev libwebpmux1 mime-support tcl8.6-dev tk8.6-dev zlib1g-dev'
+pilpkgs='libfreetype6-dev libjpeg-dev liblcms2-dev libtiff5-dev libwebp-dev \
+libwebpmux1 mime-support tcl8.6-dev tk8.6-dev zlib1g-dev'
 
 basepkgs="automake clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
 libhamlib-dev libhamlib-utils libqt5multimedia5-plugins libqt5serialport5-dev \
 libsamplerate0-dev libtool libusb-dev packaging-dev pkg-config portaudio19-dev \
-python3-dev python3-numpy python3-pip python3-setuptools python3-tk python-dev \
-qtmultimedia5-dev source-highlight subversion texinfo"
+python3-pil python3-pil.imagetk python3-dev python3-numpy python3-pip \
+python3-setuptools python3-tk python-dev qtmultimedia5-dev source-highlight \
+subversion texinfo"
 
 		case "${distrov}" in
-			14.04|14.10|15.04 )
+			14.04*|14.10|15.04)
 				AC_PATH_PROG([PKGMGR], [apt-get],[]) 
 
 				# configure package list based on distro version

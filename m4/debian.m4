@@ -17,8 +17,9 @@ libfreetype6-dev libhamlib-dev libhamlib-utils libjpeg-dev liblcms2-dev \
 libqt5multimedia5-plugins libqt5serialport5-dev libsamplerate0-dev \
 libtiff5-dev libtool libusb-dev libwebp-dev libwebpmux1 mime-support \
 libwww-perl packaging-dev pkg-config portaudio19-dev python3-dev python3-numpy \
-python3-pip python3-setuptools python3-tk python-dev qtmultimedia5-dev \
-source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
+python3-tk python3-pil python3-pil.imagetk python3-pip python3-setuptools \
+python-dev qtmultimedia5-dev source-highlight subversion tcl8.6-dev tk8.6-dev \
+texinfo zlib1g-dev'
 
 			# sort the listing into a file
 			if test -f needed.txt ; then rm -f needed.txt ; fi
@@ -48,10 +49,11 @@ source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
 				PKG_COUNT=0
 			fi
 			
-			# Pip-3 Commands, whether python3-pil is installed or not
-			apt-cache policy python-pil |grep 'Installed' > /dev/null 2>&1
-			if test $? = "1" ; then pip_command='sudo pip3 install pillow' ; fi
-			if test $? = "0" ; then pip_command='sudo pip3 install --upgrade pillow' ; fi			
+			# On debian, we install the packages first (via BASE_LIST), so
+			# there is no need to check if python3-pil is installed,
+			# simple set the upgrade command. This is the same for
+			# Raspbian Jessie iamge
+			pip_command='sudo pip3 install --upgrade pillow'
 		;;
 		* )
 			ACTUAL=$(lsb_release -si)

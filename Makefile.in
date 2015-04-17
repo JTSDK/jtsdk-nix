@@ -148,12 +148,14 @@ ifeq ($(DISTV),14.04)
 endif
 ifeq ($(DISTV),14.10)
 	@echo ' Yes, starting Pillow Install with PIP3'
-	@echo
+	@echo " Install Command: $(PIPCMD)"
+	@echo ''
 	$(PIPCMD)
 endif
 ifeq ($(DISTV),8.0)
 	@echo ' Yes, starting Pillow Install with PIP3'
-	@echo
+	@echo " Install Command: $(PIPCMD)"
+	@echo ''
 	$(PIPCMD)
 endif
 	@sudo -k
