@@ -238,7 +238,8 @@ list-needed:
 	@echo '----------------------------------------------------------'
 	@echo ''
 	@cat ./needed.txt | column
-	@echo
+	@echo ''
+	@wcho ''
 	@echo '* Simulate Installation, type ...: make simulate'
 	@echo '* Install Packages, type ........: make'
 	@echo

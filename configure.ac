@@ -345,7 +345,7 @@ AC_OUTPUT
 
 if test "$PKGCOUNT" -gt "0" ; then
 echo "
--------------------------------------------------
+-----------------------------------------------------
 
  ADDITIONAL PACKAGES REQUIRED
  
@@ -357,7 +357,7 @@ echo "
  * Simulate Installation, type ...: make simulate
  * Install Packages, type ........: make
  
--------------------------------------------------
+------------------------------------------------------
 "
 else
 echo ''
