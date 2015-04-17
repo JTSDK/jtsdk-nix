@@ -353,9 +353,9 @@ echo "
  ( ${PKG_COUNT} ) package(s) that should be installed
  before you run make install.
  
- To simulate installation ...: make simulate
-
- To install packages, type ..: make
+ * List Needed Packages, type ....: make list-needed
+ * Simulate Installation, type ...: make simulate
+ * Install Packages, type ........: make
  
 -------------------------------------------------
 "

@@ -224,12 +224,24 @@ uninstall:
 	@echo ''
 
 # Cleanup Source Tree
-.PHONY: clean simulate
+.PHONY: clean simulate list-needed
 clean:
 	${RM} -f src/*.sh config.log config.status autoscan.log configure.scan \
 	configure Makefile src/language/language_en data/jtsdk.desktop installed.txt \
 	temp.list needed.txt installed.txt
 	${RM} -rf ./autom4*
+
+list-needed:
+	@clear
+	@echo '----------------------------------------------------------'
+	@echo -e $(C_Y)' Packages Needed To Install'$(C_NC)
+	@echo '----------------------------------------------------------'
+	@echo ''
+	@cat ./needed.txt | column
+	@echo
+	@echo '* Simulate Installation, type ...: make simulate'
+	@echo '* Install Packages, type ........: make'
+	@echo
 
 simulate:
 	@clear
