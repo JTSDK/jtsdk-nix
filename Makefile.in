@@ -124,7 +124,7 @@ install-dep:
 	@sudo -k
 
 mainsymlink:
-	(cd $(DESTDIR)/$(BINDIR); ln -sf jtsdk.sh jtsdk ; \
+	@(cd $(DESTDIR)/$(BINDIR); ln -sf jtsdk.sh jtsdk ; \
 	ln -sf jtsdk-hamlib3.sh jtsdk-hamlib3 ; \
 	ln -sf jtsdk-wsjtx.sh jtsdk-wsjtx ; \
 	ln -sf jtsdk-map65.sh jtsdk-map65 ; \
