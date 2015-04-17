@@ -35,6 +35,7 @@ MV			:=	@MV@
 RM			:=	@RM@
 SED			:=	@SED@
 SHELL		:=	@SHELL@
+TAR			:=	@TAR@
 SVN			:=	@SVN@
 MKDIR		:=	@MKDIR@
 PYTHON3		:=	@PYTHON3@
@@ -50,6 +51,7 @@ MANDIR		:=	@MANDIR@
 DOCDIR		:=	@DOCDIR@
 DTDIR		:=	@DTDIR@
 ICOND		:=	@ICOND@
+OPENJD		:=	./src/openjpeg-2.1.0
 
 # Home directory locations
 LOGNAME		:=	@LOGNAME@
@@ -148,17 +150,20 @@ ifeq ($(DISTV),14.04)
 endif
 ifeq ($(DISTV),14.10)
 	@echo ' Yes, starting Pillow Install with PIP3'
-	@echo " Install Command: $(PIPCMD)"
 	@echo ''
-	$(PIPCMD)
+	@echo ' Upgrading Pillow'
+	@echo ''
+	@$(PIPCMD)
+	@sudo -k
 endif
 ifeq ($(DISTV),8.0)
 	@echo ' Yes, starting Pillow Install with PIP3'
-	@echo " Install Command: $(PIPCMD)"
 	@echo ''
-	$(PIPCMD)
-endif
+	@echo ' Upgrading Pillow'
+	@echo ''
+	@$(PIPCMD)
 	@sudo -k
+endif
 
 # Install System Files
 install: mainsymlink
@@ -217,6 +222,7 @@ install: mainsymlink
 	@echo ''
 	@echo 'To Run @PROGRAM@, type ..: jtsdk'
 	@echo ''
+	@sudo -k
 	
 # Uninstall System Files
 uninstall:

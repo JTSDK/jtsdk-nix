@@ -146,7 +146,9 @@ AC_PATH_PROG([MKDIR], [mkdir])
 AC_PATH_PROG([MV], [mv])
 AC_PATH_PROG([RM], [rm])
 AC_PATH_PROG([SED], [sed])
+AC_PATH_PROG([TAR], [tar])
 AC_PATH_PROG([TOUCH], [touch])
+
 
 # ------------------------------------------------------------------------------
 #  distro setup
