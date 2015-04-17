@@ -13,6 +13,7 @@ WEB         :=	@WEB@
 # System Information
 DESC		:=	@DESC@
 OS			:=	@HOST_OS@
+DISTV		:=	@DISTROV@
 ARCH		:=	@HOST_CPU@
 JJJJ		:=	@JJJJ@
 
@@ -73,6 +74,7 @@ DEFS		:=	@DEFS@
 PKGMGR		:=	@PKGMGR@
 PKGCOIUNT	:=	@PKGCOUNT@
 PKGLIST		:=	@PKGLIST@
+PIPCMD		:=	@PIPCOMMAND@
 NEEDED		:=	./needed.txt
 
 # Files to install
@@ -87,7 +89,7 @@ C_C			:=	'\033[01;36m'	# cyan
 C_NC		:=	'\033[01;37m'	# no color
 
 # Targets
-all: install-dep
+all: install-dep pip3-pillow
 	@echo ''
 	@echo '---------------------------------------------------------------'
 	@echo -e $(C_Y)' Dependency Installation Summary'$(C_NC)
@@ -121,7 +123,6 @@ install-dep:
 	@echo "* Updating @DESC@ Package List"
 	@echo ''
 	@sudo $(PKGMGR) -y -q update && sudo $(PKGMGR) -y -q install --no-install-recommends $(PKGLIST)
-	@sudo -k
 
 mainsymlink:
 	@(cd $(DESTDIR)/$(BINDIR); ln -sf jtsdk.sh jtsdk ; \
@@ -131,6 +132,31 @@ mainsymlink:
 	ln -sf jtsdk-wsprx.sh jtsdk-wsprx ; \
 	ln -sf jtsdk-wspr.sh jtsdk-wspr ; \
 	ln -sf jtsdk-wsjt.sh jtsdk-wsjt)
+
+# This is a hack for the Pillow v2.6.1 issues: Applies to UBuntu 14.10, Debian Jessie 8.0
+pip3-pillow:
+	@echo ''
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)" Check Pillow Requirments"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo ' Checking if we need to install Pillow via pip3'
+	@echo
+ifeq ($(DISTV),14.04)
+	@echo ' No, Pillow Upgrade is not required'
+	@echo
+endif
+ifeq ($(DISTV),14.10)
+	@echo ' Yes, starting Pillow Install with PIP3'
+	@echo
+	$(PIPCMD)
+endif
+ifeq ($(DISTV),8.0)
+	@echo ' Yes, starting Pillow Install with PIP3'
+	@echo
+	$(PIPCMD)
+endif
+	@sudo -k
 
 # Install System Files
 install: mainsymlink

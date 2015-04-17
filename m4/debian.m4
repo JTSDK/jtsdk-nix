@@ -74,6 +74,7 @@ source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
 esac
 
 # now substitute variables for the Makefile and install-dep target
+AC_SUBST([DISTROV], [${distrov}])
 AC_SUBST([PKGCOUNT], [${PKG_COUNT}])
 AC_SUBST([PKGLIST], [${PKG_LIST}])
 AC_SUBST([DESC], [${distrosd}])
