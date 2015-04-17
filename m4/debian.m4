@@ -13,9 +13,9 @@ case "${DISTRO}" in
 				# TO_DO: Test native install package requirments
 				#        using both Pulseaudio and ALSA
 BASE_LIST='automake clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
-libfreetype6 libhamlib-dev libhamlib-utils libjpeg8 libopenjpeg-dev liblcms2-dev \
+libfreetype6-dev libhamlib-dev libhamlib-utils libjpeg-dev liblcms2-dev \
 libqt5multimedia5-plugins libqt5serialport5-dev libsamplerate0-dev \
-libtiff5-dev libtool libusb-dev libwebp5-dev libwebpmux1 mime-support \
+libtiff5-dev libtool libusb-dev libwebp-dev libwebpmux1 mime-support \
 libwww-perl packaging-dev pkg-config portaudio19-dev python3-dev python3-numpy \
 python3-pip python3-setuptools python3-tk python-dev qtmultimedia5-dev \
 source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
