@@ -235,9 +235,8 @@ list-needed:
 	@echo -e $(C_Y)' Packages Needed To Install'$(C_NC)
 	@echo '----------------------------------------------------------'
 	@echo ''
-	@cat $(NEEDED) | column
-	@echo ''
-	@echo ''
+	@if test -f $(NEEDED); then cat $(NEEDED) | column ; else echo '* No Packages Needed'; fi
+	@ echo ''
 	@echo '* Simulate Installation, type ...: make simulate'
 	@echo '* Install Packages, type ........: make'
 	@echo ''
