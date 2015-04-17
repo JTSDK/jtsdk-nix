@@ -111,7 +111,7 @@ install-dep:
 	@echo ''
 	@sudo -k
 	@echo ' This will install all @PROGRAM@ required packages'
-	@echo ' and their dependencies.
+	@echo ' and their dependencies.'
 	@echo ''
 	@echo "* $(PKGMGR) will update your package list first."
 	@while [ -z "$$GO" ]; do \
