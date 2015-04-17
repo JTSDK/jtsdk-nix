@@ -46,7 +46,12 @@ source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
 				AC_DEFINE([PKG_NEEDED], [1], [${PKG_COUNT}: Package(s) Needed for Installation])
 			else
 				PKG_COUNT=0
-			fi			
+			fi
+			
+			# Pip-3 Commands, whether python3-pil is installed or not
+			apt-cache policy python-pil |grep 'Installed' > /dev/null 2>&1
+			if test $? = "1" ; then pip_command='sudo pip3 install pillow' ; fi
+			if test $? = "0" ; then pip_command='sudo pip3 install --upgrade pillow' ; fi			
 		;;
 		* )
 			ACTUAL=$(lsb_release -si)
@@ -74,6 +79,7 @@ source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
 esac
 
 # now substitute variables for the Makefile and install-dep target
+AC_SUBST([PIPCOMMAND], [${pip_command}])
 AC_SUBST([DISTROV], [${distrov}])
 AC_SUBST([PKGCOUNT], [${PKG_COUNT}])
 AC_SUBST([PKGLIST], [${PKG_LIST}])
