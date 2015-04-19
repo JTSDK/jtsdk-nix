@@ -143,30 +143,22 @@ pip3-pillow:
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo ' Checking if we need to install Pillow via pip3'
-# UBuntu (Trusty)
-ifeq ($(DISTV),14.04)
+ifeq ($(DISTV),14.04) # Ubuntu (Trusty)
 	@echo ' No, Pillow Upgrade is not required'
-	@echo
-endif
-# Ubuntu (Utopic)
-ifeq ($(DISTV),14.10)
-	@echo ' Yes, starting Pillow upgrade using pip3'
 	@echo ''
-	@echo ' Upgrading Pillow'
+endif
+ifeq ($(DISTV),14.10) # Ubuntu (Utopic)
+	@echo ' Yes, starting Pillow upgrade using pip3'
 	@echo ''
 	@$(PIPCMD)
 	@sudo -k
 endif
-# Ubuntu (Vivid)
-ifeq ($(DISTV),15.04)
+ifeq ($(DISTV),15.04) # Ubuntu (Vivid)
 	@echo ' No, Pillow upgrade is not required'
-	@echo
-endif
-# Debian (Jessie)
-ifeq ($(DISTV),8.0)
-	@echo ' Yes, starting Pillow upgrade using pip3'
 	@echo ''
-	@echo ' Upgrading Pillow'
+endif
+ifeq ($(DISTV),8.0) # Debian (Jessie)
+	@echo ' Yes, starting Pillow upgrade using pip3'
 	@echo ''
 	@$(PIPCMD)
 	@sudo -k
