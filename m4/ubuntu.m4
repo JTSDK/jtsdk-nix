@@ -11,7 +11,7 @@ pilpkgs='libfreetype6-dev libjpeg-dev liblcms2-dev libtiff5-dev libwebp-dev \
 libwebpmux1 mime-support tcl8.6-dev tk8.6-dev zlib1g-dev'
 
 basepkgs='automake clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
-libhamlib-dev libhamlib-utilslibqt5multimedia5-plugins libqt5serialport5-dev \
+libhamlib-dev libhamlib-utils libqt5multimedia5-plugins libqt5serialport5-dev \
 libqt5opengl5-dev libsamplerate0-dev libtool libusb-dev packaging-dev \
 pkg-config portaudio19-dev python3-pil python3-pil.imagetk python3-tk \
 python3-dev python3-numpy python3-pip python3-setuptools python-dev \
