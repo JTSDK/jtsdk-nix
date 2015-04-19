@@ -14,12 +14,12 @@ case "${DISTRO}" in
 				#        using both Pulseaudio and ALSA
 BASE_LIST='automake clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
 libfreetype6-dev libhamlib-dev libhamlib-utils libjpeg-dev liblcms2-dev \
-libqt5multimedia5-plugins libqt5serialport5-dev libsamplerate0-dev \
-libtiff5-dev libtool libusb-dev libwebp-dev libwebpmux1 mime-support \
-libwww-perl packaging-dev pkg-config portaudio19-dev python3-dev python3-numpy \
-python3-tk python3-pil python3-pil.imagetk python3-pip python3-setuptools \
-python-dev qtmultimedia5-dev source-highlight subversion tcl8.6-dev tk8.6-dev \
-texinfo zlib1g-dev'
+libqt5multimedia5-plugins libqt5serialport5-dev libqt5opengl5-dev \
+libsamplerate0-dev libtiff5-dev libtool libusb-dev libwebp-dev \
+libwebpmux1 mime-support libwww-perl packaging-dev pkg-config portaudio19-dev \
+python3-dev python3-numpy python3-tk python3-pil python3-pil.imagetk \
+python3-pip python3-setuptools python-dev qtbase5-dev qtmultimedia5-dev \
+source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
 
 			# sort the listing into a file
 			if test -f needed.txt ; then rm -f needed.txt ; fi

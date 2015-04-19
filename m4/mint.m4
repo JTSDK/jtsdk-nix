@@ -17,10 +17,10 @@ case "${DISTRO}" in
 
 BASE_LIST='automake clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
 libhamlib-dev libhamlib-utils libjack0 libjack-dev libqt5multimedia5-plugins \
-libqt5serialport5-dev libsamplerate0-dev libtool libusb-dev packaging-dev \
-pkg-config portaudio19-dev python3-dev python3-numpy python3-pil \
+libqt5serialport5-dev libqt5opengl5-dev libsamplerate0-dev libtool libusb-dev \
+packaging-dev pkg-config portaudio19-dev python3-dev python3-numpy python3-pil \
 python3-pil.imagetk python3-pip python3-setuptools python3-tk python-dev \
-qtmultimedia5-dev source-highlight subversion texinfo'
+qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo'
 
 			# sort the listing into a file
 			if test -f needed.txt ; then rm -f needed.txt ; fi
