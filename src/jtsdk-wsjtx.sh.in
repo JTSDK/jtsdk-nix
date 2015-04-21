@@ -284,20 +284,30 @@ case "$OPTION" in
 		echo -e ${C_Y}" BUILDING ( CHKFFT )" ${C_NC}
 		echo '-----------------------------------------------------'
 		cd $APP_SRC/lib
+
+		# remove previous build, if exists
 		if [[ -f chkfft ]] ; then
-		echo ''
+			echo ''
 			echo 'Removing Previous CHKFFT Build'
-			rm chkfft >/dev/null 2>&1
-				rm -f *.o >/dev/null 2>&1
+			rm -f chkfft
+			rm -f *.o
 		fi
+
+		# start compiling
 		echo 'Compiling CHKFFT'
 		gfortran -o chkfft chkfft.f90 four2a.f90 f77_wisdom.f90 gran.c -lfftw3f
-		if [[ -f $INSTALLD/bin ]] ; then rm -f  $INSTALLD/bin ; fi
+
+		# if previous BIN / bin type files if exists
+		if [[ -f $INSTALLD/bin ]] ; then rm -f  $INSTALLD/bin ; fi		
+		if [[ -f $INSTALLD/BIN ]] ; then rm -f  $INSTALLD/BIN ; fi
+
+		# install files to the wsjtx bin directory
 		echo 'Installing CHKFFT and Support Files'
-		install -m 755 chkfft "$INSTALLD/bin/" >/dev/null 2>&1
-		install -m 644 chkfft.txt "$INSTALLD/bin/" >/dev/null 2>&1
-		install -m 644 nfft.dat "$INSTALLD/bin/" >/dev/null 2>&1
-		install -m 644 nfft.out "$INSTALLD/bin/" >/dev/null 2>&1
+		if [[ ! -d 	$INSTALLD/bin ]] ; then mkdir -p "$INSTALLD/bin" ; fi
+		cp -u ./chkfft "$INSTALLD/bin/"
+		cp -u ./chkfft.txt "$INSTALLD/bin/"
+		cp -u ./nfft.dat "$INSTALLD/bin/"
+		cp -u ./nfft.out "$INSTALLD/bin/"
 		echo 'Finished'
 		;;
 	* )
