@@ -292,11 +292,12 @@ case "$OPTION" in
 		fi
 		echo 'Compiling CHKFFT'
 		gfortran -o chkfft chkfft.f90 four2a.f90 f77_wisdom.f90 gran.c -lfftw3f
+		if [[ -f $INSTALLD/bin ]] then ; rm -f  $INSTALLD/bin ; fi
 		echo 'Installing CHKFFT and Support Files'
-		install -m 755 chkfft "$INSTALLD/bin" >/dev/null 2>&1
-		install -m 644 chkfft.txt "$INSTALLD/bin" >/dev/null 2>&1
-		install -m 644 nfft.dat "$INSTALLD/bin" >/dev/null 2>&1
-		install -m 644 nfft.out "$INSTALLD/bin" >/dev/null 2>&1
+		install -m 755 chkfft "$INSTALLD/bin/" >/dev/null 2>&1
+		install -m 644 chkfft.txt "$INSTALLD/bin/" >/dev/null 2>&1
+		install -m 644 nfft.dat "$INSTALLD/bin/" >/dev/null 2>&1
+		install -m 644 nfft.out "$INSTALLD/bin/" >/dev/null 2>&1
 		echo 'Finished'
 		;;
 	* )
