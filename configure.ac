@@ -69,19 +69,19 @@ HL3I="$HOMEDIR/hamlib3"
 #  Application Install Paths ( used in build scripts )
 # ------------------------------------------------------------------------------
 
-# install directories
+# INSTALL DIRECTORIES
 WSJTI="$HOMEDIR/wsjt/install"
 WSPRI="$HOMEDIR/wspr/install"
 
-# WSJTX 1.6.0 devel (adds JT4 Mode)
+# WSJTX 1.6 (exp)
 WSJTXEXPIR="$HOMEDIR/wsjtxexp/install/release"
 WSJTXEXPID="$HOMEDIR/wsjtxexp/install/debug"
 
-# WSJTX 1.5.0 devel
+# WSJTX 1.5 (devel)
 WSJTXIR="$HOMEDIR/wsjtx/install/release"
 WSJTXID="$HOMEDIR/wsjtx/install/debug"
 
-# WSJTX 1.4.0 RC
+# WSJTX 1.5 RC
 WSJTXRCIR="$HOMEDIR/wsjtxrc/install/release"
 WSJTXRCID="$HOMEDIR/wsjtxrc/install/debug"
 
@@ -93,16 +93,16 @@ WSPRXID="$HOMEDIR/wsprx/install/debug"
 MAP65IR="$HOMEDIR/map65/install/release"
 MAP65ID="$HOMEDIR/map65/install/debug"
 
-# build directories
-# WSJTX 1.6.0 exp (add JT4 mode)
+# BUILD DIRECTORIES
+# WSJTX 1.6 (exp)
 WSJTXEXPBR="$HOMEDIR/wsjtxexp/build/release"
 WSJTXEXPBD="$HOMEDIR/wsjtxexp/build/debug"
 
-# WSJTX 1.5.0 devel
+# WSJTX 1.5 (devel)
 WSJTXBR="$HOMEDIR/wsjtx/build/release"
 WSJTXBD="$HOMEDIR/wsjtx/build/debug"
 
-# WSJTX 1.4 RC
+# WSJTX 1.5 RC
 WSJTXRCBR="$HOMEDIR/wsjtxrc/build/release"
 WSJTXRCBD="$HOMEDIR/wsjtxrc/build/debug"
 
@@ -277,15 +277,15 @@ AC_SUBST([ADOCD], ["$ADOCD"])
 AC_SUBST([WSJTI], ["$WSJTI"])
 AC_SUBST([WSPRI], ["$WSPRI"])
 
-# WSJTX-EXP v1.6.0 
+# WSJTX-EXP v1.6.0 (exp)
 AC_SUBST([WSJTXEXPIR], ["$WSJTXEXPIR"])
 AC_SUBST([WSJTXEXPID], ["$WSJTXEXPID"])
 
-# WSJTX v1.5.0
+# WSJTX v1.5 (devel)
 AC_SUBST([WSJTXIR], ["$WSJTXIR"])
 AC_SUBST([WSJTXID], ["$WSJTXID"])
 
-# WSJTX v1.4.0 Release Candidate
+# WSJTX v1.5 (RC1) Release Candidate
 AC_SUBST([WSJTXRCIR], ["$WSJTXRCIR"])
 AC_SUBST([WSJTXRCID], ["$WSJTXRCID"])
 

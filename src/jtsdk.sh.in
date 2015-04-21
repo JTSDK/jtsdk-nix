@@ -108,7 +108,7 @@ cat << 'EOF' > @TMPD@/MMenu.tmp
 "2" "WSPR ..... v4.0" \
 "3" "WSJT-X ... v1.6 (exp)" \
 "4" "WSJT-X ... v1.5 (devel)" \
-"5" "WSJT-X ... v1.4 (Release)" \
+"5" "WSJT-X ... v1.5 (RC1)" \
 "6" "Hamlib3 .. v3.0 (devel)" \
 "H" "Help" \
 "E" "Exit"
@@ -132,7 +132,7 @@ cat << 'EOF' > @TMPD@/WSJTXMenu.tmp
 "B" "Back"
 EOF
 
-# WSJTX 1.4.0 release candidate menu
+# WSJTX 1.5 RC1
 touch @TMPD@/WSJTXRCMenu.tmp
 cat << 'EOF' > @TMPD@/WSJTXRCMenu.tmp 
 "1" "Release Target" \
@@ -442,10 +442,10 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
 		rm -f "$TMP/buildselect"
 		continue
 	fi
-# End WSJT-X 1.5.0 Menu---------------------------------------------------------
+# End WSJT-X 1.5.0 (devel) Menu-------------------------------------------------
 
 
-# WSJT-X 1.4.0 RC Menu ---------------------------------------------------------
+# WSJT-X 1.5 RC Menu ---------------------------------------------------------
 	elif [[ $MMSELECT = "5" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
@@ -474,7 +474,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
 		rm -f "$TMP/buildselect"
 		continue
 	fi
-# End WSJT-X 1.4.0 Menu---------------------------------------------------------
+# End WSJT-X 1.5 RC Menu--------------------------------------------------------
 
 
 # Build Hamlib3-----------------------------------------------------------------

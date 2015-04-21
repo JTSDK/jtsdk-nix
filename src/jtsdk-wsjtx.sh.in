@@ -140,15 +140,16 @@ echo \
  OPT-2 = ( release | debug ) 
 
   help .....: Display this help page
-  rc .......: Release Candidate Branch ( 1.4 )
+  rc .......: Release Candidate Branch ( 1.5 RC1 )
   dev ......: Latest Development Branch ( 1.5 )
+  exp ......: Experimental Branch ( 1.5 )
   release ..: Release Target
   debug ....: Debug Target
 
  Examples:
-  WSJT-X 1.6.0-devel ..: jtsdk-wsjtx exp release
-  WSJT-X 1.5.0-devel ..: jtsdk-wsjtx dev release
-  WSJT-X 1.4.0 RC .....: jtsdk-wsjtx rc release
+  WSJT-X 1.6 (exp) ...: jtsdk-wsjtx exp release
+  WSJT-X 1.5 (devel)..: jtsdk-wsjtx dev release
+  WSJT-X 1.5 (RC1) ....: jtsdk-wsjtx rc release
 
 '
 
@@ -159,6 +160,7 @@ exit 0
 # START MAIN SCRIPT
 ################################################################################
 
+# Joe's v1.6 EXP Branch
 case "$OPT1" in
 	exp|EXP|-e|-E ) # $1 from jtsdk main
 		APP_NAME=wsjtx
@@ -218,10 +220,10 @@ case "$OPT1" in
 	;;
 	rc|RC|-rc|-RC ) # $1 from jtsdk main
 		APP_NAME=wsjtx
-		DEV=1.4.0
-		APP_SRC_NAME=wsjtx-1.4
+		DEV=1.5-RC1
+		APP_SRC_NAME=wsjtx-1.5
 		APP_SRC=@SRCD@/$APP_SRC_NAME
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.4"
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.5"
 
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
@@ -269,13 +271,12 @@ echo -e ${C_Y}" STARTING BUILD for ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
 check_svn
 
-# Utility program to test Discrete Fourier transforms (DFTs)
-# Build the utility with Release & Debug targets, not Package
-
 # exit on errors
 set -e
 
-# CHKFFT only exists in the development branch ( v1.5.0 )
+# Utility program to test Discrete Fourier transforms (DFTs)
+# Build the utility with Release & Debug targets, not Package
+# CHKFFT only exists in the development branch ( v1.5 devel )
 if [[ $DEV = "1.5.0" ]] ; then
 case "$OPTION" in
 	Debug )

@@ -25,7 +25,7 @@ INTRODUCTION
 
 BUILD DESCRIPTIONS
 
- WSJT-X 1.5 (devel) and WSJT-X 1.4 (Release)
+ WSJT-X 1.5 (devel) and WSJT-X 1.5 RC (Release)
  
  There are (3) primary build types:
  * Release ..: Install Release
@@ -35,11 +35,13 @@ BUILD DESCRIPTIONS
  WSJT-X v1.5 is currently the head of the development. It is
  updated often and the current plan it to start producing RC's (Release
  Candidates) from this branch in preparation to formally release v1.5.
+ WSJT-X v1.5 RC1 is the current release candidate based on the main WSJTX v1.5.0
+ (devel) branch
 
  Early in April-2015, WSJT-X v1.4 was formally released and placed in
  a dormant state with respect to development. Unless there is a specific
- issue that cannot be resolved in the v1.5 branch, you should not expect
- much activity in the branch.
+ issue that cannot be resolved in the v1.5 or 1.5 RC branch, you should not
+ expect much activity in the branch.
 
  The distribution ( package ) is only available for select Linux and Mac
  distributions. At the time of this writing, the package target supports:

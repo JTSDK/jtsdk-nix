@@ -1,4 +1,4 @@
-WSJT-RC 1.4.0 BUILD HELP MENU
+WSJT-RC 1.5 RC1 BUILD HELP MENU
 
 NAVIGATION:
  You can  move  through the file by using the cursor, page-up, 
@@ -23,7 +23,7 @@ INSTALL LOCATIONS
  in subfolders under wsjtx. If you did not change the default
  home direcotry during configure, the following applies:
  
- Source ...: /home/$USER/jtsdk/src/wsjtx-1.4
+ Source ...: /home/$USER/jtsdk/src/wsjtx-1.5
  Release ..: /home/$USER/jtsdk/wsjtxrc/install/release/{bin,share}
  Debug ....: /home/$USER/jtsdk/wsjtxrc/install/debug/{bin,share}
  Package ..: /home/$USER/jtsdk/wsjtxrc/install/package

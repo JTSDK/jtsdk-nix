@@ -190,13 +190,13 @@ install: mainsymlink
 	@$(MKDIR) -p @MAP65IR@
 	@$(MKDIR) -p @MAP65BD@
 	@$(MKDIR) -p @MAP65ID@
-# WSJTX 1.5.0
+# WSJTX 1.5 (devel)
 	@$(MKDIR) -p @WSJTXBR@
 	@$(MKDIR) -p @WSJTXIR@
 	@$(MKDIR) -p @WSJTXBD@
 	@$(MKDIR) -p @WSJTXID@
 	@$(MKDIR) -p @WSJTXPD@
-# WSJTX 1.4.0 RC
+# WSJTX 1.5 (RC)
 	@$(MKDIR) -p @WSJTXRCBR@
 	@$(MKDIR) -p @WSJTXRCIR@
 	@$(MKDIR) -p @WSJTXRCBD@
@@ -270,8 +270,8 @@ list-needed:
 	@echo ''
 	@if test -f $(NEEDED); then cat $(NEEDED) | column ; else echo '* No Packages Needed'; fi
 	@ echo ''
-	@echo '* Simulate Installation, type ...: make simulate'
-	@echo '* Install Packages, type ........: make'
+	@echo '* Simulate Installation, type ..: make simulate'
+	@echo '* Install Packages, type .......: make'
 	@echo ''
 
 simulate:
