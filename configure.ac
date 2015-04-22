@@ -82,8 +82,8 @@ WSJTXIR="$HOMEDIR/wsjtx/install/release"
 WSJTXID="$HOMEDIR/wsjtx/install/debug"
 
 # WSJTX 1.5 RC
-WSJTXRCIR="$HOMEDIR/wsjtxrc/install/release"
-WSJTXRCID="$HOMEDIR/wsjtxrc/install/debug"
+WSJTXRCIR="$HOMEDIR/wsjtx-1.5-rc1/install/release"
+WSJTXRCID="$HOMEDIR/wsjtx-1.5-rc1/install/debug"
 
 # WSPR
 WSPRXIR="$HOMEDIR/wsprx/install/release"
@@ -103,8 +103,8 @@ WSJTXBR="$HOMEDIR/wsjtx/build/release"
 WSJTXBD="$HOMEDIR/wsjtx/build/debug"
 
 # WSJTX 1.5 RC
-WSJTXRCBR="$HOMEDIR/wsjtxrc/build/release"
-WSJTXRCBD="$HOMEDIR/wsjtxrc/build/debug"
+WSJTXRCBR="$HOMEDIR/wsjtx-1.5-rc1/build/release"
+WSJTXRCBD="$HOMEDIR/wsjtx-1.5-rc1/build/debug"
 
 # WSPRX
 WSPRXBR="$HOMEDIR/wsprx/build/release"
@@ -117,7 +117,7 @@ MAP65BD="$HOMEDIR/map65/build/debug"
 # package directories
 WSJTXPD="$HOMEDIR/wsjtx/package"
 WSJTXEXPPD="$HOMEDIR/wsjtxexp/package"
-WSJTXRCPD="$HOMEDIR/wsjtxrc/package"
+WSJTXRCPD="$HOMEDIR/wsjtx-1.5-rc1/package"
 
 # ------------------------------------------------------------------------------
 #  check compilers
