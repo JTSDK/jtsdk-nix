@@ -108,7 +108,7 @@ cat << 'EOF' > @TMPD@/MMenu.tmp
 "2" "WSPR ..... v4.0" \
 "3" "WSJT-X ... v1.6 (exp)" \
 "4" "WSJT-X ... v1.5 (devel)" \
-"5" "WSJT-X ... v1.5 (RC1)" \
+"5" "WSJT-X ... v1.5 (RC2)" \
 "6" "Hamlib3 .. v3.0 (devel)" \
 "H" "Help" \
 "E" "Exit"

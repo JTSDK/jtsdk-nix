@@ -140,7 +140,7 @@ echo \
  OPT-2 = ( release | debug ) 
 
   help .....: Display this help page
-  rc .......: Release Candidate Branch ( 1.5 RC1 )
+  rc .......: Release Candidate Branch ( 1.5 RC2 )
   dev ......: Latest Development Branch ( 1.5 )
   exp ......: Experimental Branch ( 1.5 )
   release ..: Release Target
@@ -149,7 +149,7 @@ echo \
  Examples:
   WSJT-X 1.6 (exp) ...: jtsdk-wsjtx exp release
   WSJT-X 1.5 (devel)..: jtsdk-wsjtx dev release
-  WSJT-X 1.5 (RC1) ....: jtsdk-wsjtx rc release
+  WSJT-X 1.5 (RC2) ....: jtsdk-wsjtx rc release
 
 '
 
@@ -219,7 +219,7 @@ case "$OPT1" in
 	;;
 	rc|RC|-rc|-RC ) # $1 from jtsdk main
 		APP_NAME=wsjtx
-		DEV=1.5-RC1
+		DEV=1.5-RC2
 		APP_SRC_NAME=wsjtx-1.5
 		APP_SRC=@SRCD@/$APP_SRC_NAME
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.5"
