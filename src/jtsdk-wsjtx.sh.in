@@ -196,7 +196,6 @@ case "$OPT1" in
 		DEV=1.5.0
 		APP_SRC=@SRCD@/$APP_SRC_NAME
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx"
-
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
 			BUILDD=@WSJTXBD@
@@ -401,9 +400,12 @@ case "$OPTION" in
 		echo " Install .....: $INSTALLD/bin"
 		echo ''
 		if [[ $OPTION = "Debug" ]] ; then
-			echo ' CHKFFT Utility Program'
-			echo " Install .....: $INSTALLD/bin/chkfft"
-			echo ''
+			case $DEV in
+				1.5.0 )
+				echo ' CHKFFT Utility Program'
+				echo " Install .....: $INSTALLD/bin/chkfft"
+				echo '' ;;
+			esac
 		fi		
 		echo " TO RUN $APP_NAME"
 		echo " cd ..........: $INSTALLD/bin"
