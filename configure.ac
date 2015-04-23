@@ -73,17 +73,17 @@ HL3I="$HOMEDIR/hamlib3"
 WSJTI="$HOMEDIR/wsjt/install"
 WSPRI="$HOMEDIR/wspr/install"
 
-# WSJTX 1.6 (exp)
+# WSJTX 1.6.1 (exp)
 WSJTXEXPIR="$HOMEDIR/wsjtxexp/install/release"
 WSJTXEXPID="$HOMEDIR/wsjtxexp/install/debug"
 
-# WSJTX 1.5 (devel)
+# WSJTX 1.6.0 (devel)
 WSJTXIR="$HOMEDIR/wsjtx/install/release"
 WSJTXID="$HOMEDIR/wsjtx/install/debug"
 
-# WSJTX 1.5 RC
-WSJTXRCIR="$HOMEDIR/wsjtx-1.5-rc2/install/release"
-WSJTXRCID="$HOMEDIR/wsjtx-1.5-rc2/install/debug"
+# WSJTX 1.5.x RCx
+WSJTXRCIR="$HOMEDIR/wsjtxrc/install/release"
+WSJTXRCID="$HOMEDIR/wsjtxrc/install/debug"
 
 # WSPR
 WSPRXIR="$HOMEDIR/wsprx/install/release"
@@ -94,17 +94,17 @@ MAP65IR="$HOMEDIR/map65/install/release"
 MAP65ID="$HOMEDIR/map65/install/debug"
 
 # BUILD DIRECTORIES
-# WSJTX 1.6 (exp)
+# WSJTX 1.6.1 (exp)
 WSJTXEXPBR="$HOMEDIR/wsjtxexp/build/release"
 WSJTXEXPBD="$HOMEDIR/wsjtxexp/build/debug"
 
-# WSJTX 1.5 (devel)
+# WSJTX 1.6.0 (devel)
 WSJTXBR="$HOMEDIR/wsjtx/build/release"
 WSJTXBD="$HOMEDIR/wsjtx/build/debug"
 
-# WSJTX 1.5 RC
-WSJTXRCBR="$HOMEDIR/wsjtx-1.5-rc2/build/release"
-WSJTXRCBD="$HOMEDIR/wsjtx-1.5-rc2/build/debug"
+# WSJTX 1.5.x RCx
+WSJTXRCBR="$HOMEDIR/wsjtxrc/build/release"
+WSJTXRCBD="$HOMEDIR/wsjtxrc/build/debug"
 
 # WSPRX
 WSPRXBR="$HOMEDIR/wsprx/build/release"
@@ -117,7 +117,7 @@ MAP65BD="$HOMEDIR/map65/build/debug"
 # package directories
 WSJTXPD="$HOMEDIR/wsjtx/package"
 WSJTXEXPPD="$HOMEDIR/wsjtxexp/package"
-WSJTXRCPD="$HOMEDIR/wsjtx-1.5-rc2/package"
+WSJTXRCPD="$HOMEDIR/wsjtxrc/package"
 
 # ------------------------------------------------------------------------------
 #  check compilers

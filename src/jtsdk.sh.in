@@ -105,11 +105,11 @@ UDMSG="\n      Build Selection is Under Development"
 touch @TMPD@/MMenu.tmp
 cat << 'EOF' > @TMPD@/MMenu.tmp 
 "1" "WSJT ..... v10.0" \
-"2" "WSPR ..... v4.0" \
-"3" "WSJT-X ... v1.6 (exp)" \
-"4" "WSJT-X ... v1.5 (devel)" \
-"5" "WSJT-X ... v1.5 (RC2)" \
-"6" "Hamlib3 .. v3.0 (devel)" \
+"2" "WSPR ..... v4.0.0" \
+"3" "WSJT-X ... v1.6.1 (exp)" \
+"4" "WSJT-X ... v1.6.0 (devel)" \
+"5" "WSJT-X ... v1.5.0 (RC)" \
+"6" "Hamlib3 .. v3.0.0 (devel)" \
 "H" "Help" \
 "E" "Exit"
 EOF
@@ -383,7 +383,7 @@ elif [[ $MMSELECT = "2" ]]; then
 	continue
 
 
-# WSJT-X 1.6.0 Menu (exp)-------------------------------------------------------
+# WSJT-X 1.6.1 Menu (exp)-------------------------------------------------------
 	elif [[ $MMSELECT = "3" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
@@ -411,10 +411,10 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" \
 		rm -f "$TMP/buildselect"
 		continue
 	fi
-# End WSJT-X 1.6.0 Menu---------------------------------------------------------
+# End WSJT-X 1.6.1 Menu---------------------------------------------------------
 
 
-# WSJT-X 1.5.0 Menu (devel) ----------------------------------------------------
+# WSJT-X 1.6.0 Menu (devel) ----------------------------------------------------
 	elif [[ $MMSELECT = "4" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
@@ -442,7 +442,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
 		rm -f "$TMP/buildselect"
 		continue
 	fi
-# End WSJT-X 1.5.0 (devel) Menu-------------------------------------------------
+# End WSJT-X 1.6.0 (devel) Menu-------------------------------------------------
 
 
 # WSJT-X 1.5 RC Menu ---------------------------------------------------------

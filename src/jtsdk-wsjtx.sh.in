@@ -140,16 +140,16 @@ echo \
  OPT-2 = ( release | debug ) 
 
   help .....: Display this help page
-  rc .......: Release Candidate Branch ( 1.5 RC2 )
-  dev ......: Latest Development Branch ( 1.5 )
-  exp ......: Experimental Branch ( 1.5 )
+  rc .......: Release Candidate Branch ( 1.5 RCx )
+  dev ......: Latest Development Branch ( 1.6 )
+  exp ......: Experimental Branch ( 1.6.1 )
   release ..: Release Target
   debug ....: Debug Target
 
  Examples:
-  WSJT-X 1.6 (exp) ...: jtsdk-wsjtx exp release
-  WSJT-X 1.5 (devel)..: jtsdk-wsjtx dev release
-  WSJT-X 1.5 (RC2) ....: jtsdk-wsjtx rc release
+  WSJT-X 1.6.1 (exp) ...: jtsdk-wsjtx exp release
+  WSJT-X 1.6.0 (devel)..: jtsdk-wsjtx dev release
+  WSJT-X 1.5.0 (RC) ....: jtsdk-wsjtx rc release
 
 '
 
@@ -160,12 +160,12 @@ exit 0
 # START MAIN SCRIPT
 ################################################################################
 
-# Joe's v1.6 EXP Branch
+# Joe's v1.6.1 EXP Branch
 case "$OPT1" in
 	exp|EXP|-e|-E ) # $1 from jtsdk main
 		APP_NAME=wsjtx
 		APP_SRC_NAME=wsjtx_exp
-		DEV=1.6.0
+		DEV=1.6.1
 		APP_SRC=@SRCD@/$APP_SRC_NAME
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx_exp"
 
@@ -190,10 +190,11 @@ case "$OPT1" in
 			cli_help
 		fi
 	;;
+	# Main WSJT-X Development Branch
 	dev|devel|-d|-D ) # $1 from jtsdk main
 		APP_NAME=wsjtx
 		APP_SRC_NAME=wsjtx
-		DEV=1.5.0
+		DEV=1.6.0
 		APP_SRC=@SRCD@/$APP_SRC_NAME
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx"
 		# setup variables based on $2 from jtsdk main
@@ -217,9 +218,10 @@ case "$OPT1" in
 			cli_help
 		fi
 	;;
+	# Release Candidate Branch
 	rc|RC|-rc|-RC ) # $1 from jtsdk main
 		APP_NAME=wsjtx
-		DEV=1.5-RC2
+		DEV=1.5-RC
 		APP_SRC_NAME=wsjtx-1.5
 		APP_SRC=@SRCD@/$APP_SRC_NAME
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.5"
@@ -272,48 +274,6 @@ check_svn
 
 # exit on errors
 set -e
-
-# Utility program to test Discrete Fourier transforms (DFTs)
-# Build the utility with Release & Debug targets, not Package
-# CHKFFT only exists in the development branch ( v1.5 devel )
-if [[ $DEV = "1.5.0" ]] ; then
-case "$OPTION" in
-	Debug )
-		echo ''
-		echo '-----------------------------------------------------'
-		echo -e ${C_Y}" BUILDING ( CHKFFT )" ${C_NC}
-		echo '-----------------------------------------------------'
-		cd $APP_SRC/lib
-
-		# remove previous build, if exists
-		if [[ -f chkfft ]] ; then
-			echo ''
-			echo 'Removing Previous CHKFFT Build'
-			rm -f chkfft
-			rm -f *.o
-		fi
-
-		# start compiling
-		echo 'Compiling CHKFFT'
-		gfortran -o chkfft chkfft.f90 four2a.f90 f77_wisdom.f90 gran.c -lfftw3f
-
-		# if previous BIN / bin type files if exists
-		if [[ -f $INSTALLD/bin ]] ; then rm -f  $INSTALLD/bin ; fi		
-		if [[ -f $INSTALLD/BIN ]] ; then rm -f  $INSTALLD/BIN ; fi
-
-		# install files to the wsjtx bin directory
-		echo 'Installing CHKFFT and Support Files'
-		if [[ ! -d 	$INSTALLD/bin ]] ; then mkdir -p "$INSTALLD/bin" ; fi
-		cp -u ./chkfft "$INSTALLD/bin/"
-		cp -u ./chkfft.txt "$INSTALLD/bin/"
-		cp -u ./nfft.dat "$INSTALLD/bin/"
-		cp -u ./nfft.out "$INSTALLD/bin/"
-		echo 'Finished'
-		;;
-	* )
-	;;
-esac
-fi
 
 # start configuring the main build
 echo
@@ -390,7 +350,6 @@ echo '-----------------------------------------------------'
 echo -e ${C_G}" BUILD SUMMARY ( $APP_NAME-$DEV $OPTION )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-
 case "$OPTION" in
 
 	Release|Debug )
@@ -399,21 +358,12 @@ case "$OPTION" in
 		echo " Build .......: $BUILDD"
 		echo " Install .....: $INSTALLD/bin"
 		echo ''
-		if [[ $OPTION = "Debug" ]] ; then
-			case $DEV in
-				1.5.0 )
-				echo ' CHKFFT Utility Program'
-				echo " Install .....: $INSTALLD/bin/chkfft"
-				echo '' ;;
-			esac
-		fi		
 		echo " TO RUN $APP_NAME"
 		echo " cd ..........: $INSTALLD/bin"
 		echo " Type, .......: ./$APP_NAME"
 		echo ''
 		read -p "Press [ Enter ] to continue.."
 	;;
-
 	package )
 		PKG_NAME=$(ls -m1 $PKGD)
 		echo " Type ......: $OPTION"
