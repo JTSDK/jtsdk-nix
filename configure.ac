@@ -69,54 +69,43 @@ HL3I="$HOMEDIR/hamlib3"
 #  Application Install Paths ( used in build scripts )
 # ------------------------------------------------------------------------------
 
-# INSTALL DIRECTORIES
+# WSJT
 WSJTI="$HOMEDIR/wsjt/install"
+
+# WSPR
 WSPRI="$HOMEDIR/wspr/install"
+
+# WSPRX (currently not used)
+WSPRXIR="$HOMEDIR/wsprx/install/release"
+WSPRXID="$HOMEDIR/wsprx/install/debug"
+WSPRXBR="$HOMEDIR/wsprx/build/release"
+WSPRXBD="$HOMEDIR/wsprx/build/debug"
+
+# MAP65 (currently not used)
+MAP65IR="$HOMEDIR/map65/install/release"
+MAP65ID="$HOMEDIR/map65/install/debug"
+MAP65BR="$HOMEDIR/map65/build/release"
+MAP65BD="$HOMEDIR/map65/build/debug"
 
 # WSJTX 1.6.1 (exp)
 WSJTXEXPIR="$HOMEDIR/wsjtxexp/install/release"
 WSJTXEXPID="$HOMEDIR/wsjtxexp/install/debug"
+WSJTXEXPBR="$HOMEDIR/wsjtxexp/build/release"
+WSJTXEXPBD="$HOMEDIR/wsjtxexp/build/debug"
+WSJTXEXPPD="$HOMEDIR/wsjtxexp/package"
 
 # WSJTX 1.6.0 (devel)
 WSJTXIR="$HOMEDIR/wsjtx/install/release"
 WSJTXID="$HOMEDIR/wsjtx/install/debug"
-
-# WSJTX 1.5.x RCx
-WSJTXRCIR="$HOMEDIR/wsjtxrc/install/release"
-WSJTXRCID="$HOMEDIR/wsjtxrc/install/debug"
-
-# WSPR
-WSPRXIR="$HOMEDIR/wsprx/install/release"
-WSPRXID="$HOMEDIR/wsprx/install/debug"
-
-# MAP65
-MAP65IR="$HOMEDIR/map65/install/release"
-MAP65ID="$HOMEDIR/map65/install/debug"
-
-# BUILD DIRECTORIES
-# WSJTX 1.6.1 (exp)
-WSJTXEXPBR="$HOMEDIR/wsjtxexp/build/release"
-WSJTXEXPBD="$HOMEDIR/wsjtxexp/build/debug"
-
-# WSJTX 1.6.0 (devel)
 WSJTXBR="$HOMEDIR/wsjtx/build/release"
 WSJTXBD="$HOMEDIR/wsjtx/build/debug"
+WSJTXPD="$HOMEDIR/wsjtx/package"
 
-# WSJTX 1.5.x RCx
+# WSJTX 1.5 RCx
+WSJTXRCIR="$HOMEDIR/wsjtxrc/install/release"
+WSJTXRCID="$HOMEDIR/wsjtxrc/install/debug"
 WSJTXRCBR="$HOMEDIR/wsjtxrc/build/release"
 WSJTXRCBD="$HOMEDIR/wsjtxrc/build/debug"
-
-# WSPRX
-WSPRXBR="$HOMEDIR/wsprx/build/release"
-WSPRXBD="$HOMEDIR/wsprx/build/debug"
-
-# MAP65
-MAP65BR="$HOMEDIR/map65/build/release"
-MAP65BD="$HOMEDIR/map65/build/debug"
-
-# package directories
-WSJTXPD="$HOMEDIR/wsjtx/package"
-WSJTXEXPPD="$HOMEDIR/wsjtxexp/package"
 WSJTXRCPD="$HOMEDIR/wsjtxrc/package"
 
 # ------------------------------------------------------------------------------

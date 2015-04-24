@@ -61,13 +61,45 @@ TMPD		:=	@TMPD@
 LOGD		:=	@LOGD@
 MKRD		:=	@MKRD@
 
-# Applications Directories
+# Application Directories
+# WSJT
 WSJTI		:=	@WSJTI@
+
+# WSPR
 WSPRI		:=	@WSPRI@
+
+# WSPRX (currently not used)
+WSPRXIR		:=	@WSPRXIR@
+WSPRXID		:=	@WSPRXID@
+WSPRXBR		:=	@WSPRXBR@
+WSPRXBD		:=	@WSPRXBD@
+
+# MAP65 (currently not used)
+MAP65IR		:=	@MAP65IR@
+MAP65ID		:=	@MAP65ID@
+MAP65BR		:=	@MAP65BR@
+MAP65BD		:=	@MAP65BD@
+
+# WSJTX 1.6.1 (exp)
+WSJTXEXPIR	:=	@WSJTXEXPIR@
+WSJTXEXPID	:=	@WSJTXEXPID@
+WSJTXEXPBR	:=	@WSJTXEXPBR@
+WSJTXEXPBD	:=	@WSJTXEXPBD@
+WSJTXEXPPD	:=	@WSJTXEXPPD@
+
+# WSJTX 1.6.0 (devel)
 WSJTXIR		:=	@WSJTXIR@
 WSJTXID		:=	@WSJTXID@
+WSJTXBR		:=	@WSJTXBR@
+WSJTXBD		:=	@WSJTXBD@
+WSJTXPD		:=	@WSJTXPD@
+
+# WSJTX 1.5 RCx
 WSJTXRCIR	:=	@WSJTXRCIR@
 WSJTXRCID	:=	@WSJTXRCID@
+WSJTXRCBR	:=	@WSJTXRCBR@
+WSJTXRCBD	:=	@WSJTXRCBD@
+WSJTXRCPD	:=	@WSJTXRCPD@
 
 # Config Definitions
 DEFS		:=	@DEFS@
@@ -176,31 +208,37 @@ install: mainsymlink
 	@$(MKDIR) -p @TMPD@
 	@$(MKDIR) -p @LOGD@
 	@$(MKDIR) -p @MKRD@
-# WSPR
-	@$(MKDIR) -p @WSJTI@
 # WSJT
+	@$(MKDIR) -p @WSJTI@
+# WSPR
 	@$(MKDIR) -p @WSPRI@
-# WSPRX
-	@$(MKDIR) -p @WSPRXBR@
+# WSPRX (currently not used)
 	@$(MKDIR) -p @WSPRXIR@
-	@$(MKDIR) -p @WSPRXBD@
 	@$(MKDIR) -p @WSPRXID@
-# MAP65
-	@$(MKDIR) -p @MAP65BR@
+	@$(MKDIR) -p @WSPRXBR@
+	@$(MKDIR) -p @WSPRXBD@
+# MAP65 (currently not used)
 	@$(MKDIR) -p @MAP65IR@
-	@$(MKDIR) -p @MAP65BD@
 	@$(MKDIR) -p @MAP65ID@
-# WSJTX 1.5 (devel)
-	@$(MKDIR) -p @WSJTXBR@
+	@$(MKDIR) -p @MAP65BD@
+	@$(MKDIR) -p @MAP65BR@
+# WSJTX 1.6.1 (devel - Joe's Branch)
+	@$(MKDIR) -p @WSJTXEXPIR@
+	@$(MKDIR) -p @WSJTXEXPID@
+	@$(MKDIR) -p @WSJTXEXPBR@
+	@$(MKDIR) -p @WSJTXEXPBD@
+	@$(MKDIR) -p @WSJTXEXPPD@
+# WSJTX 1.6.0 (devel - Main Devel Branch)
 	@$(MKDIR) -p @WSJTXIR@
-	@$(MKDIR) -p @WSJTXBD@
 	@$(MKDIR) -p @WSJTXID@
+	@$(MKDIR) -p @WSJTXBR@
+	@$(MKDIR) -p @WSJTXBD@
 	@$(MKDIR) -p @WSJTXPD@
-# WSJTX 1.5 (RC)
-	@$(MKDIR) -p @WSJTXRCBR@
+# WSJTX 1.5 (RC - Release Candidate Branch)
 	@$(MKDIR) -p @WSJTXRCIR@
-	@$(MKDIR) -p @WSJTXRCBD@
 	@$(MKDIR) -p @WSJTXRCID@
+	@$(MKDIR) -p @WSJTXRCBR@
+	@$(MKDIR) -p @WSJTXRCBD@
 	@$(MKDIR) -p @WSJTXRCPD@
 	@$(MKDIR) -p $(HOMEDIR)/package-info
 	@if [ -f orig-install.txt ] ; then \
