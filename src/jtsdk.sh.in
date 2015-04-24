@@ -104,8 +104,8 @@ UDMSG="\n      Build Selection is Under Development"
 # main menu
 touch @TMPD@/MMenu.tmp
 cat << 'EOF' > @TMPD@/MMenu.tmp 
-"1" "WSJT ..... v10.0" \
-"2" "WSPR ..... v4.0.0" \
+"1" "WSJT ..... v10.0  (devel" \
+"2" "WSPR ..... v4.0.0 (devel)" \
 "3" "WSJT-X ... v1.6.1 (exp)" \
 "4" "WSJT-X ... v1.6.0 (devel)" \
 "5" "WSJT-X ... v1.5.0 (RC)" \

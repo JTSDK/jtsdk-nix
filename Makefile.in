@@ -68,39 +68,6 @@ WSJTI		:=	@WSJTI@
 # WSPR
 WSPRI		:=	@WSPRI@
 
-# WSPRX (currently not used)
-WSPRXIR		:=	@WSPRXIR@
-WSPRXID		:=	@WSPRXID@
-WSPRXBR		:=	@WSPRXBR@
-WSPRXBD		:=	@WSPRXBD@
-
-# MAP65 (currently not used)
-MAP65IR		:=	@MAP65IR@
-MAP65ID		:=	@MAP65ID@
-MAP65BR		:=	@MAP65BR@
-MAP65BD		:=	@MAP65BD@
-
-# WSJTX 1.6.1 (exp)
-WSJTXEXPIR	:=	@WSJTXEXPIR@
-WSJTXEXPID	:=	@WSJTXEXPID@
-WSJTXEXPBR	:=	@WSJTXEXPBR@
-WSJTXEXPBD	:=	@WSJTXEXPBD@
-WSJTXEXPPD	:=	@WSJTXEXPPD@
-
-# WSJTX 1.6.0 (devel)
-WSJTXIR		:=	@WSJTXIR@
-WSJTXID		:=	@WSJTXID@
-WSJTXBR		:=	@WSJTXBR@
-WSJTXBD		:=	@WSJTXBD@
-WSJTXPD		:=	@WSJTXPD@
-
-# WSJTX 1.5 RCx
-WSJTXRCIR	:=	@WSJTXRCIR@
-WSJTXRCID	:=	@WSJTXRCID@
-WSJTXRCBR	:=	@WSJTXRCBR@
-WSJTXRCBD	:=	@WSJTXRCBD@
-WSJTXRCPD	:=	@WSJTXRCPD@
-
 # Config Definitions
 DEFS		:=	@DEFS@
 
@@ -212,34 +179,6 @@ install: mainsymlink
 	@$(MKDIR) -p @WSJTI@
 # WSPR
 	@$(MKDIR) -p @WSPRI@
-# WSPRX (currently not used)
-	@$(MKDIR) -p @WSPRXIR@
-	@$(MKDIR) -p @WSPRXID@
-	@$(MKDIR) -p @WSPRXBR@
-	@$(MKDIR) -p @WSPRXBD@
-# MAP65 (currently not used)
-	@$(MKDIR) -p @MAP65IR@
-	@$(MKDIR) -p @MAP65ID@
-	@$(MKDIR) -p @MAP65BD@
-	@$(MKDIR) -p @MAP65BR@
-# WSJTX 1.6.1 (devel - Joe's Branch)
-	@$(MKDIR) -p @WSJTXEXPIR@
-	@$(MKDIR) -p @WSJTXEXPID@
-	@$(MKDIR) -p @WSJTXEXPBR@
-	@$(MKDIR) -p @WSJTXEXPBD@
-	@$(MKDIR) -p @WSJTXEXPPD@
-# WSJTX 1.6.0 (devel - Main Devel Branch)
-	@$(MKDIR) -p @WSJTXIR@
-	@$(MKDIR) -p @WSJTXID@
-	@$(MKDIR) -p @WSJTXBR@
-	@$(MKDIR) -p @WSJTXBD@
-	@$(MKDIR) -p @WSJTXPD@
-# WSJTX 1.5 (RC - Release Candidate Branch)
-	@$(MKDIR) -p @WSJTXRCIR@
-	@$(MKDIR) -p @WSJTXRCID@
-	@$(MKDIR) -p @WSJTXRCBR@
-	@$(MKDIR) -p @WSJTXRCBD@
-	@$(MKDIR) -p @WSJTXRCPD@
 	@$(MKDIR) -p $(HOMEDIR)/package-info
 	@if [ -f orig-install.txt ] ; then \
 	$(CP) -u orig-install.txt $(HOMEDIR)/package-info ; fi 

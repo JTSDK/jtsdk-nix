@@ -6,9 +6,9 @@
 # Contributors	: @JTSDK_AUTHORS@
 # Comment		: Part of the JTSDK Linux Project
 #                 This script builds:
-#                 WSJT-X 1.6.0 exp branch
-#                 WSJT-X 1.5.0 development branch
-#                 WSJT-X 1.4.0 RC branch
+#                 WSJT-X 1.6.1 exp branch
+#                 WSJT-X 1.6.0 development branch
+#                 WSJT-X 1.5.0 RC branch
 #
 # @PROGRAM@ is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,11 +24,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------#
 
-# common vars
-OPT1=$1
-OPT2=$2
+# branch names for svn urls
+APP_NAME=wsjtx
+EXP_APP_NAME=wsjtx_exp
+DEV_APP_NAME=wsjtx
+RC_APP_NAME=wsjtx-1.5
+
+# common variables
+HOMEDIR=@HOMEDIR@
 SRCD=@SRCD@
 JJ=@JJJJ@
+SRCD=@SRCD@
+OPT1=$1
+OPT2=$2
 
 # hamlib path variables
 HL3SRC=@HL3SRC@
@@ -110,9 +118,11 @@ else
 			cd $APP_SRC 
 			echo "Updating ( $APP_NAME )"
 			svn cleanup && svn update
+			get_version
 			break ;;
 		
 		[Nn]* )
+			get_version
 			break ;;
 		
 		* )
@@ -156,63 +166,86 @@ echo \
 exit 0
 }
 
+# get WSJTX Version information from: Version.cmake
+# Note: must be performed "After" SVN checkout
+
+# Example Versions.cmake
+# ------------------------------------------------------------------------------
+# set (WSJTX_VERSION_MAJOR 1)
+# set (WSJTX_VERSION_MINOR 6)
+# set (WSJTX_VERSION_PATCH 1)
+# set (WSJTX_RC 0)					# release candidate number, comment out or zero for development versions
+# set (WSJTX_VERSION_IS_RELEASE 0)	# set to 1 for final release build
+# ------------------------------------------------------------------------------
+
+get_version() {
+
+VER_FILE="$APP_SRC/Versions.cmake"
+
+# get Major number
+MA=$(cat $VER_FILE |grep '_MAJOR' |awk '{print $3}' |cut -c1)
+
+# get Minor number 
+MI=$(cat $VER_FILE |grep '_MINOR' |awk '{print $3}' |cut -c1)
+
+# get Patch number
+PA=$(cat $VER_FILE |grep '_PATCH' |awk '{print $3}' |cut -c1)
+
+# get RC version
+RC=$(cat $VER_FILE |grep '_RC' |awk '{print $3}' |cut -c1)
+
+# combine into a string
+if [ "$RC" == "0" ] ; then 
+	AVER="$MA.$MI.$PA"
+else
+	AVER="$MA.$MI.$PA-RC$RC"
+fi
+
+echo "-- Setting Repository Version To: $AVER"
+
+
+}
+
 ################################################################################
 # START MAIN SCRIPT
 ################################################################################
 
-# Joe's v1.6.1 EXP Branch
+# Joe's v1.6.1 ( devel - Joe's Branch )
 case "$OPT1" in
 	exp|EXP|-e|-E ) # $1 from jtsdk main
-		APP_NAME=wsjtx
-		APP_SRC_NAME=wsjtx_exp
-		DEV=1.6.1
-		APP_SRC=@SRCD@/$APP_SRC_NAME
+		APP_SRC_NAME="$EXP_APP_NAME"
+		APP_SRC="$SRCD/$APP_SRC_NAME"
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx_exp"
-
+		
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
-			BUILDD=@WSJTXEXPBD@
-			INSTALLD=@WSJTXEXPID@
 			OPTION="Debug"
 
 		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
-			BUILDD=@WSJTXEXPBR@
-			INSTALLD=@WSJTXEXPIR@
 			OPTION="Release"
 
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
-			BUILDD=@WSJTXEXPBR@
-			INSTALLD=@WSJTXEXPIR@
 			OPTION="package"
-			PKGD=@WSJTXEXPPD@
-
 		else
 			cli_help
 		fi
 	;;
+	
 	# Main WSJT-X Development Branch
 	dev|devel|-d|-D ) # $1 from jtsdk main
-		APP_NAME=wsjtx
-		APP_SRC_NAME=wsjtx
-		DEV=1.6.0
-		APP_SRC=@SRCD@/$APP_SRC_NAME
+		APP_SRC_NAME="$DEV_APP_NAME"
+		APP_SRC="$SRCD/$APP_SRC_NAME"
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx"
+
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
-			BUILDD=@WSJTXBD@
-			INSTALLD=@WSJTXID@
 			OPTION="Debug"
 
 		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
-			BUILDD=@WSJTXBR@
-			INSTALLD=@WSJTXIR@
 			OPTION="Release"
 
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
-			BUILDD=@WSJTXBR@
-			INSTALLD=@WSJTXIR@
 			OPTION="package"
-			PKGD=@WSJTXPD@
 
 		else
 			cli_help
@@ -220,47 +253,29 @@ case "$OPT1" in
 	;;
 	# Release Candidate Branch
 	rc|RC|-rc|-RC ) # $1 from jtsdk main
-		APP_NAME=wsjtx
-		DEV=1.5-RC
-		APP_SRC_NAME=wsjtx-1.5
-		APP_SRC=@SRCD@/$APP_SRC_NAME
+		APP_SRC_NAME="$RC_APP_NAME"
+		APP_SRC="$SRCD/$APP_SRC_NAME"
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.5"
 
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
-			BUILDD=@WSJTXRCBD@
-			INSTALLD=@WSJTXRCID@
 			OPTION="Debug"
-
 		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
-			BUILDD=@WSJTXRCBR@
-			INSTALLD=@WSJTXRCIR@
 			OPTION="Release"
-
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
-			BUILDD=@WSJTXRCBR@
-			INSTALLD=@WSJTXRCIR@
 			OPTION="package"
-			PKGD=@WSJTXRCPD@
-	
 		else
 			cli_help
 		fi
 	;;
-
 	--help|help|-h|-H )
 		cli_help ;;
-
 	* )
 		cli_help
 	;;
 esac
 
-# Make sure directories are present, in case they were deleted
-mkdir -p "$BUILDD" >/dev/null 2>&1
-mkdir -p "$INSTALLD" >/dev/null 2>&1
-mkdir -p "$PKGD" >/dev/null 2>&1
-
+# Make sure directories are present, in case they were deleted or new version
 # check hamlib for Release, Debug and Package
 # then ask to update from SVN
 hamlib_test
@@ -268,9 +283,24 @@ hamlib_test
 # Ask to update from SVN first
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" STARTING BUILD for ( $APP_NAME-$DEV $OPTION )"${C_NC}
+echo -e ${C_Y}" SVN UPDATE"${C_NC}
 echo '-----------------------------------------------------'
 check_svn
+
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CHECK VERSION && DIRECTORIES"${C_NC}
+echo '-----------------------------------------------------'
+# get version info
+get_version
+
+# make the directories
+BUILDD="$HOMEDIR/$APP_NAME/$AVER/build/$OPTION"
+INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
+PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
+mkdir -p "$BUILDD" >/dev/null 2>&1
+mkdir -p "$INSTALLD" >/dev/null 2>&1
+mkdir -p "$PKGD" >/dev/null 2>&1
 
 # exit on errors
 set -e
@@ -278,7 +308,7 @@ set -e
 # start configuring the main build
 echo
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" CONFIGURING ( $APP_NAME-$DEV $OPTION )"${C_NC}
+echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER )"${C_NC}
 echo '-----------------------------------------------------'
 echo
 
@@ -324,7 +354,7 @@ fi
 
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" BUILDING ( $APP_NAME-$DEV $OPTION )"${C_NC}
+echo -e ${C_Y}" BUILDING ( WSJT-X $AVER )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
@@ -347,16 +377,17 @@ esac
 # Finished
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_G}" BUILD SUMMARY ( $APP_NAME-$DEV $OPTION )"${C_NC}
+echo -e ${C_G}" BUILD SUMMARY ( WSJT-X )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 case "$OPTION" in
 
 	Release|Debug )
-		echo " Build Type ..: $OPTION"
-		echo " Source ......: $APP_SRC"
-		echo " Build .......: $BUILDD"
-		echo " Install .....: $INSTALLD/bin"
+		echo " App Version ..: $AVER"
+		echo " Build Type ...: $OPTION"
+		echo " Source .......: $APP_SRC"
+		echo " Build ........: $BUILDD"
+		echo " Install ......: $INSTALLD/bin"
 		echo ''
 		echo " TO RUN $APP_NAME"
 		echo " cd ..........: $INSTALLD/bin"

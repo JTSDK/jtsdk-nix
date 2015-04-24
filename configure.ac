@@ -75,39 +75,6 @@ WSJTI="$HOMEDIR/wsjt/install"
 # WSPR
 WSPRI="$HOMEDIR/wspr/install"
 
-# WSPRX (currently not used)
-WSPRXIR="$HOMEDIR/wsprx/install/release"
-WSPRXID="$HOMEDIR/wsprx/install/debug"
-WSPRXBR="$HOMEDIR/wsprx/build/release"
-WSPRXBD="$HOMEDIR/wsprx/build/debug"
-
-# MAP65 (currently not used)
-MAP65IR="$HOMEDIR/map65/install/release"
-MAP65ID="$HOMEDIR/map65/install/debug"
-MAP65BR="$HOMEDIR/map65/build/release"
-MAP65BD="$HOMEDIR/map65/build/debug"
-
-# WSJTX 1.6.1 (exp)
-WSJTXEXPIR="$HOMEDIR/wsjtxexp/install/release"
-WSJTXEXPID="$HOMEDIR/wsjtxexp/install/debug"
-WSJTXEXPBR="$HOMEDIR/wsjtxexp/build/release"
-WSJTXEXPBD="$HOMEDIR/wsjtxexp/build/debug"
-WSJTXEXPPD="$HOMEDIR/wsjtxexp/package"
-
-# WSJTX 1.6.0 (devel)
-WSJTXIR="$HOMEDIR/wsjtx/install/release"
-WSJTXID="$HOMEDIR/wsjtx/install/debug"
-WSJTXBR="$HOMEDIR/wsjtx/build/release"
-WSJTXBD="$HOMEDIR/wsjtx/build/debug"
-WSJTXPD="$HOMEDIR/wsjtx/package"
-
-# WSJTX 1.5 RCx
-WSJTXRCIR="$HOMEDIR/wsjtxrc/install/release"
-WSJTXRCID="$HOMEDIR/wsjtxrc/install/debug"
-WSJTXRCBR="$HOMEDIR/wsjtxrc/build/release"
-WSJTXRCBD="$HOMEDIR/wsjtxrc/build/debug"
-WSJTXRCPD="$HOMEDIR/wsjtxrc/package"
-
 # ------------------------------------------------------------------------------
 #  check compilers
 # ------------------------------------------------------------------------------
@@ -265,50 +232,6 @@ AC_SUBST([ADOCD], ["$ADOCD"])
 # application install subs
 AC_SUBST([WSJTI], ["$WSJTI"])
 AC_SUBST([WSPRI], ["$WSPRI"])
-
-# WSJTX-EXP v1.6.0 (exp)
-AC_SUBST([WSJTXEXPIR], ["$WSJTXEXPIR"])
-AC_SUBST([WSJTXEXPID], ["$WSJTXEXPID"])
-
-# WSJTX v1.5 (devel)
-AC_SUBST([WSJTXIR], ["$WSJTXIR"])
-AC_SUBST([WSJTXID], ["$WSJTXID"])
-
-# WSJTX v1.5 (RC1) Release Candidate
-AC_SUBST([WSJTXRCIR], ["$WSJTXRCIR"])
-AC_SUBST([WSJTXRCID], ["$WSJTXRCID"])
-
-AC_SUBST([WSPRXIR], ["$WSPRXIR"])
-AC_SUBST([WSPRXID], ["$WSPRXID"])
-
-AC_SUBST([MAP65IR], ["$MAP65IR"])
-AC_SUBST([MAP65ID], ["$MAP65ID"])
-
-# application build subs
-
-# WSJTX v1.6.0 EXP
-AC_SUBST([WSJTXEXPBR], ["$WSJTXEXPBR"])
-AC_SUBST([WSJTXEXPBD], ["$WSJTXEXPBD"])
-
-# WSJTX v1.5.0
-AC_SUBST([WSJTXBR], ["$WSJTXBR"])
-AC_SUBST([WSJTXBD], ["$WSJTXBD"])
-
-# WSJTX v1.4.0 RC
-AC_SUBST([WSJTXRCBR], ["$WSJTXRCBR"])
-AC_SUBST([WSJTXRCBD], ["$WSJTXRCBD"])
-
-AC_SUBST([WSPRXBR], ["$WSPRXBR"])
-AC_SUBST([WSPRXBD], ["$WSPRXBD"])
-
-AC_SUBST([MAP65BR], ["$MAP65BR"])
-AC_SUBST([MAP65BD], ["$MAP65BD"])
-
-# package subs
-AC_SUBST([WSJTXPD], ["$WSJTXPD"])
-AC_SUBST([WSJTXEXPPD], ["$WSJTXEXPPD"])
-AC_SUBST([WSJTXRCPD], ["$WSJTXRCPD"])
-
 
 # hamlib3 subs
 AC_SUBST([HL3SRC], ["$HL3SRC"])
