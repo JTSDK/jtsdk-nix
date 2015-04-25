@@ -1,7 +1,7 @@
 AC_DEFUN([AC_BUILD_DOCS], [
 	AC_ARG_ENABLE([docs],
-		AC_HELP_STRING([--disable-docs], [Disable Building HTML Documentation]),
-		[], [ac_cv_docs=yes])
+		AC_HELP_STRING([--enable-docs], [Enable Building HTML Documentation]),
+		[ac_cv_docs=yes], [ac_cv_docs=no])
 
 if test "x$ac_cv_docs" = "xyes"; then
 	BDOC=Yes
