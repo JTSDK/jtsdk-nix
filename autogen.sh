@@ -38,26 +38,21 @@ echo \
 'JTSDK Autogen Help Options
 
 Distribution  Suported Release(s)
-   debian        Jessie
-   ubuntu        14.04 (includes Xubuntu, Lubuntu, Kubuntu)
+   debian        8.0
+   ubuntu        14.04|14.10|5.04
    mint          17
 
 Several options exist for pre-processing the configure script: 
---with-distro		# Set Linux / FreeSBD Distribution
 --with-python3		# Alternate location for python3
 --with-f2py3		# alternalte locaiton for f2py3
---enable-parallel	# Enables Multi-Core builds
+--disable-docs		# Disable building HTML documentation
+--disable-parallel	# Disable Multi-Core builds
 
 STANDARD INVOCATION:
-./autogen.sh --with-distro=ubuntu --enable-parallel=yes
+./autogen.sh'
 
-WITH ADDITIONAL LOCATIONS:
-./autogen.sh --with-distro=ubuntu \
---with-python3=/usr/local/bin/python3 \
---with-f2py3=/usr/local/bin/f2py3 \
---enable-parallel=yes'
+echo ''
 
-echo
 exit 0
 }
 
@@ -140,33 +135,32 @@ if test -f ./Makefile -a ./configure ; then
 	echo ''
 	make -s clean
 	echo '---------------------------------------------------'
-	echo ${C_Y}"Running ( autoconf -f -i ) to process configure.ac"${C_NC}
+	echo ${C_Y}"Running ( autoconf ) to process configure.ac"${C_NC}
 	echo '---------------------------------------------------'
 	autoconf -f -i
 else
 	clear
 	echo '---------------------------------------------------'
-	echo ${C_Y}"Running ( autoconf -f -i ) to process configure.ac"${C_NC}
+	echo ${C_Y}"Running ( autoconf ) to process configure.ac"${C_NC}
 	echo '---------------------------------------------------'
 	autoconf -f -i
 fi
 
 # simple test for the configure script, after running autogen.sh
 if test -s ./configure; then
-	echo "Finished"
-	echo "Running ./configure to configure the build"
+	echo "Finished generating configure script"
 else
 # message if configure was not found
-	echo
+	echo ''
 	echo "There was a problem generating the configure script"
 	echo "Check config.status for details."	
-	echo
+	echo ''
 	exit 1
 fi
 
 # message if no arguments were presented
 if test -z "$*"; then
-	echo "Using with default arguments"
+	echo "Using ./configure With Default Options"
 else
 # List user input arguments
 	echo "Using ./configure $@"

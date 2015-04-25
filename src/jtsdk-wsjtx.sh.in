@@ -37,6 +37,7 @@ JJ=@JJJJ@
 SRCD=@SRCD@
 OPT1=$1
 OPT2=$2
+SEPARATE=@SEPARATE@
 
 # hamlib path variables
 HL3SRC=@HL3SRC@
@@ -115,14 +116,13 @@ else
 		case $yn in
 		
 		[Yy]* )
-			cd $APP_SRC 
+			cd "$APP_SRC"
 			echo "Updating ( $APP_NAME )"
 			svn cleanup && svn update
-			get_version
 			break ;;
 		
 		[Nn]* )
-			get_version
+			echo "Nothign to be done..."
 			break ;;
 		
 		* )
@@ -168,6 +168,7 @@ exit 0
 
 # get WSJTX Version information from: Version.cmake
 # Note: must be performed "After" SVN checkout
+get_version() {
 
 # Example Versions.cmake
 # ------------------------------------------------------------------------------
@@ -178,22 +179,17 @@ exit 0
 # set (WSJTX_VERSION_IS_RELEASE 0)	# set to 1 for final release build
 # ------------------------------------------------------------------------------
 
-get_version() {
 
+echo "-- Getting App Version from Repository"
 VER_FILE="$APP_SRC/Versions.cmake"
-
 # get Major number
 MA=$(cat $VER_FILE |grep '_MAJOR' |awk '{print $3}' |cut -c1)
-
 # get Minor number 
 MI=$(cat $VER_FILE |grep '_MINOR' |awk '{print $3}' |cut -c1)
-
 # get Patch number
 PA=$(cat $VER_FILE |grep '_PATCH' |awk '{print $3}' |cut -c1)
-
 # get RC version
 RC=$(cat $VER_FILE |grep '_RC' |awk '{print $3}' |cut -c1)
-
 # combine into a string
 if [ "$RC" == "0" ] ; then 
 	AVER="$MA.$MI.$PA"
@@ -201,10 +197,20 @@ else
 	AVER="$MA.$MI.$PA-RC$RC"
 fi
 
-echo "-- Setting Repository Version To: $AVER"
+echo "-- Repository Version Is ..: $AVER"
 
 
 }
+
+# get the last changed svn number
+get_svn_revision() {
+
+echo "-- Getting SVN Revision Number"
+SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
+echo "-- SVN Revision Is ........: $SVN_VER"
+
+}
+
 
 ################################################################################
 # START MAIN SCRIPT
@@ -289,15 +295,23 @@ check_svn
 
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" CHECK VERSION && DIRECTORIES"${C_NC}
+echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
 echo '-----------------------------------------------------'
-# get version info
 get_version
+get_svn_revision
 
-# make the directories
-BUILDD="$HOMEDIR/$APP_NAME/$AVER/build/$OPTION"
-INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
-PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
+# set build and install locaitons
+if [ $SEPARATE == "Yes" ] ; then 
+	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER//build/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/install/$OPTION"
+	PKGD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/package"
+else
+	BUILDD="$HOMEDIR/$APP_NAME/$AVER/build/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
+	PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
+fi
+
+# make sure the build and install directories exist
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1

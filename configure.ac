@@ -2,10 +2,73 @@
 # Process this file with autoconf -*- autoconf -*-
 # ------------------------------------------------------------------------------
 AC_PREREQ([2.69])
-AC_INIT([JTSDK],[2.0.0],[wsjt-devel@lists.sourceforge.net],[],
+AC_INIT([JTSDK],[2.0.1],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
 JTSDK_COPYRIGHT="Copyright (C) 2015 Joseph H Taylor, Jr, K1JT"
+
+# ------------------------------------------------------------------------------
+#  distro setup - dont waste time if distro is not supported
+# ------------------------------------------------------------------------------
+AC_ARG_WITH([distro],
+AC_HELP_STRING([--with-distro=DISTRO], [Distro Name: (debian, ubuntu, mint)]), [distro=$with_distro])
+
+if test -n "$with_distro" ; then
+	DISTID=`echo ${with_distro} | tr A-Z a-z`
+	AC_SUBST([DISTRO], ["$DISTID"])
+
+	case "${DISTRO}" in
+		ubuntu|kubuntu|xubuntu|lubuntu )
+			AC_UBUNTU_CONFIG ;;
+		debian )
+			AC_DEBIAN_CONFIG ;;
+		raspbian|rpi2 )
+			AC_DEBIAN_CONFIG ;;
+		mint )
+			AC_MINT_CONFIG ;;
+		* )
+			echo ''
+			AC_MSG_ERROR([Unsupported Distribution: ${DISTRO}
+
+The Following distribuitons are currently supported:
+
+ * Debian, Mint, Ubuntu
+ * Ubuntu includes, Xubuntu, Lubuntu and Kubuntu
+ * Debian included raspbian
+
+ Usage:
+ ./autogen.sh --with-distro=<distribution>
+
+ For Ubuntu.....: ./autogen.sh --with-distro=ubuntu
+ For Mint.......: ./autogen.sh --with-distro=mint
+ For Debian.....: ./autogen.sh --with-distro=debian
+ For Raspbian...: ./autogen.sh --with-distro=debian
+ 
+])	;;
+	esac
+else
+	AC_MSG_WARN([Distribution Not Specified])
+	echo ''
+	echo ' You must specify a supported distribution in order to'
+	echo ' configure the Makefiles. Supported Distributions:'
+	echo ''
+	echo '  Distribution   Version'
+	echo '   Debian         Jessie  or  later (8.*)'
+	echo '   Ubuntu         Trusty  or  later (14.04* | 14.10* |15.04*)'
+	echo '   Mint           Rebecca or  later (17.*)'
+	echo ''
+	echo '   Note(s):'
+	echo '    1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu'
+	echo '    2. Debian includes Raspbian'
+	echo '    3. You do not need to specify the version'
+	echo ''
+	echo '   For Ubuntu, type ....: ./autogen.sh --with-distro=ubuntu'
+	echo '   For Mint, type ......: ./autogen.sh --with-distro=mint'
+	echo '   For Debian, type ....: ./autogen.sh --with-distro=debian'
+	echo '   For Raspbian, type ..: ./autogen.sh --with-distro=debian'
+	echo ''
+	exit 1
+fi
 
 # ------------------------------------------------------------------------------
 #  canonical host information
@@ -50,6 +113,7 @@ BINDIR="$prefix"/bin
 SHARE="$prefix"/share/jtsdk
 MANDIR="$prefix"/share/man/man1
 DOCDIR="$prefix"/share/jtsdk/doc
+DOCSRC=$(exec pwd)/docs/source
 
 # ------------------------------------------------------------------------------
 #  $USER paths ( also used in build scripts )
@@ -58,22 +122,11 @@ SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGD="$HOMEDIR/logs"
 MKRD="$HOMEDIR/mkrd"
-ADOCD="$HOMEDIR/asciidoc"
 
 # hamlib3 directories
 HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
 HL3B="$HOMEDIR/src/build/hamlib"
 HL3I="$HOMEDIR/hamlib3"
-
-# ------------------------------------------------------------------------------
-#  Application Install Paths ( used in build scripts )
-# ------------------------------------------------------------------------------
-
-# WSJT
-WSJTI="$HOMEDIR/wsjt/install"
-
-# WSPR
-WSPRI="$HOMEDIR/wspr/install"
 
 # ------------------------------------------------------------------------------
 #  check compilers
@@ -104,67 +157,7 @@ AC_PATH_PROG([RM], [rm])
 AC_PATH_PROG([SED], [sed])
 AC_PATH_PROG([TAR], [tar])
 AC_PATH_PROG([TOUCH], [touch])
-
-
-# ------------------------------------------------------------------------------
-#  distro setup
-# ------------------------------------------------------------------------------
-AC_ARG_WITH([distro],
-AC_HELP_STRING([--with-distro=DISTRO], [Distro Name: (debian, ubuntu, mint etc)]), [distro=$with_distro])
-
-if test -n "$with_distro" ; then
-	AC_SUBST([DISTRO], ["$with_distro"])
-
-	case "${DISTRO}" in
-		ubuntu|kubuntu|xubuntu|lubuntu )
-			AC_UBUNTU_CONFIG ;;
-		debian )
-			AC_DEBIAN_CONFIG ;;
-		mint )
-			AC_MINT_CONFIG ;;
-		* )
-			AC_MSG_ERROR([Unsupported Distribution: ${DISTRO}
-
-The Following distribuitons are currently supported:
-
- * debian, mint, ubuntu
- * ubuntu includes, xubuntu, lubuntu and kubuntu
-
- Usage:
- ./autogen.sh --with-distro=<distribution>
-
- Example:
- ./autogen.sh --with-distro=ubuntu
- 
-]) 	;;
-	esac
-else
-	AC_MSG_WARN([Distribution Not Specified])
-	echo ''
-	echo ' You must specify a supported distribution in order to'
-	echo ' configure the Makefiles. Supported Distributions:'
-	echo ''
-	echo '  Distribution   Version'
-	echo '   debian         Jessie  (8.0)'
-	echo '   ubuntu         Trusty  (14.04)'
-	echo '   mint           Rebecca (17.1)'
-	echo ''
-	echo '   Note(s):'
-	echo '    1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu'
-	echo '    2. You do not need to specify the version'
-	echo ''
-	echo '   Usage: ./autogen.sh --with-distro=<distribution>'
-	echo ''
-	echo '   Example:'
-	echo '   ./autogen.sh --with-distro=ubuntu'
-	echo ''
-	exit 1
-fi
-
-# ------------------------------------------------------------------------------
-#  check parallel option
-# ------------------------------------------------------------------------------
-AC_BUILD_PARALLEL
+AC_PATH_PROG([ASCIIDOC], [asciidoc])
 
 # ------------------------------------------------------------------------------
 #  check gfortran (m4)
@@ -202,6 +195,22 @@ AC_CMAKE_CHECK
 AC_QMAKE_CHECK
 
 # ------------------------------------------------------------------------------
+#  check parallel option (m4)
+# ------------------------------------------------------------------------------
+AC_BUILD_PARALLEL
+
+# ------------------------------------------------------------------------------
+#  check for building docs (m4)
+# ------------------------------------------------------------------------------
+AC_BUILD_DOCS
+
+# ------------------------------------------------------------------------------
+#  separate SVN folders for each build (m4)
+# ------------------------------------------------------------------------------
+AC_BUILD_SEPARATE
+
+
+# ------------------------------------------------------------------------------
 #  substitutions
 # ------------------------------------------------------------------------------
 
@@ -214,6 +223,8 @@ AC_SUBST([BUGS], ["$PACKAGE_BUGREPORT"])
 AC_SUBST([WEB], ["$PACKAGE_URL"])
 AC_SUBST([AUTHORS], ["$JTSDK_AUTHORS"])
 AC_SUBST([COPYRIGHT], ["$JTSDK_COPYRIGHT"])
+AC_SUBST([DOCSRC], ["$DOCSRC"])
+AC_SUBST([ASCIIDOC], ["$ASCIIDOC"])
 
 # system subs
 AC_SUBST([BINDIR], ["$BINDIR"])
@@ -251,43 +262,41 @@ src/jtsdk-wsjtx.sh
 src/jtsdk-map65.sh
 src/jtsdk-wsprx.sh
 data/jtsdk.desktop
+docs/Makefile
 ])
 AC_OUTPUT
+
 # ------------------------------------------------------------------------------
 #  configure summary
 # ------------------------------------------------------------------------------
-
-if test "$PKGCOUNT" -gt "0" ; then
-echo "
------------------------------------------------------
-
- ADDITIONAL PACKAGES REQUIRED
- 
- Configuration finished, however, you have
- ( ${PKG_COUNT} ) package(s) that should be installed
- before you run make install.
- 
- * List Needed Packages, type ....: make list-needed
- * Simulate Installation, type ...: make simulate
- * Install Packages, type ........: make
- 
-------------------------------------------------------
-"
-
-else
-
 echo ''
 echo '-------------------------------------------------'
 echo 'Configuration Summary'
 echo '-------------------------------------------------'
 echo "
- Package: ...........: ${PROGRAM} ${VERSION}
- Distribution .......: ${DESC} ${HOST_CPU}
- Install prefix .....: ${PREFIX}
- Working Directory ..: ${HOMEDIR}
- Needed Packages ....: ${PKG_COUNT}
-
- To Install ,type ...: sudo make install
+ Package ...................: ${PROGRAM} ${VERSION}
+ Distribution ..............: ${DESC} ${HOST_CPU}
+ Install prefix ............: ${PREFIX}
+ Working Directory .........: ${HOMEDIR}
+ Needed Packages ...........: ${PKG_COUNT}
+ 
+ OPTIONS
+ CPU Cores .................: ${JJJJ}
+ With HTML Docs ............: ${BDOC}
+ Enable Folder Separation ..: ${SEPARATE}
 
 "
+if test ${PKGCOUNT} -gt 0 ; then
+echo ' * List needed pkgs, type ........: make list-needed'
+echo ' * Simulate pkg install, type ....: make simulate'
+echo ' * Install pkgs, type ............: make'
+echo ''
+else
+echo " Build ${PROGRAM}, type ..: make"
+echo ''
+echo ''
 fi
+
+
+
+

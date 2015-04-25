@@ -28,17 +28,17 @@ LOGS=@LOGD@
 SRCD=@SRCD@
 TMP=@TMPD@
 MKRD=@MKRD@
-INSTALL=@INSTALL@
-INSTALLD=@WSPRI@
+SEPARATE=@SEPARATE@
+APP_NAME=wspr
+APP_SRC="$SRCD/$APP_NAME"
+URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
+
 
 # Python3 and F2PY3
 PYTHON3=@PYTHON3@
 F2PY3=@F2PY3@
 
 # App variables
-URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
-APP_NAME=wspr
-APP_SRC="$SRCD/$APP_NAME"
 
 # Foreground colours
 C_R='\033[01;31m'		# red
@@ -72,7 +72,7 @@ else
 			svn cleanup && svn update
 			break ;;
 		[Nn]* )
-			echo 'Nothing to be done'
+			echo 'Nothing to be done..'
 			break ;;
 		
 		* )
@@ -84,19 +84,57 @@ fi
 
 }
 
+# get WSPR Version information from: wspy.py
+get_version() {
+
+# Example
+# ------------------------------------------------------------------------------
+# Using wspy.py line: Version="4.0 r" + "$Rev: 4889 $"[6:-2]
+# ------------------------------------------------------------------------------
+
+echo "-- Getting App Version from Repository"
+AVER=$(cat $APP_SRC/wspr.py |grep 'Version="' |awk '{print $1}' |cut -c10-13)
+echo "-- Repository Version Is ..: $AVER"
+
+}
+
+# get the last changed svn number
+get_svn_revision() {
+
+echo "-- Getting SVN Revision Number"
+SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
+echo "-- SVN Revision Is ........: $SVN_VER"
+
+}
+
+
 ################################################################################
 # START MAIN SCRIPT
 ################################################################################
 
 # Make sure directories are present, in case they were deleted
-mkdir -p "$INSTALLD" >/dev/null 2>&1
 clear
 echo '-----------------------------------------------------'
-echo -e ${C_Y}"STARTING BUILD for ( $APP_NAME )"${C_NC}
+echo -e ${C_Y}"STARTING BUILD for ( WSPR )"${C_NC}
 echo '-----------------------------------------------------'
 check_svn
 
-echo
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
+echo '-----------------------------------------------------'
+get_version
+get_svn_revision
+
+# set install locaiton
+if [ $SEPARATE == "Yes" ] ; then 
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/install/$OPTION"
+else
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
+fi
+
+
+echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}' RUN AUTORECONF'${C_NC}
 echo '-----------------------------------------------------'
@@ -110,14 +148,14 @@ fi
 echo 'Generating Makefile and Configure scripts'
 autoreconf -f -i
 
-echo
+echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}'RUN CONFIGURE'${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 ./configure --prefix="$INSTALLD" --with-python3=@PYTHON3@ --with-f2py=@F2PY3@
 
-echo
+echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}'COMPILE and INSTALL TARGETS'${C_NC}
 echo '-----------------------------------------------------'
@@ -179,7 +217,7 @@ chown -R "$USER":"$USER" "$INSTALLD"
 # Finished
 echo
 echo '-----------------------------------------------------'
-echo -e ${C_G}"BUILD SUMMARY for ( $APP_NAME )"${C_NC}
+echo -e ${C_G}"BUILD SUMMARY for ( WSPR )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 echo " Build Type ..: Release"

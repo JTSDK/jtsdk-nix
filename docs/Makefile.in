@@ -1,0 +1,35 @@
+# Makefile for Linux
+# Re-direct stdout and stderr:		bash
+#								make >& junk
+#
+# Prerequisites: Bash, Git, Subversion
+
+# Program Infomation
+PROGRAM		:=	@PROGRAM@
+VERSION		:=	@VERSION@
+BUGS		:=	@BUGS@
+WEB         :=	@WEB@
+
+# System Information
+DESC		:=	@DESC@
+OS			:=	@HOST_OS@
+DISTV		:=	@DISTROV@
+ARCH		:=	@HOST_CPU@
+JJJJ		:=	@JJJJ@
+
+# General Vars
+DOCSRC		:=	@DOCSRC@
+RM			:=	@RM@
+ASCIIDOC	:=	@ASCIIDOC@
+
+all: build-doc
+
+# Install package dependencies
+build-doc:
+	@$(ASCIIDOC) -b xhtml11 -a data-uri -a toc2 -o jtsdk.html $(DOCSRC)/dev-guide-main.adoc
+
+# Cleanup Source Tree
+.PHONY: clean
+clean:
+	${RM} -f ./*.html
+

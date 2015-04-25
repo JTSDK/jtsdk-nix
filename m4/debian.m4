@@ -6,6 +6,9 @@ case "${DISTRO}" in
 	debian )
 		distrosd=$(lsb_release -sd)
 		distrov=$(lsb_release -sr)
+		distroc=$(lsb_release -sc)
+		AC_MSG_NOTICE([Distribution codename is supported: ${distroc}])
+
 		case "${distrov}" in
 			8.0 )
 				AC_PATH_PROG([PKGMGR], [apt-get],[]) 
@@ -62,7 +65,7 @@ source-highlight subversion tcl8.6-dev tk8.6-dev texinfo zlib1g-dev'
 				echo ''
 				echo 'Are you sure you set the correct distribution name?'
 				echo " Set Name .....: --with-distro=$DISTRO"
-				echo " Actual Name ..: --with-distro="`echo $ACTUAL | perl -ne 'print lc'`
+				echo " Actual Name ..: --with-distro=${distroc}"
 				echo ''
 				echo ''
 			else
@@ -83,10 +86,11 @@ esac
 # now substitute variables for the Makefile and install-dep target
 AC_SUBST([PIPCOMMAND], [${pip_command}])
 AC_SUBST([DISTROV], [${distrov}])
+AC_SUBST([DISTROC], [${distroc}])
 AC_SUBST([PKGCOUNT], [${PKG_COUNT}])
 AC_SUBST([PKGLIST], [${PKG_LIST}])
 AC_SUBST([DESC], [${distrosd}])
 AC_SUBST([PKGMGR], [${PKGMGR}])
 AC_SUBST([DTDIR], [/usr/share/applications])
-AC_SUBST([ICOND], [/usr/share/pixmap])
+AC_SUBST([ICOND], [/usr/share/pixmaps])
 ]) # End Debian distro config

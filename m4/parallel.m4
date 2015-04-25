@@ -1,18 +1,14 @@
 AC_DEFUN([AC_BUILD_PARALLEL], [
-  AC_ARG_ENABLE([parallel],
-                AC_HELP_STRING([--enable-parallel], [Enable Multi-Core Builds (--enable-parallel=yes)]),
-                [case "${enableval}" in
-                  yes|no) ac_cv_parallel="${enableval}" ;;
-                  *)      AC_MSG_ERROR([bad value ${enableval} for --enable-parallel]) ;;
-                 esac],
-                 [ac_cv_parallel=no])
+	AC_ARG_ENABLE([parallel],
+		AC_HELP_STRING([--disable-parallel], [Disable Multi-Core Builds]),
+		[], [ac_cv_parallel=yes])
 
 if test "x$ac_cv_parallel" = "xyes"; then
 	JJJJ=$(grep -c proc /proc/cpuinfo)
-	AC_MSG_NOTICE([Enabled Multi-Core Build ( $JJJJ ) Cores])
+	AC_MSG_NOTICE([Multi-Core builds *enabled*. Using ( $JJJJ ) cores])
 else
 	JJJJ=1
-	AC_MSG_NOTICE([Using Single Core For Builds])
+	AC_MSG_NOTICE([Milti-Core builds *disabled*. Using ($JJJJ) cores])
 fi
 	AC_SUBST([JJJJ], ["$JJJJ"])
 

@@ -6,6 +6,9 @@ case "${DISTRO}" in
 	mint )
 		distrosd=$(lsb_release -sd)
 		distrov=$(lsb_release -sr)
+		distroc=$(lsb_release -sc)
+		AC_MSG_NOTICE([Distribution codename is supported: ${distroc}])
+		
 		case "${distrov}" in
 			17.0|17.1 )
 				AC_PATH_PROG([PKGMGR], [apt-get],[]) 
@@ -57,7 +60,7 @@ qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo'
 				echo ''
 				echo 'Are you sure you set the correct distribution name?'
 				echo " Set Name .....: --with-distro=$DISTRO"
-				echo " Actual Name ..: --with-distro="`echo $ACTUAL | perl -ne 'print lc'`
+				echo " Actual Name ..: --with-distro=${distroc}"
 				echo ''
 				echo ''
 			else
@@ -76,10 +79,13 @@ qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo'
 esac
 
 # now substitute variables for the Makefile and install-dep target
+AC_SUBST([PIPCOMMAND], [${pip_command}])
+AC_SUBST([DISTROV], [${distrov}])
+AC_SUBST([DISTROC], [${distroc}])
 AC_SUBST([PKGCOUNT], [${PKG_COUNT}])
 AC_SUBST([PKGLIST], [${PKG_LIST}])
 AC_SUBST([DESC], [${distrosd}])
 AC_SUBST([PKGMGR], [${PKGMGR}])
 AC_SUBST([DTDIR], [/usr/share/applications])
-AC_SUBST([ICOND], [/usr/share/pixmap])
+AC_SUBST([ICOND], [/usr/share/pixmaps])
 ]) # End Mint distro config

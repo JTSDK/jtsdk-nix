@@ -4,9 +4,11 @@
 AC_DEFUN([AC_UBUNTU_CONFIG],[
 case "${DISTRO}" in
 	ubuntu|kubuntu|xubuntu|lubuntu )
-	distrosd=$(lsb_release -sd)
-	distrov=$(lsb_release -sr)
-
+		distrosd=$(lsb_release -sd)
+		distrov=$(lsb_release -sr)
+		distroc=$(lsb_release -sc)
+		AC_MSG_NOTICE([Distribution codename is supported: ${distroc}])
+		
 pilpkgs='libfreetype6-dev libjpeg-dev liblcms2-dev libtiff5-dev libwebp-dev \
 libwebpmux1 mime-support tcl8.6-dev tk8.6-dev zlib1g-dev'
 
@@ -24,14 +26,11 @@ qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo'
 				# configure package list based on distro version
 				case "${distrov}" in
 					14.04 )
-						BASE_LIST="${basepkgs}"
-					;;
+						BASE_LIST="${basepkgs}" ;;
 					14.10 )
-						BASE_LIST="${basepkgs}  ${pilpkgs}"
-					;;
+						BASE_LIST="${basepkgs}  ${pilpkgs}" ;;
 					15.04 )
-					BASE_LIST="${basepkgs}"
-					;;
+					BASE_LIST="${basepkgs}" ;;
 				esac
 
 	# sort the listing into a file
@@ -74,7 +73,7 @@ qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo'
 			echo ''
 			echo 'Are you sure you set the correct distribution name?'
 			echo " Set Name .....: --with-distro=$DISTRO"
-			echo " Actual Name ..: --with-distro="`echo $ACTUAL | perl -ne 'print lc'`
+			echo " Actual Name ..: --with-distro=${distroc}"
 			echo ''
 			echo ''
 		else
@@ -95,6 +94,7 @@ esac
 # now substitute variables for the Makefile and install-dep target
 AC_SUBST([PIPCOMMAND], [${pip_command}])
 AC_SUBST([DISTROV], [${distrov}])
+AC_SUBST([DISTROC], [${distroc}])
 AC_SUBST([PKGCOUNT], [${PKG_COUNT}])
 AC_SUBST([PKGLIST], [${PKG_LIST}])
 AC_SUBST([DESC], [${distrosd}])
