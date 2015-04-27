@@ -25,42 +25,37 @@ INTRODUCTION
 
 BUILD DESCRIPTIONS
 
- WSJT-X 1.5 (devel) and WSJT-X 1.5 RC (Release)
+ WSJT-X 1.6.1
  
- There are (3) primary build types:
- * Release ..: Install Release
- * Debug ....: Install Release With Debugging Enabled
- * Package ..: Distribution Package
+ This is an experimental branch to testing new features and functions.
+ The current focus is porting several modes from WSJT (JT4, JT65B, JT65C)
+ and testing the potential for WSPR inclusion.
  
- WSJT-X v1.5 is currently the head of the development. It is
- updated often and the current plan it to start producing RC's (Release
- Candidates) from this branch in preparation to formally release v1.5.
- WSJT-X v1.5 RC1 is the current release candidate based on the main WSJTX v1.5.0
- (devel) branch
-
- Early in April-2015, WSJT-X v1.4 was formally released and placed in
- a dormant state with respect to development. Unless there is a specific
- issue that cannot be resolved in the v1.5 or 1.5 RC branch, you should not
- expect much activity in the branch.
-
- The distribution ( package ) is only available for select Linux and Mac
- distributions. At the time of this writing, the package target supports:
+ Available build targets: ( Release, Debug and Package )
  
- Debian Based ..: Debian, Ubuntu, Mint etc.
- RPM Based .....: Fedora, OpenSUSE etc
-
-
- WSJT-X 1.6 (exp)
-
- This is an experimental branch for testing new concepts, ideas and code.
- It is subject to frequent updates, all of which may not land in a final
- release version.
  
- There are (2) primary build types:
- * Release ..: Install Release
- * Debug ....: Install Release With Debugging Enabled
-
-
+ WSJT-X 1.6.0
+ 
+ This branch is the head of development for WSJT-X. It is host to any
+ and all kinds of improvements.
+ 
+ Available build targets: ( Release, Debug and Package )
+ 
+ 
+ WSJT-X 1.5 RC
+ 
+ This branch is the release candidate branch. On any give day is can be
+ incremented upwards to produce the next public testing version.
+ 
+ Available build targets: ( Release, Debug and Package )
+ 
+ 
+ WSJTX 1.4 (Released)
+ 
+ JTSDK no longer builds this version, as it has been formally relseased by
+ the project team.
+ 
+ 
  WSJT v10 and WSPR v4.0
  
  Both WSJT and WSPR have many targets. Currently, the build script

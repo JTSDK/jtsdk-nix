@@ -1,42 +1,42 @@
-JTSDK v2.0.0 is a collection of Bash scripts designed to assist
+JTSDK v2.0.1 is a collection of Bash scripts designed to assist
 users in compiling the various WSJT applications used by
 Amateur Radio Operators.
 
 
 SUPPORTED DISTRIBUTIONS
 
-* Ubuntu .. 14.04* .. WSJT, WSPR, WSJTX
-* Mint .... 17.1* ... WSJT, WSPR, WSJTX
-* Debian .. 8.* ..... WSJTX Only
+* Ubuntu .... 14.04|14.10|15.04  ( WSJT, WSPR, WSJTX )
+* Mint ...... 17.1               ( WSJT, WSPR, WSJTX )
+* Debian .... 8.*                ( WSJT, WSPR, WSJTX )
+* Raspbian .. Jessie			 ( WSJT, WSPR, WSJTX )
 
-Note: Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+Note(s)
+
+1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+2. Rasbian upgraded to Jessie. Wheezy is not supported.
+3. At present, WSPR-X and MAP65 are not supported on Linux.
 
 
-INSTALL INSTRUCTIONS
+TO INSTALL
+* Download jtsdk-2.0.1.tar.gz
+* Extract: tar -xf jtsdk-2.0.1.tar.gz
+* Type: cd ./jtsdk-2.0.1
 
-* Download jtsdk-2.0.0.tar.gz
-* Extract: tar -xf jtsdk-2.0.0.tar.gz
-* Type: cd ./jtsdk-v2.0.0
+Ubuntu, Type:
+./autogen.sh --with-distro=ubuntu 
 
-For Ubuntu, Type:
-./autogen.sh --with-distro=ubuntu --enable-parallel=yes
+Mint, Type:
+./autogen.sh --with-distro=mint
 
-For Mint, Type:
-./autogen.sh --with-distro=mint --enable-parallel=yes
+Debian, Type:
+./autogen.sh --with-distro=debian
 
-For Debian, Type:
-./autogen.sh --with-distro=debian --enable-parallel=yes
+Raspbian, Type:
+./autogen.sh --with-distro=debian
 
 * Then Type: make
-
-* If there were no errors after make, re-run the autogen.sh command
-  used above. In this example, we're using Ubuntu:
-
-  ./autogen.sh --with-distro=ubuntu --enable-parallel=yes
-  
-* Type: sudo make install
-
-If there were no errors, the installation is finished.
+* Follow the prompts
+* When prompted, type: sudo make install
 
 
 TO RUN JTSDK:
@@ -46,7 +46,6 @@ In a terminal ( Ctrl+Alt+T )
 
 
 APPLICATION BUILD NOTES
-
 * If building WSJT-X, build Hamlib3 first, then build WSJT-X.
 * WSPR and WSJT do not require Hamlib3.
 * To update your builds, simply run JTSDK, and select the package.
@@ -54,18 +53,16 @@ APPLICATION BUILD NOTES
 
 
 POTENTIAL ISSUES
-
-* Due to package incompatibilities with Debian Jessie (8.0), WSJT
-  and WSPR will compile, but may give you runtime errors. Solutions
-  to this are being worked on, but at the present time, we do not
-  have a valid fix. Tis problem is a packaging issue, not an WSPR or
-  WSJT bug.
-
 * The Mint 17.1 Cinnamon Desktop installs python-numpy as part of it's
   desktop environment. If you encounter PObject errors when running
   WSPR or WSJT, more than likely this is the cause. WSPR and WSJT requires
   python3-numpy. To resolve, remove python-numpy, but be warned, this may
   cause unexpected behavior in your Desktop Environment.
+
+
+TO UNINSTALL
+* Type: cd ./jtsdk-nix-2.0.1
+* TYpe, sudo make uninstall
 
 
 SUPPORT

@@ -8,36 +8,36 @@
 PROGRAM		:=	@PROGRAM@
 VERSION		:=	@VERSION@
 BUGS		:=	@BUGS@
-WEB         :=	@WEB@
+WEB		:=	@WEB@
 
 # System Information
 DESC		:=	@DESC@
-OS			:=	@HOST_OS@
+OS		:=	@HOST_OS@
 DISTV		:=	@DISTROV@
 DISTC		:=	@DISTROC@
 ARCH		:=	@HOST_CPU@
 JJJJ		:=	@JJJJ@
 
 # Compiler Information
-CC			:=	@CC@
-CXX			:=	@CXX@
-FC			:=	@FC@
-FCV			:=	@FCV@
+CC		:=	@CC@
+CXX		:=	@CXX@
+FC		:=	@FC@
+FCV		:=	@FCV@
 FC_LIB_PATH	:=	@FC_LIB_PATH@
 
 # General Use Tools
-AWK			:=	@AWK@
-CP			:=	@CP@
+AWK		:=	@AWK@
+CP		:=	@CP@
 CHOWN		:=	@CHOWN@
 CHMOD		:=	@CHMOD@
-GIT			:=	@GIT@
-LN			:=	@LN@
-MV			:=	@MV@
-RM			:=	@RM@
-SED			:=	@SED@
+GIT		:=	@GIT@
+LN		:=	@LN@
+MV		:=	@MV@
+RM		:=	@RM@
+SED		:=	@SED@
 SHELL		:=	@SHELL@
-TAR			:=	@TAR@
-SVN			:=	@SVN@
+TAR		:=	@TAR@
+SVN		:=	@SVN@
 MKDIR		:=	@MKDIR@
 PYTHON3		:=	@PYTHON3@
 F2PY3		:=	@F2PY3@
@@ -71,39 +71,6 @@ WSJTI		:=	@WSJTI@
 # WSPR
 WSPRI		:=	@WSPRI@
 
-# WSPRX (currently not used)
-WSPRXIR		:=	@WSPRXIR@
-WSPRXID		:=	@WSPRXID@
-WSPRXBR		:=	@WSPRXBR@
-WSPRXBD		:=	@WSPRXBD@
-
-# MAP65 (currently not used)
-MAP65IR		:=	@MAP65IR@
-MAP65ID		:=	@MAP65ID@
-MAP65BR		:=	@MAP65BR@
-MAP65BD		:=	@MAP65BD@
-
-# WSJTX 1.6.1 (exp)
-WSJTXEXPIR	:=	@WSJTXEXPIR@
-WSJTXEXPID	:=	@WSJTXEXPID@
-WSJTXEXPBR	:=	@WSJTXEXPBR@
-WSJTXEXPBD	:=	@WSJTXEXPBD@
-WSJTXEXPPD	:=	@WSJTXEXPPD@
-
-# WSJTX 1.6.0 (devel)
-WSJTXIR		:=	@WSJTXIR@
-WSJTXID		:=	@WSJTXID@
-WSJTXBR		:=	@WSJTXBR@
-WSJTXBD		:=	@WSJTXBD@
-WSJTXPD		:=	@WSJTXPD@
-
-# WSJTX 1.5 RCx
-WSJTXRCIR	:=	@WSJTXRCIR@
-WSJTXRCID	:=	@WSJTXRCID@
-WSJTXRCBR	:=	@WSJTXRCBR@
-WSJTXRCBD	:=	@WSJTXRCBD@
-WSJTXRCPD	:=	@WSJTXRCPD@
-
 # Config Definitions
 BDOC		:=	@BDOC@
 DEFS		:=	@DEFS@
@@ -120,10 +87,10 @@ SCRIPTS		:=	$(wildcard src/*.sh)
 PKGS		:=	$(wildcard ./orig*.txt)
 
 # Foreground colours
-C_R			:=	'\033[01;31m'	# red
-C_G			:=	'\033[01;32m'	# green
-C_Y			:=	'\033[01;33m'	# yellow
-C_C			:=	'\033[01;36m'	# cyan
+C_R		:=	'\033[01;31m'	# red
+C_G		:=	'\033[01;32m'	# green
+C_Y		:=	'\033[01;33m'	# yellow
+C_C		:=	'\033[01;36m'	# cyan
 C_NC		:=	'\033[01;37m'	# no color
 
 # Targets
@@ -185,10 +152,10 @@ ifeq ($(BDOC),Yes)
 	@echo -e $(C_Y)"Building Documentation"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
-	@echo " Generating HTML Document [ jtsdk.html ]"
-	@$(RM) -f docs/*.html
-	@(cd docs/ ; make all > /dev/null 2>&1 )
-	@if [ -f docs/jtsdk.html ] ; then echo " Finished" ; fi 
+	@(cd docs/ ; make clean > /dev/null 2>&1 )
+	@echo ' Generating Docs && Manpages, please wait..'
+	@(cd docs/ ; make all > /dev/null 2>&1)
+	@if [ -f docs/jtsdk.html ] && [ -f docs/jtsdk.1 ] ; then echo " Finished" ; fi 
 endif
 
 pkg-check:
@@ -207,11 +174,11 @@ else
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo ' To ensure all dependencies are picked up'
-	@echo ' correctly, please re-run the autogen and make'
+	@echo ' correctly, please re-run configure and make'
 	@echo ' commands you ran initially.'
 	@echo ''
 	@echo ' For Example:'
-	@echo ' ./autogen.sh --with-distro=ubuntu'
+	@echo ' ./configure --with-distro=ubuntu --enable-separate'
 	@echo ''
 	@echo ' At the prompt, type ......: make' 
 	@echo ' At the 2nd prompt, type ..: sudo make install'
@@ -253,8 +220,9 @@ install:
 	@install -m 644 data/jtsdk.desktop $(DESTDIR)$(DTDIR)
 	@install -m 644 data/jtsdk.xpm $(DESTDIR)$(ICOND)
 ifeq ($(BDOC),Yes)
-	@echo '..Installing Documentation'
+	@echo '..Installing Documentation and Manpages'
 	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)
+	@install -m 644 docs/jtsdk.1 $(DESTDIR)$(MANDIR)
 endif
 	@echo '..Finished'
 	@echo ''

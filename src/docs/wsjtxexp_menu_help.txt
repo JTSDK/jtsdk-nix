@@ -1,4 +1,5 @@
-WSJT-RC 1.6.0 EXP BUILD HELP MENU
+WSJT-X 1.6.1 Experimental Branch
+
 
 NAVIGATION:
  You can  move  through the file by using the cursor, page-up, 
@@ -20,34 +21,27 @@ INSTALL LOCATIONS
  home directory during configure, the following applies:
  
  Source ...: /home/$USER/jtsdk/src/wsjtx_exp
- Release ..: /home/$USER/jtsdk/wsjtxexp/install/release/{bin,share}
- Debug ....: /home/$USER/jtsdk/wsjtxexp/install/debug/{bin,share}
- 
- Build Trees follow the same convension:
- Release ..: /home/$USER/jtsdk/wsjtxexp/build/release/{bin,share}
- Debug ....: /home/$USER/jtsdk/wsjtxexp/build/debug/{bin,share}
+ Release ..: /home/$USER/jtsdk/wsjtx/1.6.1/install/Release
+ Debug ....: /home/$USER/jtsdk/wsjtx/1.6.1/install/Debug
 
- Note: The Package build tree will use the Relese build directory
- and a tmp location while compiling the installer.
+ If you used --enable-separate during the configure process, each of the
+ base folders will be appended with the SVN revision number. This allow for
+ separating the each revision into it's owb build and install tree. For
+ example:
+ 
+ WSJT-X Version ...: 1.6.1
+ SVN Change Rev ...: r5295
+ 
+ The above would result in the following paths:
+
+ Release ..: /home/$USER/jtsdk/wsjtx/1.6.1/1.6.1-r5295/install/Release
+ Debug ....: /home/$USER/jtsdk/wsjtx/1.6.1/1.6.1-r5295/install/Debug
 
 
 RUN AFTER BUILD
  To run WSJT-X after a build, browse to the install location
  and double-click on the 'wsjtx' binary in the../bin
  directory
-
-
-HAMLIB3 INFORMATION
- WSJT-X requires a staic build of Hamlib3. You must build
- Hamlib3 before building a Release, Debug or Package target.
- The Super Build Script downloads and Builds Hamlib3 during
- the build process., so it it not necessary to pre-build
- Hamlib3 when using the Super Build script. The Hamlib3
- locations are as follows:
- 
- Source ...: /home/$USER/jtsdk/src/g4wjs-hamlib
- Build ....: /home/$USER/jtsdk/src/build/hamlib
- Install ..: /home/$USER/jtsdk/hamlib3
 
 
 ADDITIONAL RESOURCES

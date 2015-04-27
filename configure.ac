@@ -37,12 +37,12 @@ The Following distribuitons are currently supported:
  * Debian included raspbian
 
  Usage:
- ./autogen.sh --with-distro=<distribution>
+ ./configure --with-distro=<distribution>
 
- For Ubuntu.....: ./autogen.sh --with-distro=ubuntu
- For Mint.......: ./autogen.sh --with-distro=mint
- For Debian.....: ./autogen.sh --with-distro=debian
- For Raspbian...: ./autogen.sh --with-distro=debian
+ For Ubuntu.....: ./configure --with-distro=ubuntu
+ For Mint.......: ./configure --with-distro=mint
+ For Debian.....: ./configure --with-distro=debian
+ For Raspbian...: ./configure --with-distro=debian
  
 ])	;;
 	esac
@@ -53,19 +53,19 @@ else
 	echo ' configure the Makefiles. Supported Distributions:'
 	echo ''
 	echo '  Distribution   Version'
-	echo '   Debian         Jessie  or  later (8.*)'
-	echo '   Ubuntu         Trusty  or  later (14.04* | 14.10* |15.04*)'
-	echo '   Mint           Rebecca or  later (17.*)'
+	echo '   Debian         Jessie   or  later (8.*)'
+	echo '   Mint           Rebecca  or  later (17.*)'
+	echo '   Ubuntu         Trusty   or  later (14.04* | 14.10* |15.04*)'
 	echo ''
 	echo '   Note(s):'
 	echo '    1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu'
 	echo '    2. Debian includes Raspbian'
 	echo '    3. You do not need to specify the version'
 	echo ''
-	echo '   For Ubuntu, type ....: ./autogen.sh --with-distro=ubuntu'
-	echo '   For Mint, type ......: ./autogen.sh --with-distro=mint'
-	echo '   For Debian, type ....: ./autogen.sh --with-distro=debian'
-	echo '   For Raspbian, type ..: ./autogen.sh --with-distro=debian'
+	echo '   Ubuntu, type ....: ./configure --with-distro=ubuntu'
+	echo '   Mint, type ......: ./configure --with-distro=mint'
+	echo '   Debian, type ....: ./configure --with-distro=debian'
+	echo '   Raspbian, type ..: ./configure --with-distro=debian'
 	echo ''
 	exit 1
 fi
@@ -158,6 +158,8 @@ AC_PATH_PROG([SED], [sed])
 AC_PATH_PROG([TAR], [tar])
 AC_PATH_PROG([TOUCH], [touch])
 AC_PATH_PROG([ASCIIDOC], [asciidoc])
+AC_PATH_PROG([A2X], [a2x])
+
 
 # ------------------------------------------------------------------------------
 #  check gfortran (m4)
@@ -225,6 +227,9 @@ AC_SUBST([AUTHORS], ["$JTSDK_AUTHORS"])
 AC_SUBST([COPYRIGHT], ["$JTSDK_COPYRIGHT"])
 AC_SUBST([DOCSRC], ["$DOCSRC"])
 AC_SUBST([ASCIIDOC], ["$ASCIIDOC"])
+AC_SUBST([A2X], ["$A2X"])
+
+
 
 # system subs
 AC_SUBST([BINDIR], ["$BINDIR"])
@@ -263,6 +268,7 @@ src/jtsdk-map65.sh
 src/jtsdk-wsprx.sh
 data/jtsdk.desktop
 docs/Makefile
+docs/jtsdk.1.txt
 ])
 AC_OUTPUT
 
@@ -278,25 +284,22 @@ echo "
  Distribution ..............: ${DESC} ${HOST_CPU}
  Install prefix ............: ${PREFIX}
  Working Directory .........: ${HOMEDIR}
+ Python3 Directory .........: ${PYTHON3}
+ F2PY3 Directory ...........: ${F2PY3}
  Needed Packages ...........: ${PKG_COUNT}
  
  OPTIONS
  CPU Cores .................: ${JJJJ}
  With HTML Docs ............: ${BDOC}
  Enable Folder Separation ..: ${SEPARATE}
-
 "
 if test ${PKGCOUNT} -gt 0 ; then
-echo ' * List needed pkgs, type ........: make list-needed'
-echo ' * Simulate pkg install, type ....: make simulate'
-echo ' * Install pkgs, type ............: make'
+echo ' ADDITIONAL PACKAGES NEEDED'
+echo ' * List needed pkgs ........: make list-needed'
+echo ' * Install pkgs ............: make'
 echo ''
 else
-echo " Build ${PROGRAM}, type ..: make"
+echo " Build ${PROGRAM}, type .........: make"
 echo ''
 echo ''
 fi
-
-
-
-

@@ -1,35 +1,39 @@
 # Makefile for Linux
 # Re-direct stdout and stderr:		bash
-#								make >& junk
+#					make >& junk
 #
-# Prerequisites: Bash, Git, Subversion
+# Prerequisites: Asciidoc, A2x, Python ( > =2.5 < 3.0 ) 
 
 # Program Infomation
 PROGRAM		:=	@PROGRAM@
 VERSION		:=	@VERSION@
 BUGS		:=	@BUGS@
-WEB         :=	@WEB@
+WEB		:=	@WEB@
 
 # System Information
 DESC		:=	@DESC@
-OS			:=	@HOST_OS@
+OS		:=	@HOST_OS@
 DISTV		:=	@DISTROV@
 ARCH		:=	@HOST_CPU@
 JJJJ		:=	@JJJJ@
 
 # General Vars
 DOCSRC		:=	@DOCSRC@
-RM			:=	@RM@
+RM		:=	@RM@
 ASCIIDOC	:=	@ASCIIDOC@
+A2X		:=	@A2X@
 
-all: build-doc
+
+all: docs manpage
 
 # Install package dependencies
-build-doc:
+docs:
 	@$(ASCIIDOC) -b xhtml11 -a data-uri -a toc2 -o jtsdk.html $(DOCSRC)/dev-guide-main.adoc
+
+manpage:
+	@$(A2X) --doctype manpage --format manpage --no-xmllint jtsdk.1.txt
 
 # Cleanup Source Tree
 .PHONY: clean
 clean:
-	${RM} -f ./*.html
-
+	$(RM) -f ./jtsdk.html ./jtsdk.1 

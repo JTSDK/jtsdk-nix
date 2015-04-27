@@ -1,4 +1,4 @@
-WSJT-RC 1.5 RC1 BUILD HELP MENU
+WSJT-X 1.5.0 Release Candidate Branch
 
 NAVIGATION:
  You can  move  through the file by using the cursor, page-up, 
@@ -8,51 +8,39 @@ NAVIGATION:
 
 
 BUILD INFORMATION
- The following builds are availble for WSJT-X:
+ The following builds are available for WSJT-X:
 
-* Release ...... Build Standard Release Target
-* Debug ........ Build Debug Release Target
-* Package ...... Build NSIS Installer Package (On Hold)
-* Super Build .. Build Hamlib3 and WSJTX (On Hold)
-
-** On Hold means the builds are still under development.
+* Release ...... Install Release Target
+* Debug ........ Install Debug Target
 
 
 INSTALL LOCATIONS
  All of the builds, including the package installer, are located
- in subfolders under wsjtx. If you did not change the default
- home direcotry during configure, the following applies:
+ in sub-folders under wsjtx. If you did not change the default
+ home directory during configure, the following applies:
  
- Source ...: /home/$USER/jtsdk/src/wsjtx-1.5
- Release ..: /home/$USER/jtsdk/wsjtxrc/install/release/{bin,share}
- Debug ....: /home/$USER/jtsdk/wsjtxrc/install/debug/{bin,share}
- Package ..: /home/$USER/jtsdk/wsjtxrc/install/package
- 
- Build Trees follow the same convension:
- Release ..: /home/$USER/jtsdk/wsjtxrc/build/release/{bin,share}
- Debug ....: /home/$USER/jtsdk/wsjtxrc/build/debug/{bin,share}
+ Source ...: /home/$USER/jtsdk/src/wsjtx_exp
+ Release ..: /home/$USER/jtsdk/wsjtx/1.5.0/install/Release
+ Debug ....: /home/$USER/jtsdk/wsjtx/1.5.0/install/Debug
 
- Note: The Package build tree will use the Relese build directory
- and a tmp location while compiling the installer.
+ If you used --enable-separate during the configure process, each of the
+ base folders will be appended with the SVN revision number. This allow for
+ separating the each revision into it's owb build and install tree. For
+ example:
+ 
+ WSJT-X Version ...: 1.5.0
+ SVN Change Rev ...: r5295
+ 
+ The above would result in the following paths:
+
+ Release ..: /home/$USER/jtsdk/wsjtx/1.5.0/1.5.0-r5295/install/Release
+ Debug ....: /home/$USER/jtsdk/wsjtx/1.5.0/1.5.0-r5295/install/Debug
 
 
 RUN AFTER BUILD
- To run WSJT-X after a build, browse to the install locaiton
+ To run WSJT-X after a build, browse to the install location
  and double-click on the 'wsjtx' binary in the../bin
  directory
-
-
-HAMLIB3 INFORMATION
- WSJT-X requires a staic build of Hamlib3. You must build
- Hamlib3 before building a Release, Debug or Package target.
- The Super Build Script downloads and Builds Hamlib3 during
- the build process., so it it not necessary to pre-build
- Hamlib3 when using the Super Build script. The Hamlib3
- locations are as follows:
- 
- Source ...: /home/$USER/jtsdk/src/g4wjs-hamlib
- Build ....: /home/$USER/jtsdk/src/build/hamlib3
- Install ..: /home/$USER/jtsdk/hamlib3
 
 
 ADDITIONAL RESOURCES
