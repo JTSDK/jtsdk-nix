@@ -1,5 +1,5 @@
 :doctype: manpage
-:man manual: JTSDK Man Page
+:man manual: JTSDK Manpage
 :man date: {date}
 :man version: Version 2.0.1
 
@@ -11,49 +11,63 @@ jtsdk - Build System for WSJT Applications
 
 
 == SYNOPSIS
-
 jtsdk ['OPTION']
 
-== DESCRIPTION
 
-*JTSDK* is a set of shell scripts 
+== DESCRIPTION
+*JTSDK* is a set of shell scripts and small utilities designed to assist users
+with compiling the WSJT suit eof applications.
 
 
 == OPTIONS
+Options are functions that extend or enhance the primary purpose of *JTSDK*. You
+must use the double-hyphen (*--*) to initiate them. The following extended
+functions are currently enabled:
 
+*--clean::
+This function will attempt to clean up, +remove+, older builds, leaving only
+the last build compiled for a given application. It is still in beta testing.
 
+[FILEBUG]
+*--file-bug
+This function is used is similar to +++--sysinfo+++, in that, it will use the same
+code to gather information, then combine them in an easy to use .tar.gz file
+for sending vial email.
 
+*--help::
+Displays the main help page, and information HTML and manpage documents.
+
+*--supported::
+List what WSJT applications are currently supported.
+
+*--sysinfo::
+Generates, then displays information about installed packages, system architectures,
+distribution in use.
 
 
 == BUGS
+If you find a bug or suspect *JTSDK* is not acting as you think it should,
+send an email with as much detail as possible to:
+<wsjt-devel@lists.sourceforge.net>
 
-If you find a bug or suspect *'wspr'* is not acting as you think it should,
-send an email with as much detail as possible to: <wsjt-devel@lists.sourceforge.net>
+It may also be helpful to use the +++file-bug+++ options to gather more system
+system information beforehand.
 
 
 == AUTHORS
------
-Joe Taylor, K1JT, <joe@princeton.edu> .. Original Content Provider
+--------------------------------------------------------------------------------
 Greg Beam, KI7MT, <ki7mt@yahoo.com> .... Manpage Editor
------
+--------------------------------------------------------------------------------
 
-[[X1]]
 == RESOURCES
------
-Project Site: ... <http://sourceforge.net/projects/wsjt/>
+--------------------------------------------------------------------------------
 Main web site: .. <http://www.physics.princeton.edu/pulsar/K1JT/>
-Documentation: .. <http://www.physics.princeton.edu/pulsar/K1JT/wspr-main.html>
------
-
-
-== SEE ALSO
-
-wspr0(1), fmtest(1), wsprcode(1)
+Project Site: ... <http://sourceforge.net/projects/jtsdk/>
+--------------------------------------------------------------------------------
 
 
 == COPYING
-
-Copyright &copy; 2014 Joseph H Taylor, Jr, K1JT
+Copyright &copy; 2014-2015 Joseph H Taylor, Jr, K1JT
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

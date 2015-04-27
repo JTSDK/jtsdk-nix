@@ -264,10 +264,10 @@ uninstall:
 .PHONY: clean simulate list-needed
 clean:
 	$(RM) -f src/*.sh config.log config.status autoscan.log configure.scan \
-	configure Makefile src/language/language_en data/jtsdk.desktop installed.txt \
+	Makefile src/language/language_en data/jtsdk.desktop installed.txt \
 	temp.list needed.txt installed.txt
 	$(RM) -rf ./autom4*
-	$(RM) -f docs/*.html docs/Makefile
+	$(RM) -f docs/*.html docs/Makefile docs/*.1
 
 list-needed:
 	@clear
