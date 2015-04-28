@@ -625,6 +625,9 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+HL3I
+HL3B
+HL3SRC
 ADOCD
 MKRD
 LOGD
@@ -3031,6 +3034,11 @@ SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGD="$HOMEDIR/logs"
 MKRD="$HOMEDIR/mkrd"
+
+# hamlib3 directories
+HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
+HL3B="$HOMEDIR/src/build/hamlib"
+HL3I="$HOMEDIR/hamlib3"
 
 # ------------------------------------------------------------------------------
 #  check compilers
@@ -6082,6 +6090,14 @@ LOGD="$LOGD"
 MKRD="$MKRD"
 
 ADOCD="$ADOCD"
+
+
+# hamlib3 subs
+HL3SRC="$HL3SRC"
+
+HL3B="$HL3B"
+
+HL3I="$HL3I"
 
 
 # ------------------------------------------------------------------------------

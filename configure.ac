@@ -119,6 +119,11 @@ TMPD="$HOMEDIR/tmp"
 LOGD="$HOMEDIR/logs"
 MKRD="$HOMEDIR/mkrd"
 
+# hamlib3 directories
+HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
+HL3B="$HOMEDIR/src/build/hamlib"
+HL3I="$HOMEDIR/hamlib3"
+
 # ------------------------------------------------------------------------------
 #  check compilers
 # ------------------------------------------------------------------------------
@@ -231,6 +236,11 @@ AC_SUBST([TMPD], ["$TMPD"])
 AC_SUBST([LOGD], ["$LOGD"])
 AC_SUBST([MKRD], ["$MKRD"])
 AC_SUBST([ADOCD], ["$ADOCD"])
+
+# hamlib3 subs
+AC_SUBST([HL3SRC], ["$HL3SRC"])
+AC_SUBST([HL3B], ["$HL3B"])
+AC_SUBST([HL3I], ["$HL3I"])
 
 # ------------------------------------------------------------------------------
 #  configure makefiles and scripts
