@@ -8,7 +8,7 @@ case "${host_os}" in
 	*freebsd* )
 		# if --with-gfortran is not empty
 		AC_ARG_WITH([gfortran],
-		AC_HELP_STRING([--with-gfortran=DIR], [Path to gfortran]), [gfortran=$with_gfortran])
+		AC_HELP_STRING([--with-gfortran=PATH], [Path to gfortran]), [gfortran=$with_gfortran])
 		AC_MSG_CHECKING([F2PY --with-f2py])
 		if test -n ${with_gfortran}; then
 			gfortran="${with_gfortran}"

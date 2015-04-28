@@ -1,15 +1,20 @@
-JTSDK v2.0.0 is a collection of Bash scripts designed to assist
+JTSDK v2.0.1 is a collection of Bash scripts designed to assist
 users in compiling the various WSJT applications used by
 Amateur Radio Operators.
 
 
 SUPPORTED DISTRIBUTIONS
 
-* Ubuntu .. 14.04* .. WSJT, WSPR, WSJTX
-* Mint .... 17.1* ... WSJT, WSPR, WSJTX
-* Debian .. 8.* ..... WSJTX Only
+* Ubuntu .... 14.04|14.10|15.04  ( WSJT, WSPR, WSJTX )
+* Mint ...... 17.1               ( WSJT, WSPR, WSJTX )
+* Debian .... 8.*                ( WSJT, WSPR, WSJTX )
+* Raspbian .. Jessie			 ( WSJT, WSPR, WSJTX )
 
-Note: Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+Note(s):
+
+1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+2. Rasbian upgraded to Jessie. Wheezy is not supported.
+3. At present, WSPR-X and MAP65 are not supported on Linux.
 
 
 SUPPORT

@@ -106,7 +106,7 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-#  system install paths ( also used in build scripts )
+#  system and $USER paths ( also used in build scripts )
 # ------------------------------------------------------------------------------
 LOGNAME=$LOGNAME
 BINDIR="$prefix"/bin
@@ -114,19 +114,10 @@ SHARE="$prefix"/share/jtsdk
 MANDIR="$prefix"/share/man/man1
 DOCDIR="$prefix"/share/jtsdk/doc
 DOCSRC=$(exec pwd)/docs/source
-
-# ------------------------------------------------------------------------------
-#  $USER paths ( also used in build scripts )
-# ------------------------------------------------------------------------------
 SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGD="$HOMEDIR/logs"
 MKRD="$HOMEDIR/mkrd"
-
-# hamlib3 directories
-HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
-HL3B="$HOMEDIR/src/build/hamlib"
-HL3I="$HOMEDIR/hamlib3"
 
 # ------------------------------------------------------------------------------
 #  check compilers
@@ -159,7 +150,6 @@ AC_PATH_PROG([TAR], [tar])
 AC_PATH_PROG([TOUCH], [touch])
 AC_PATH_PROG([ASCIIDOC], [asciidoc])
 AC_PATH_PROG([A2X], [a2x])
-
 
 # ------------------------------------------------------------------------------
 #  check gfortran (m4)
@@ -211,7 +201,6 @@ AC_BUILD_DOCS
 # ------------------------------------------------------------------------------
 AC_BUILD_SEPARATE
 
-
 # ------------------------------------------------------------------------------
 #  substitutions
 # ------------------------------------------------------------------------------
@@ -229,8 +218,6 @@ AC_SUBST([DOCSRC], ["$DOCSRC"])
 AC_SUBST([ASCIIDOC], ["$ASCIIDOC"])
 AC_SUBST([A2X], ["$A2X"])
 
-
-
 # system subs
 AC_SUBST([BINDIR], ["$BINDIR"])
 AC_SUBST([SHARE], ["$SHARE"])
@@ -244,15 +231,6 @@ AC_SUBST([TMPD], ["$TMPD"])
 AC_SUBST([LOGD], ["$LOGD"])
 AC_SUBST([MKRD], ["$MKRD"])
 AC_SUBST([ADOCD], ["$ADOCD"])
-
-# application install subs
-AC_SUBST([WSJTI], ["$WSJTI"])
-AC_SUBST([WSPRI], ["$WSPRI"])
-
-# hamlib3 subs
-AC_SUBST([HL3SRC], ["$HL3SRC"])
-AC_SUBST([HL3B], ["$HL3B"])
-AC_SUBST([HL3I], ["$HL3I"])
 
 # ------------------------------------------------------------------------------
 #  configure makefiles and scripts

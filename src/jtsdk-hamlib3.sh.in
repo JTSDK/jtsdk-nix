@@ -25,12 +25,12 @@ set -e
 # home directory paths
 HOMEDIR=@HOMEDIR@
 SRCD=@SRCD@
-HL3SRC=@HL3SRC@
-HL3B=@HL3B@
-HL3I=@HL3I@
 LOGS=@LOGD@
 TMP=@TMPD@
 MKRD=@MKRD@
+HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
+HL3B="$HOMEDIR/src/build/hamlib"
+HL3I="$HOMEDIR/hamlib3"
 
 # misc variables
 JJ=@JJJJ@

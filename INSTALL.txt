@@ -10,7 +10,7 @@ SUPPORTED DISTRIBUTIONS
 * Debian .... 8.*                ( WSJT, WSPR, WSJTX )
 * Raspbian .. Jessie			 ( WSJT, WSPR, WSJTX )
 
-Note(s)
+Note(s):
 
 1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu
 2. Rasbian upgraded to Jessie. Wheezy is not supported.
@@ -22,21 +22,34 @@ TO INSTALL
 * Extract: tar -xf jtsdk-2.0.1.tar.gz
 * Type: cd ./jtsdk-2.0.1
 
-Ubuntu, Type:
-./autogen.sh --with-distro=ubuntu 
+As of this wriring, there are several package enabled options that may
+be passed to the configure script:
 
-Mint, Type:
-./autogen.sh --with-distro=mint
 
-Debian, Type:
-./autogen.sh --with-distro=debian
+Enable Disable Festures:
+--enable-separate		# Separate build dir's by version & svn number
+--disable-docs			# Disable building docs and manpages
+--disable-parallel		# Disable building with multiple cores
 
-Raspbian, Type:
-./autogen.sh --with-distro=debian
 
-* Then Type: make
-* Follow the prompts
-* When prompted, type: sudo make install
+Set Alternate Paths:
+--with-distro=DISTRO    Distro Name: (debian, ubuntu, mint)
+--with-homedir=PATH     Change Default Home directory path
+--with-gfortran=PATH    Path to gfortran
+--with-python3=PATH     Path to python3
+--with-f2py3=PATH       Path to f2py3
+
+
+Recommended Invocations:
+Ubuntu, Type....: ./configure --with-distro=ubuntu --enable-separate
+Mint, Type......: ./configure --with-distro=mint --enable-separate
+Debian, Type....: ./configure --with-distro=debian --enable-spearate
+Raspbian, Type..: ./configure --with-distro=debian --enable-separate
+
+
+After Configuring:
+* Type: make
+* Follow the prompts, then, type..: sudo make install
 
 
 TO RUN JTSDK:
@@ -48,7 +61,6 @@ In a terminal ( Ctrl+Alt+T )
 APPLICATION BUILD NOTES
 * If building WSJT-X, build Hamlib3 first, then build WSJT-X.
 * WSPR and WSJT do not require Hamlib3.
-* To update your builds, simply run JTSDK, and select the package.
 * Ensure you update Hamlib3 often, as updates are frequently posted.
 
 
@@ -61,7 +73,7 @@ POTENTIAL ISSUES
 
 
 TO UNINSTALL
-* Type: cd ./jtsdk-nix-2.0.1
+* Type: cd ./jtsdk-2.0.1
 * TYpe, sudo make uninstall
 
 

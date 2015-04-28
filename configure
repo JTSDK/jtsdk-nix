@@ -625,11 +625,6 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-HL3I
-HL3B
-HL3SRC
-WSPRI
-WSJTI
 ADOCD
 MKRD
 LOGD
@@ -1399,7 +1394,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-distro=DISTRO    Distro Name: (debian, ubuntu, mint)
   --with-homedir=PATH     Home directory path
-  --with-gfortran=DIR     Path to gfortran
+  --with-gfortran=PATH    Path to gfortran
   --with-python3=PATH     Path to python3
   --with-f2py3=PATH       Path to f2py3
 
@@ -3024,7 +3019,7 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-#  system install paths ( also used in build scripts )
+#  system and $USER paths ( also used in build scripts )
 # ------------------------------------------------------------------------------
 LOGNAME=$LOGNAME
 BINDIR="$prefix"/bin
@@ -3032,19 +3027,10 @@ SHARE="$prefix"/share/jtsdk
 MANDIR="$prefix"/share/man/man1
 DOCDIR="$prefix"/share/jtsdk/doc
 DOCSRC=$(exec pwd)/docs/source
-
-# ------------------------------------------------------------------------------
-#  $USER paths ( also used in build scripts )
-# ------------------------------------------------------------------------------
 SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGD="$HOMEDIR/logs"
 MKRD="$HOMEDIR/mkrd"
-
-# hamlib3 directories
-HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
-HL3B="$HOMEDIR/src/build/hamlib"
-HL3I="$HOMEDIR/hamlib3"
 
 # ------------------------------------------------------------------------------
 #  check compilers
@@ -5537,7 +5523,6 @@ fi
 
 
 
-
 # ------------------------------------------------------------------------------
 #  check gfortran (m4)
 # ------------------------------------------------------------------------------
@@ -6047,7 +6032,6 @@ fi
 
 
 
-
 # ------------------------------------------------------------------------------
 #  substitutions
 # ------------------------------------------------------------------------------
@@ -6076,8 +6060,6 @@ ASCIIDOC="$ASCIIDOC"
 A2X="$A2X"
 
 
-
-
 # system subs
 BINDIR="$BINDIR"
 
@@ -6100,20 +6082,6 @@ LOGD="$LOGD"
 MKRD="$MKRD"
 
 ADOCD="$ADOCD"
-
-
-# application install subs
-WSJTI="$WSJTI"
-
-WSPRI="$WSPRI"
-
-
-# hamlib3 subs
-HL3SRC="$HL3SRC"
-
-HL3B="$HL3B"
-
-HL3I="$HL3I"
 
 
 # ------------------------------------------------------------------------------
