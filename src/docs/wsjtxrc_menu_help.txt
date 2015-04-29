@@ -1,0 +1,53 @@
+WSJT-X 1.5.0 Release Candidate Branch
+
+NAVIGATION:
+ You can  move  through the file by using the cursor, page-up, 
+ page-down, arrow UP/DWN and HOME/END keys available on most keyboards.
+ If the lines are too long to be displayed in the box, the LEFT/RIGHT keys
+ can be used to scroll the text region horizontally.
+
+
+BUILD INFORMATION
+ The following builds are available for WSJT-X:
+
+* Release ...... Install Release Target
+* Debug ........ Install Debug Target
+
+
+INSTALL LOCATIONS
+ All of the builds, including the package installer, are located
+ in sub-folders under wsjtx. If you did not change the default
+ home directory during configure, the following applies:
+ 
+ Source ...: /home/$USER/jtsdk/src/wsjtx_exp
+ Release ..: /home/$USER/jtsdk/wsjtx/1.5.0/install/Release
+ Debug ....: /home/$USER/jtsdk/wsjtx/1.5.0/install/Debug
+
+ If you used --enable-separate during the configure process, each of the
+ base folders will be appended with the SVN revision number. This allow for
+ separating the each revision into it's owb build and install tree. For
+ example:
+ 
+ WSJT-X Version ...: 1.5.0
+ SVN Change Rev ...: r5295
+ 
+ The above would result in the following paths:
+
+ Release ..: /home/$USER/jtsdk/wsjtx/1.5.0/1.5.0-r5295/install/Release
+ Debug ....: /home/$USER/jtsdk/wsjtx/1.5.0/1.5.0-r5295/install/Debug
+
+
+RUN AFTER BUILD
+ To run WSJT-X after a build, browse to the install location
+ and double-click on the 'wsjtx' binary in the../bin
+ directory
+
+
+ADDITIONAL RESOURCES
+ 
+WSJT Home Page:
+* http://www.physics.princeton.edu/pulsar/K1JT/
+
+WSJT Program Development:
+* www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
+

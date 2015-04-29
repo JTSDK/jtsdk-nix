@@ -1,0 +1,93 @@
+JTSDK v2.0.1 is a collection of Bash scripts designed to assist
+users in compiling the various WSJT applications used by
+Amateur Radio Operators.
+
+
+SUPPORTED DISTRIBUTIONS
+
+* Ubuntu .... 14.04|14.10|15.04  ( WSJT, WSPR, WSJTX )
+* Mint ...... 17.1               ( WSJT, WSPR, WSJTX )
+* Debian .... 8.*                ( WSJT, WSPR, WSJTX )
+* Raspbian .. Jessie			 ( WSJT, WSPR, WSJTX )
+
+Note(s):
+
+1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu
+2. Rasbian upgraded to Jessie. Wheezy is not supported.
+3. At present, WSPR-X and MAP65 are not supported on Linux.
+
+
+TO INSTALL
+* Download jtsdk-2.0.1.tar.gz
+* Extract: tar -xf jtsdk-2.0.1.tar.gz
+* Type: cd ./jtsdk-2.0.1
+
+As of this wriring, there are several package enabled options that may
+be passed to the configure script:
+
+
+Enable Disable Festures:
+--enable-separate		# Separate build dir's by version & svn number
+--disable-docs			# Disable building docs and manpages
+--disable-parallel		# Disable building with multiple cores
+
+
+Set Alternate Paths:
+--with-distro=DISTRO    Distro Name: (debian, ubuntu, mint)
+--with-homedir=PATH     Change Default Home directory path
+--with-gfortran=PATH    Path to gfortran
+--with-python3=PATH     Path to python3
+--with-f2py3=PATH       Path to f2py3
+
+
+Recommended Invocations:
+Ubuntu, Type....: ./configure --with-distro=ubuntu --enable-separate
+Mint, Type......: ./configure --with-distro=mint --enable-separate
+Debian, Type....: ./configure --with-distro=debian --enable-spearate
+Raspbian, Type..: ./configure --with-distro=debian --enable-separate
+
+
+After Configuring:
+* Type: make
+* Follow the prompts, then, type..: sudo make install
+
+
+TO RUN JTSDK:
+
+In a terminal ( Ctrl+Alt+T )
+* Type: jtsdk
+
+
+APPLICATION BUILD NOTES
+* If building WSJT-X, build Hamlib3 first, then build WSJT-X.
+* WSPR and WSJT do not require Hamlib3.
+* Ensure you update Hamlib3 often, as updates are frequently posted.
+
+
+POTENTIAL ISSUES
+* The Mint 17.1 Cinnamon Desktop installs python-numpy as part of it's
+  desktop environment. If you encounter PObject errors when running
+  WSPR or WSJT, more than likely this is the cause. WSPR and WSJT requires
+  python3-numpy. To resolve, remove python-numpy, but be warned, this may
+  cause unexpected behavior in your Desktop Environment.
+
+
+TO UNINSTALL
+* Type: cd ./jtsdk-2.0.1
+* TYpe, sudo make uninstall
+
+
+SUPPORT
+
+If you have problems with the JTSDK, please report them to the WSJT-Devel 
+List at: < wsjt-devel@lists.sourceforge.net >
+
+
+WSJT INFORMATION
+
+WSJT Home Page:
+http://www.physics.princeton.edu/pulsar/K1JT/
+
+WSJT Program Development:
+www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
+

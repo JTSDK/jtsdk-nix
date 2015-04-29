@@ -1,0 +1,313 @@
+# Makefile for Linux
+# Re-direct stdout and stderr:		bash
+#								make >& junk
+#
+# Prerequisites: Bash, Git, Subversion
+
+# Program Infomation
+PROGRAM		:=	@PROGRAM@
+VERSION		:=	@VERSION@
+BUGS		:=	@BUGS@
+WEB		:=	@WEB@
+
+# System Information
+DESC		:=	@DESC@
+OS		:=	@HOST_OS@
+DISTV		:=	@DISTROV@
+DISTC		:=	@DISTROC@
+ARCH		:=	@HOST_CPU@
+JJJJ		:=	@JJJJ@
+
+# Compiler Information
+CC		:=	@CC@
+CXX		:=	@CXX@
+FC		:=	@FC@
+FCV		:=	@FCV@
+FC_LIB_PATH	:=	@FC_LIB_PATH@
+
+# General Use Tools
+AWK		:=	@AWK@
+CP		:=	@CP@
+CHOWN		:=	@CHOWN@
+CHMOD		:=	@CHMOD@
+GIT		:=	@GIT@
+LN		:=	@LN@
+MV		:=	@MV@
+RM		:=	@RM@
+SED		:=	@SED@
+SHELL		:=	@SHELL@
+TAR		:=	@TAR@
+SVN		:=	@SVN@
+MKDIR		:=	@MKDIR@
+PYTHON3		:=	@PYTHON3@
+F2PY3		:=	@F2PY3@
+CMAKE		:=	@CMAKE@
+QMAKE		:=	@QMAKE@
+ASCIIDOC	:=	@ASCIIDOC@
+DOCSRC		:=	@DOCSRC@
+
+# Install locations
+INSTALL		:=	install
+BINDIR		:=	@BINDIR@
+SHARE		:=	@SHARE@
+MANDIR		:=	@MANDIR@
+DOCDIR		:=	@DOCDIR@
+DTDIR		:=	@DTDIR@
+ICOND		:=	@ICOND@
+OPENJD		:=	./src/openjpeg-2.1.0
+
+# Home directory locations
+LOGNAME		:=	@LOGNAME@
+HOMEDIR		:=	@HOMEDIR@
+SRCD		:=	@SRCD@
+TMPD		:=	@TMPD@
+LOGD		:=	@LOGD@
+MKRD		:=	@MKRD@
+
+# Application Directories
+# WSJT
+WSJTI		:=	@WSJTI@
+
+# WSPR
+WSPRI		:=	@WSPRI@
+
+# Config Definitions
+BDOC		:=	@BDOC@
+DEFS		:=	@DEFS@
+
+# Package List and Program
+PKGMGR		:=	@PKGMGR@
+PKGCOUNT	:=	@PKGCOUNT@
+PKGLIST		:=	@PKGLIST@
+PIPCMD		:=	@PIPCOMMAND@
+NEEDED		:=	./needed.txt
+
+# Files to install
+SCRIPTS		:=	$(wildcard src/*.sh)
+PKGS		:=	$(wildcard ./orig*.txt)
+
+# Foreground colours
+C_R		:=	'\033[01;31m'	# red
+C_G		:=	'\033[01;32m'	# green
+C_Y		:=	'\033[01;33m'	# yellow
+C_C		:=	'\033[01;36m'	# cyan
+C_NC		:=	'\033[01;37m'	# no color
+
+# Targets
+all: install-dep pip3-pillow build-doc pkg-check
+
+# Install package dependencies
+install-dep:
+	@clear
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Checking Package Dependencies"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+ifeq ($(PKGCOUNT), 0)
+	@echo " Packages Required [ $(PKGCOUNT) ]"
+else
+	@sudo -k
+	@echo ' This target will perform the following:'
+	@echo ''
+	@echo ' 1. Update your source list'
+	@echo ' 2. Install needed packages + dependencies'
+	@echo ''
+	@while [ -z "$$GO" ]; do \
+	read -r -p "* OK To Continue: [y/n]: " GO ; \
+	done ; \
+	[ $$GO = "y" ] || [ $$GO = "Y" ] || (echo '' ; echo " Exiting, disregaurd the error 1 msg." ; echo '' ; exit 1 ;)
+	@echo "* Updating @DESC@ Package List"
+	@sudo $(PKGMGR) -y -q update && sudo $(PKGMGR) -y -q install --no-install-recommends $(PKGLIST)
+endif
+
+# This is a hack for the Pillow v2.6.1 issues: Applies to UBuntu 14.10, Debian Jessie 8.0
+pip3-pillow:
+	@echo ''
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Check Pillow Requirments"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+ifeq ($(DISTV),14.04) # Ubuntu (Trusty)
+	@echo ' Pillow upgrade required [ NO ]'
+endif
+ifeq ($(DISTV),14.10) # Ubuntu (Utopic)
+	@echo ' Upgrading Pillow using pip3'
+	@$(PIPCMD)
+endif
+ifeq ($(DISTV),15.04) # Ubuntu (Vivid)
+	@echo ' Pillow upgrade required [ NO ]'
+endif
+ifeq ($(DISTV),17.1) # Mint 17.1
+	@echo ' Pillow upgrade required [ NO ]'
+endif
+ifeq ($(DISTV),8.0) # Debian (Jessie)
+	@echo ' Upgrading Pillow using pip3'
+	@$(PIPCMD)
+endif
+
+build-doc:
+ifeq ($(BDOC),Yes)
+	@echo ''
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Building Documentation"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@(cd docs/ ; make clean > /dev/null 2>&1 )
+	@echo ' Generating Docs && Manpages, please wait..'
+	@(cd docs/ ; make all > /dev/null 2>&1)
+	@if [ -f docs/jtsdk.html ] && [ -f docs/jtsdk.1 ] ; then echo " Finished" ; fi 
+endif
+
+pkg-check:
+ifeq ($(PKGCOUNT), 0)
+	@echo ''
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Finished Build"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo " To Install $(PROGRAM), type ..: sudo make install"
+	@echo ''
+else
+	@echo ''
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Rechecking Package Requirments"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo ' To ensure all dependencies are picked up'
+	@echo ' correctly, please re-run configure and make'
+	@echo ' commands you ran initially.'
+	@echo ''
+	@echo ' For Example:'
+	@echo ' ./configure --with-distro=ubuntu --enable-separate'
+	@echo ''
+	@echo ' At the prompt, type ......: make' 
+	@echo ' At the 2nd prompt, type ..: sudo make install'
+	@echo ''
+endif
+
+# Install System Files
+install:
+	@clear
+	@echo '---------------------------------------------'
+	@echo -e $(C_G)"Installing @PROGRAM@ @VERSION@"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo '..Installing Directories'
+	@$(MKDIR) -p @SRCD@
+	@$(MKDIR) -p @TMPD@
+	@$(MKDIR) -p @LOGD@
+	@$(MKDIR) -p @MKRD@
+	@$(MKDIR) -p $(HOMEDIR)/package-info
+	@if [ -f orig-install.txt ] ; then \
+	$(CP) -u orig-install.txt $(HOMEDIR)/package-info ; fi 
+	@if [ -f orig-needed.txt ] ; then \
+	$(CP) -u orig-needed.txt $(HOMEDIR)/package-info ; fi 
+	@echo '..Changing Directory Ownership to: '"[ $(LOGNAME) ]"
+	@$(CHOWN) -R $(LOGNAME):$(LOGNAME) $(HOMEDIR)
+	@echo '..Installing and Linking Main Scripts'
+	@install -m 755 $(SCRIPTS) $(DESTDIR)$(BINDIR)
+	@$(MKDIR) -p $(DESTDIR)$(DOCDIR)
+	@(cd $(DESTDIR)/$(BINDIR); ln -sf jtsdk.sh jtsdk ; \
+	ln -sf jtsdk-hamlib3.sh jtsdk-hamlib3 ; \
+	ln -sf jtsdk-wsjtx.sh jtsdk-wsjtx ; \
+	ln -sf jtsdk-map65.sh jtsdk-map65 ; \
+	ln -sf jtsdk-wsprx.sh jtsdk-wsprx ; \
+	ln -sf jtsdk-wspr.sh jtsdk-wspr ; \
+	ln -sf jtsdk-wsjt.sh jtsdk-wsjt)
+	@echo '..Installing Misc Files'
+	@install -m 644 src/docs/* $(DESTDIR)$(DOCDIR)
+	@install -m 644 AUTHORS ChangeLog COPYING COPYRIGHT README TO-DO $(DESTDIR)$(DOCDIR)
+	@install -m 644 data/jtsdk.desktop $(DESTDIR)$(DTDIR)
+	@install -m 644 data/jtsdk.xpm $(DESTDIR)$(ICOND)
+ifeq ($(BDOC),Yes)
+	@echo '..Installing Documentation and Manpages'
+	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)
+	@install -m 644 docs/jtsdk.1 $(DESTDIR)$(MANDIR)
+endif
+	@echo '..Finished'
+	@echo ''
+	@echo "To Run $(PROGRAM), type ..: jtsdk"
+	@echo ''
+
+# Uninstall System Files
+uninstall:
+	@clear
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Uninstall @PROGRAM@ @VERSION@"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo '..Removing installed scripts'
+	@$(RM) -f $(DESTDIR)$(BINDIR)/jtsdk*
+	@echo '..Removing installed manpages'
+	@$(RM) -f ${DESTDIR}$(MANDIR)/jtsdk.1
+	@echo '..Removing installed share files'
+	@$(RM) -rf $(DESTDIR)$(SHARE)
+	@$(RM) -f $(ICOND)/jtsdk.xpm
+	@$(RM) -f $(DTDIR)/jtsdk.desktop
+	@echo ''
+	@echo 'UNINSTALL NOTES'
+	@echo ''
+	@echo ' 1. All user generated files remain in:'
+	@echo "    PATH: $(HOMEDIR)"
+	@echo ''
+	@echo ' 2. All packages that were installed ( if any )'
+	@echo '    during the configure and installation phase'
+	@echo '    *have not* been removed automatically. This'
+	@echo '    is by design, as it can potentially break'
+	@echo '    system or application package dependencies.'
+	@echo '    A list of installed packages can be found in:'
+	@echo ''
+	@echo "    PATH: $(HOMEDIR)/package-info/orig-needed.txt"
+	@echo ''
+
+# Cleanup Source Tree
+.PHONY: clean simulate list-needed
+clean:
+	$(RM) -f src/*.sh config.log config.status autoscan.log configure.scan \
+	Makefile src/language/language_en data/jtsdk.desktop installed.txt \
+	temp.list needed.txt installed.txt
+	$(RM) -rf ./autom4*
+	$(RM) -f docs/*.html docs/Makefile docs/*.1
+
+list-needed:
+	@clear
+	@echo '----------------------------------------------------------'
+	@echo -e $(C_Y)' Packages Needed To Install'$(C_NC)
+	@echo '----------------------------------------------------------'
+	@echo ''
+	@if test -f $(NEEDED); then cat $(NEEDED) | column ; else echo '* No Packages Needed'; fi
+	@ echo ''
+	@echo '* Simulate Installation, type ..: make simulate'
+	@echo '* Install Packages, type .......: make'
+	@echo ''
+
+simulate:
+	@clear
+	@echo '----------------------------------------------------------'
+	@echo -e $(C_Y)' Simulate Package Installation'$(C_NC)
+	@echo '----------------------------------------------------------'
+	@echo ''
+	@echo " This will *Simulate* installing packages for $(PROGRAM)"
+	@echo ' No packages will actually be installed. The follwing
+	@ecjo ' actions will be performed:'
+	@echo ''
+	@echo ' 1. Update your source list'
+	@echo ' 2. *Simulate* installing packages + dependencies'
+	@echo ''
+	@while [ -z "$$GO" ]; do \
+	read -r -p "* OK To Continue: [y/n]: " GO ; \
+	done ; \
+	[ $$GO = "y" ] || [ $$GO = "Y" ] || (echo '' ; echo " Exiting, disregaurd the error 1 msg." ; echo '' ; exit 1;)
+	@echo "* Updating $(DESC) Package List"
+	@echo ''
+	@sudo $(PKGMGR) update && echo && sudo $(PKGMGR) -s -y -q install --no-install-recommends $(PKGLIST)
+	@echo ''
+	@echo '----------------------------------------------------------'
+	@echo -e $(C_G)' Finished Simulate Package Installation'$(C_NC)
+	@echo '----------------------------------------------------------'
+	@echo ''
+	@echo ' * List needed dependencies , type ..: make list-needed'
+	@echo ' * Install dependencies , type ......: make'
+	@echo ''
+	@echo ''
+	@sudo -k

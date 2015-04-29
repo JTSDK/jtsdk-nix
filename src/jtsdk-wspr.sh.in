@@ -1,0 +1,237 @@
+#! /usr/bin/env bash
+#
+# Name			: jtsdk-wspr.sh
+# Execution		: As normal user type: jtsdk-wspr.sh
+# Copyright		: @JTSDK_COPYRIGHT@
+# Contributors	: @JTSDK_AUTHORS@
+# Comment		: Part of the JTSDK Linux Project
+#
+# @PROGRAM@ is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation either version 3 of the License, or
+# (at your option) any later version. 
+#
+# @PROGRAM@ is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-------------------------------------------------------------------------#
+
+set -e
+
+# set home and system veriables
+HOMEDIR=@HOMEDIR@
+LOGS=@LOGD@
+SRCD=@SRCD@
+TMP=@TMPD@
+MKRD=@MKRD@
+SEPARATE=@SEPARATE@
+APP_NAME=wspr
+APP_SRC="$SRCD/$APP_NAME"
+URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
+
+
+# Python3 and F2PY3
+PYTHON3=@PYTHON3@
+F2PY3=@F2PY3@
+
+# App variables
+
+# Foreground colours
+C_R='\033[01;31m'		# red
+C_G='\033[01;32m'		# green
+C_Y='\033[01;33m'		# yellow
+C_C='\033[01;36m'		# cyan
+C_NC='\033[01;37m'		# no color
+
+################################################################################
+# FUNCTOINS
+################################################################################
+check_svn() {
+
+if [[ ! -d $APP_SRC/.svn ]]
+then
+	echo
+	echo "Checking Out New Version of $APP_NAME"
+	cd $SRCD
+	svn co $URL
+else
+	# Yy / Nn answer to update from svn	
+	while [ 1 ]
+	do
+		echo
+		read -p "Update from SVN Before Building? [ Y/N ]: " yn
+		case "$yn" in
+		
+		[Yy]* )
+			cd "$APP_SRC" 
+			echo "Updating ( $APP_NAME )"
+			svn cleanup && svn update
+			break ;;
+		[Nn]* )
+			echo 'Nothing to be done..'
+			break ;;
+		
+		* )
+			clear
+			echo "Please use "Y" yes or "N" No." ;;
+		esac
+	done
+fi
+
+}
+
+# get WSPR Version information from: wspy.py
+get_version() {
+
+# Example
+# ------------------------------------------------------------------------------
+# Using wspy.py line: Version="4.0 r" + "$Rev: 4889 $"[6:-2]
+# ------------------------------------------------------------------------------
+
+echo "-- Getting App Version from Repository"
+AVER=$(cat $APP_SRC/wspr.py |grep 'Version="' |awk '{print $1}' |cut -c10-13)
+echo "-- Repository Version Is ..: $AVER"
+
+}
+
+# get the last changed svn number
+get_svn_revision() {
+
+echo "-- Getting SVN Revision Number"
+SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
+echo "-- SVN Revision Is ........: $SVN_VER"
+
+}
+
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
+
+# Make sure directories are present, in case they were deleted
+clear
+echo '-----------------------------------------------------'
+echo -e ${C_Y}"STARTING BUILD for ( WSPR )"${C_NC}
+echo '-----------------------------------------------------'
+check_svn
+
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
+echo '-----------------------------------------------------'
+get_version
+get_svn_revision
+
+# set install locaiton
+if [ $SEPARATE == "Yes" ] ; then 
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/install/$OPTION"
+else
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
+fi
+
+
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}' RUN AUTORECONF'${C_NC}
+echo '-----------------------------------------------------'
+cd "$APP_SRC"
+# clelan first
+if [[ -f Makefile ]] ; then
+	echo "Running make clean first"
+	make clean >/dev/null 2>&1
+fi
+# run autoreconf to generate new Makefile & configure script
+echo 'Generating Makefile and Configure scripts'
+autoreconf -f -i
+
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}'RUN CONFIGURE'${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+./configure --prefix="$INSTALLD" --with-python3=@PYTHON3@ --with-f2py=@F2PY3@
+
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}'COMPILE and INSTALL TARGETS'${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+# get the targets from Makefile all: line into an array
+targets=$(grep '^all\:' Makefile |awk 'FNR==1' |cut -f2-)
+
+# loop through the targets
+for i in "${targets[@]}"
+do
+	make $i
+done
+
+# now install the targets
+mkdir -p "$INSTALLD"/{doc/examples,save/Samples,WsprMod}
+install -m 644 save/Samples/* "$INSTALLD"/save/Samples/
+install -m 755 gocal Pmw*.py wspr.py wsprrc "$INSTALLD"
+install -m 644 AUTHORS	README NEWS COPYING COPYRIGHT "$INSTALLD"
+install -m 644 hamlib_rig* "$INSTALLD"
+install -m 755 WsprMod/* "$INSTALLD"/WsprMod
+install -m 644 doc/examples/* "$INSTALLD"/doc/examples/
+chmod -R 644 "$INSTALLD"/doc/examples/*
+
+# loop through binaries && install strip
+binaries=(fmtest fcal fmeasure fmtave wspr0 wsprcode)
+for i in "${binaries[@]}"
+do
+	install -m 755 -s $i "$INSTALLD" 
+done
+
+if [[ -f $INSTALLD/$APP_NAME.sh ]] ; then rm -f "$INSTALLD/$APP_NAME.sh" ; fi
+touch "$INSTALLD/$APP_NAME.sh" && chmod +x "$INSTALLD/$APP_NAME.sh"
+
+# Generate a simple wsspr.sh run script
+(
+cat <<'EOF_WSPRSH'
+#!/usr/bin/env bash
+#-------------------------------------------------------------------------------
+# File Name:    wspr.sh
+# Description:  Shell script wrapper to run wspr
+#				JTSDK auto generated file
+#-------------------------------------------------------------------------------
+
+set -e
+HOMEDIR=@WSPRI@
+
+# make sure we are in the right place
+cd "$HOMEDIR"
+
+# python3 path is updated form @PROGRAM@
+@PYTHON3@ -O wspr.py
+
+EOF_WSPRSH
+) > "$INSTALLD"/wspr.sh
+
+# ensure ownership is for the current user
+chown -R "$USER":"$USER" "$INSTALLD" 
+
+# Finished
+echo
+echo '-----------------------------------------------------'
+echo -e ${C_G}"BUILD SUMMARY for ( WSPR )"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+echo " Build Type ..: Release"
+echo " Source ......: $APP_SRC"
+echo " Install .....: $INSTALLD"
+echo ''
+echo ' FMT Tools'
+echo " Install .....: $INSTALLD"
+echo ''
+echo " TO RUN $APP_NAME"
+echo " cd ..........: $INSTALLD"
+echo " Type, .......: ./$APP_NAME.sh"
+echo ''
+read -p "Press [ Enter ] to return to the main menu .."
+
+exit 0
+

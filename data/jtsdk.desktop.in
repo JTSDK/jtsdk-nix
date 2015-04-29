@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=@PROGRAM@ @VERSION@
+Comment=JTSDK - WSJT Software Development Kit
+Exec=bash -c '@BINDIR@/jtsdk'
+Terminal=true
+Categories=Development
+Keywords=Scientific;Hamradio;Radio;Signal;WSJTX;WSJT;WSPR;MAP65;WSPRX
+Icon=jtsdk.xpm

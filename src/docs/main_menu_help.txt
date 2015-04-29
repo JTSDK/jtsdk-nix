@@ -1,0 +1,90 @@
+JTSDK MAIN MENU HELP FILE
+
+NAVIGATION:  You can  move  through the file by using the cursor, page-up, 
+page-down, arrow UP/DWN and HOME/END keys available on most keyboards.
+If the lines are too long to be displayed in the box, the LEFT/RIGHT keys
+can be used to scroll the text region horizontally.
+
+
+INTRODUCTION
+
+ JTSDK allows you to build most of the WSJT applications through
+ an easy to use menu system. Several build options exist for each
+ application.
+
+ Except for the WSJT-X Super-Build, all WSJT-X builds require Hamlib3
+ to be built before running then application build. If it is not
+ found in the default location, a message will be displayed prompting you
+ to perform the build first.
+
+ If the user has the knowledge, there is nothing stopping them from building
+ the packages from the command line after JTSDK installation. In fact,
+ many developers prefer this method as it allows for much greater control over
+ the various aspects of the build.
+
+
+BUILD DESCRIPTIONS
+
+ WSJT-X 1.6.1
+ 
+ This is an experimental branch to testing new features and functions.
+ The current focus is porting several modes from WSJT (JT4, JT65B, JT65C)
+ and testing the potential for WSPR inclusion.
+ 
+ Available build targets: ( Release, Debug and Package )
+ 
+ 
+ WSJT-X 1.6.0
+ 
+ This branch is the head of development for WSJT-X. It is host to any
+ and all kinds of improvements.
+ 
+ Available build targets: ( Release, Debug and Package )
+ 
+ 
+ WSJT-X 1.5 RC
+ 
+ This branch is the release candidate branch. On any give day is can be
+ incremented upwards to produce the next public testing version.
+ 
+ Available build targets: ( Release, Debug and Package )
+ 
+ 
+ WSJTX 1.4 (Released)
+ 
+ JTSDK no longer builds this version, as it has been formally relseased by
+ the project team.
+ 
+ 
+ WSJT v10 and WSPR v4.0
+ 
+ Both WSJT and WSPR have many targets. Currently, the build script
+ simply builds the install target. Later versions JTSDK will include
+ individual targets for each application. 
+ 
+ 
+ WSPR-X and MAP65
+
+ WSPR-X and MAP65 cannot be built on Linux without applying several
+ patches. As such, the builds are classed as "under development" at
+ this time. When the source codes has been updated to build on Linux,
+ the builds will be enabled.
+
+ Hamlib3
+
+ Hamlib3 is a custom Git repository maintained by Bill (G4WJS). Updates to
+ this repo may eventually land in the Official Hamlib libraries, however,
+ when the updates will be included is unknown. 
+
+ There is only one target type for building Hamlib3. Selecting the build from
+ the menu is all that is required. You should re-build Hamlib3 often, in
+ particular, before building any of the WSJT-X versions.
+
+
+ADDITIONAL RESOURCES
+ 
+ WSJT Home Page:
+ * http://www.physics.princeton.edu/pulsar/K1JT/
+
+ WSJT Program Development:
+ * www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
