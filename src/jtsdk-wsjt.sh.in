@@ -202,10 +202,6 @@ cat <<'EOF_WSJTSH'
 #-------------------------------------------------------------------------------
 
 set -e
-HOMEDIR=@WSJTI@
-
-# make sure we are in the right place
-cd "$HOMEDIR"
 
 # python3 path is updated form @PROGRAM@
 @PYTHON3@ -O wsjt.py

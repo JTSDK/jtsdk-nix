@@ -64,13 +64,6 @@ TMPD		:=	@TMPD@
 LOGD		:=	@LOGD@
 MKRD		:=	@MKRD@
 
-# Application Directories
-# WSJT
-WSJTI		:=	@WSJTI@
-
-# WSPR
-WSPRI		:=	@WSPRI@
-
 # Config Definitions
 BDOC		:=	@BDOC@
 DEFS		:=	@DEFS@
@@ -91,7 +84,7 @@ C_R		:=	'\033[01;31m'	# red
 C_G		:=	'\033[01;32m'	# green
 C_Y		:=	'\033[01;33m'	# yellow
 C_C		:=	'\033[01;36m'	# cyan
-C_NC		:=	'\033[01;37m'	# no color
+C_NC	:=	'\033[01;37m'	# no color
 
 # Targets
 all: install-dep pip3-pillow build-doc pkg-check

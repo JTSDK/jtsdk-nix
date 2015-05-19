@@ -198,12 +198,7 @@ cat <<'EOF_WSPRSH'
 # Description:  Shell script wrapper to run wspr
 #				JTSDK auto generated file
 #-------------------------------------------------------------------------------
-
 set -e
-HOMEDIR=@WSPRI@
-
-# make sure we are in the right place
-cd "$HOMEDIR"
 
 # python3 path is updated form @PROGRAM@
 @PYTHON3@ -O wspr.py
