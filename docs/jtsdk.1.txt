@@ -1,7 +1,7 @@
 :doctype: manpage
 :man manual: JTSDK Manpage
 :man date: {date}
-:man version: Version 2.0.1
+:man version: Version 2.0.3
 
 = jtsdk(1)
 

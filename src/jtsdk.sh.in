@@ -114,7 +114,7 @@ cat << 'EOF' > @TMPD@/MMenu.tmp
 "E" "Exit"
 EOF
 
-# WSJTX 1.6.0 exp menu
+# WSJTX 1.6.1 exp menu
 touch @TMPD@/WSJTXEXPMenu.tmp
 cat << 'EOF' > @TMPD@/WSJTXEXPMenu.tmp 
 "1" "Release Target" \
@@ -123,20 +123,22 @@ cat << 'EOF' > @TMPD@/WSJTXEXPMenu.tmp
 "B" "Back"
 EOF
 
-# WSJTX 1.5.0 devel menu
+# WSJTX 1.6.0 devel menu
 touch @TMPD@/WSJTXMenu.tmp
 cat << 'EOF' > @TMPD@/WSJTXMenu.tmp 
 "1" "Release Target" \
 "2" "Debug Target" \
+"3" "Compile User Guide" \
 "H" "Help" \
 "B" "Back"
 EOF
 
-# WSJTX 1.5 RC1
+# WSJTX 1.5 RC
 touch @TMPD@/WSJTXRCMenu.tmp
 cat << 'EOF' > @TMPD@/WSJTXRCMenu.tmp 
 "1" "Release Target" \
 "2" "Debug Target" \
+"3" "Compile User Guide" \
 "H" "Help" \
 "B" "Back"
 EOF
@@ -387,7 +389,7 @@ elif [[ $MMSELECT = "2" ]]; then
 	elif [[ $MMSELECT = "3" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 18 --file "$TMP/WSJTXEXPMenu.tmp" 2> "$TMP/buildselect"
+"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 --file "$TMP/WSJTXEXPMenu.tmp" 2> "$TMP/buildselect"
 
 	BUILDSELECT=$(head -c 1 < $TMP/buildselect)
 
@@ -418,7 +420,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" \
 	elif [[ $MMSELECT = "4" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXTITLE" --menu "$MENUMSG" 12 60 18 --file "$TMP/WSJTXMenu.tmp" 2> "$TMP/buildselect"
+"$WSJTXTITLE" --menu "$MENUMSG" 14 60 19 --file "$TMP/WSJTXMenu.tmp" 2> "$TMP/buildselect"
 
 	BUILDSELECT=$(head -c 1 < $TMP/buildselect)
 
@@ -430,6 +432,11 @@ dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 	# Debug
 	elif [[ $BUILDSELECT = "2" ]]; then
 		jtsdk-wsjtx dev debug
+		continue
+
+	# Documentation
+	elif [[ $BUILDSELECT = "3" ]]; then
+		jtsdk-wsjtx dev doc
 		continue
 
 	# Help
@@ -449,7 +456,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
 	elif [[ $MMSELECT = "5" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXRCTITLE" --menu "$MENUMSG" 12 60 18 --file "$TMP/WSJTXMenu.tmp" 2> "$TMP/buildselect"
+"$WSJTXRCTITLE" --menu "$MENUMSG" 14 60 19 --file "$TMP/WSJTXMenu.tmp" 2> "$TMP/buildselect"
 
 	BUILDSELECT=$(head -c 1 < $TMP/buildselect)
 
@@ -461,6 +468,11 @@ dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 	# Debug
 	elif [[ $BUILDSELECT = "2" ]]; then
 		jtsdk-wsjtx rc debug
+		continue
+
+	# Documentation
+	elif [[ $BUILDSELECT = "3" ]]; then
+		jtsdk-wsjtx rc doc
 		continue
 
 	# Help
