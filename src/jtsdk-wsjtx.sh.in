@@ -226,12 +226,15 @@ case "$OPT1" in
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
 			OPTION="Debug"
+			DESC="Debug Target"
 
 		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
 			OPTION="Release"
+			DESC="Release Target"
 
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
 			OPTION="package"
+			DESC="User Guide"
 		else
 			cli_help
 		fi
@@ -246,13 +249,19 @@ case "$OPT1" in
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
 			OPTION="Debug"
+			DESC="Debug Target"
 
 		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
 			OPTION="Release"
+			DESC="Release Target"
 
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
 			OPTION="package"
-
+			DESC="Package Target"
+			
+		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
+			OPTION="doc"
+			DESC="User Guide"
 		else
 			cli_help
 		fi
@@ -270,6 +279,9 @@ case "$OPT1" in
 			OPTION="Release"
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
 			OPTION="package"
+		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
+			OPTION="doc"
+			DESC="User Guide"
 		else
 			cli_help
 		fi
@@ -305,16 +317,19 @@ if [ $SEPARATE == "Yes" ] ; then
 	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER//build/$OPTION"
 	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/install/$OPTION"
 	PKGD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/package"
+	UGDIR="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/user-guide"
 else
 	BUILDD="$HOMEDIR/$APP_NAME/$AVER/build/$OPTION"
 	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
 	PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
+	UGDIR="$HOMEDIR/$APP_NAME/$AVER/user-guide"
 fi
 
 # make sure the build and install directories exist
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
+mkdir -p "$UGDIR" >/dev/null 2>&1
 
 # exit on errors
 set -e
@@ -332,8 +347,6 @@ cd "$BUILDD"
 cmake -G "Unix Makefiles" \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
 -D WSJT_INCLUDE_KVASD=ON \
--D WSJT_SKIP_MANPAGES=ON \
--D WSJT_GENERATE_DOCS=ON \
 -D CMAKE_BUILD_TYPE="$OPTION" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
 
@@ -343,8 +356,6 @@ cd "$BUILDD"
 cmake -G "Unix Makefiles" \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
 -D WSJT_CREATE_WINMAIN=ON \
--D WSJT_INCLUDE_KVASD=ON \
--D WSJT_SKIP_MANPAGES=ON \
 -D CMAKE_BUILD_TYPE="$OPTION" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
 
@@ -354,8 +365,16 @@ cd "$BUILDD"
 cmake -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
 -D WSJT_INCLUDE_KVASD=ON \
 -D CMAKE_COLOR_MAKEFILE=ON \
--D WSJT_GENERATE_DOCS=ON \
 -D CMAKE_BUILD_TYPE="$OPTION" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
+
+# configuration options for uder-guide build
+elif [[ $OPTION = "doc" ]] ; then
+cd "$BUILDD"
+cmake -G "Unix Makefiles" \
+-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
+-D WSJT_CREATE_WINMAIN=ON \
+-D CMAKE_BUILD_TYPE="Release" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
 
 else
@@ -367,23 +386,37 @@ else
 fi
 
 # build the target
-
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" BUILDING ( WSJT-X $AVER )"${C_NC}
+echo -e ${C_Y}" BUILDING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-cd "$BUILDD"
 case "$OPTION" in
 	Release|Debug )
+	cd "$BUILDD"
 	make -s clean
 	cmake --build . --target install -- -j "$JJ" ;;
 
 	package )
+	cd "$BUILDD"
 	make -s clean
 	cmake --build . --target package -- -j "$JJ"
 	if [[ $? = "0" ]] ; then
 		cp -rf "$BUILDD"/wsjtx*.deb "$PKGD"/
+	fi ;;
+
+	doc )
+	cd "$BUILDD"
+	make -s clean
+	cmake --build . --target docs -- -j "$JJ"
+	if [[ $? = "0" ]] ; then
+		cp -rf "$BUILDD"/doc/wsjtx*.html "$UGDIR"/
+		FILENAME=$(ls -al $UGDIR |grep 'html' |awk '{print $9}')
+		echo ''
+		echo "Document Name ..: $FILENAME"
+		echo "Location .......: $UGDIR"
+		echo ''
+		read -p 'Press [Enter] to continue ...'
 	fi ;;
 
 	*)
