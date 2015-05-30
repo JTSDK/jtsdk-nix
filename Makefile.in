@@ -213,9 +213,10 @@ install:
 	@install -m 644 data/jtsdk.desktop $(DESTDIR)$(DTDIR)
 	@install -m 644 data/jtsdk.xpm $(DESTDIR)$(ICOND)
 ifeq ($(BDOC),Yes)
+	@$(MKDIR) -p @MANDIR@
 	@echo '..Installing Documentation and Manpages'
-	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)
-	@install -m 644 manpages/jtsdk.1 $(DESTDIR)$(MANDIR)
+	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)/jtsdk.html
+	@install -m 644 manpages/jtsdk.1 $(DESTDIR)$(MANDIR)/jtsdk.1
 endif
 	@echo '..Finished'
 	@echo ''
