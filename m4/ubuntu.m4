@@ -12,12 +12,12 @@ case "${DISTRO}" in
 pilpkgs='libfreetype6-dev libjpeg-dev liblcms2-dev libtiff5-dev libwebp-dev \
 libwebpmux1 mime-support tcl8.6-dev tk8.6-dev zlib1g-dev'
 
-basepkgs='automake clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
+basepkgs='automake asciidoc clang-3.5 cmake dialog g++ gettext gfortran git libfftw3-dev \
 libhamlib-dev libhamlib-utils libqt5multimedia5-plugins libqt5serialport5-dev \
-libqt5opengl5-dev libsamplerate0-dev libtool libusb-dev packaging-dev \
+libqt5opengl5-dev libsamplerate0-dev libtool libusb-dev libxml2-utils packaging-dev \
 pkg-config portaudio19-dev python3-pil python3-pil.imagetk python3-tk \
 python3-dev python3-numpy python3-pip python3-setuptools python-dev \
-qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo'
+qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo xmlto'
 
 		case "${distrov}" in
 			14.04*|14.10|15.04)

@@ -13,15 +13,16 @@ WEB			:=	@WEB@
 # General Vars
 DOCSRC		:=	@DOCSRC@
 RM			:=	@RM@
-ASCIIDOC	:=	@ASCIIDOC@
+A2X			:=	@A2X@
 
-all: docs
 
-# Build Docs
-docs:
-	@$(ASCIIDOC) -b xhtml11 -a data-uri -a toc2 -o jtsdk.html $(DOCSRC)/dev-guide-main.adoc
+all: manpage
+
+# Build Manpages
+manpage:
+	@$(A2X) --doctype manpage --format manpage --no-xmllint jtsdk.1.txt
 
 # Cleanup Source Tree
 .PHONY: clean
 clean:
-	$(RM) -f ./jtsdk.html
+	$(RM) -f ./jtsdk.1 

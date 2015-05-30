@@ -256,7 +256,8 @@ src/jtsdk-map65.sh
 src/jtsdk-wsprx.sh
 data/jtsdk.desktop
 docs/Makefile
-docs/jtsdk.1.txt
+manpages/jtsdk.1.txt
+manpages/Makefile
 ])
 AC_OUTPUT
 

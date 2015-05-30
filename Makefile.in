@@ -145,10 +145,10 @@ ifeq ($(BDOC),Yes)
 	@echo -e $(C_Y)"Building Documentation"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
-	@(cd docs/ ; make clean > /dev/null 2>&1 )
 	@echo ' Generating Docs && Manpages, please wait..'
-	@(cd docs/ ; make all > /dev/null 2>&1)
-	@if [ -f docs/jtsdk.html ] && [ -f docs/jtsdk.1 ] ; then echo " Finished" ; fi 
+	@(cd docs/ ; make clean > /dev/null 2>&1 ; make all > /dev/null 2>&1)
+	@(cd manpages/ ; make clean > /dev/null 2>&1 ; make all > /dev/null 2>&1)
+	@if [ -f docs/jtsdk.html ] && [ -f manpages/jtsdk.1 ] ; then echo " Finished" ; fi 
 endif
 
 pkg-check:
@@ -215,7 +215,7 @@ install:
 ifeq ($(BDOC),Yes)
 	@echo '..Installing Documentation and Manpages'
 	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)
-	@install -m 644 docs/jtsdk.1 $(DESTDIR)$(MANDIR)
+	@install -m 644 manpages/jtsdk.1 $(DESTDIR)$(MANDIR)
 endif
 	@echo '..Finished'
 	@echo ''
@@ -260,7 +260,8 @@ clean:
 	Makefile src/language/language_en data/jtsdk.desktop installed.txt \
 	temp.list needed.txt installed.txt
 	$(RM) -rf ./autom4*
-	$(RM) -f docs/*.html docs/Makefile docs/*.1
+	$(RM) -f docs/*.html docs/Makefile
+	$(RM) -f manpages/Makefile manpages/jtsdk.1.txt manpages/jtsdk.1
 
 list-needed:
 	@clear
