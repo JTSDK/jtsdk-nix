@@ -2,7 +2,7 @@
 # Process this file with autoconf -*- autoconf -*-
 # ------------------------------------------------------------------------------
 AC_PREREQ([2.69])
-AC_INIT([JTSDK],[2.0.3],[wsjt-devel@lists.sourceforge.net],[],
+AC_INIT([JTSDK],[2.0.4],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
 JTSDK_COPYRIGHT="Copyright (C) 2015 Joseph H Taylor, Jr, K1JT"
@@ -37,12 +37,12 @@ The Following distribuitons are currently supported:
  * Debian included raspbian
 
  Usage:
- ./configure --with-distro=<distribution>
+ ./autogen.sh --with-distro=<distribution>
 
- For Ubuntu.....: ./configure --with-distro=ubuntu
- For Mint.......: ./configure --with-distro=mint
- For Debian.....: ./configure --with-distro=debian
- For Raspbian...: ./configure --with-distro=debian
+ For Ubuntu....: ./autogeh.sh --with-distro=ubuntu
+ For Mint......: ./autogeh.sh --with-distro=mint
+ For Debian....: ./autogeh.sh --with-distro=debian
+ For Raspbian..: ./autogeh.sh --with-distro=debian
  
 ])	;;
 	esac
@@ -62,10 +62,10 @@ else
 	echo '    2. Debian includes Raspbian'
 	echo '    3. You do not need to specify the version'
 	echo ''
-	echo '   Ubuntu, type ....: ./configure --with-distro=ubuntu'
-	echo '   Mint, type ......: ./configure --with-distro=mint'
-	echo '   Debian, type ....: ./configure --with-distro=debian'
-	echo '   Raspbian, type ..: ./configure --with-distro=debian'
+	echo '   Ubuntu, type ....: ./autogeh.sh --with-distro=ubuntu'
+	echo '   Mint, type ......: ./autogen.sh --with-distro=mint'
+	echo '   Debian, type ....: ./autogen.sh --with-distro=debian'
+	echo '   Raspbian, type ..: ./autogen.sh --with-distro=debian'
 	echo ''
 	exit 1
 fi
