@@ -2,32 +2,78 @@ JTSDK is a collection of Bash scripts designed to assist
 users in compiling the various WSJT applications used by
 Amateur Radio Operators.
 
-
 SUPPORTED DISTRIBUTIONS
+* Ubuntu.....: 14.04|14.10|15.04
+* Mint.......: 17.1
+* Debian.....: 8.*
+* Raspbian...: Jessie
 
-* Ubuntu .... 14.04|14.10|15.04  ( WSJT, WSPR, WSJTX )
-* Mint ...... 17.1               ( WSJT, WSPR, WSJTX )
-* Debian .... 8.*                ( WSJT, WSPR, WSJTX )
-* Raspbian .. Jessie			 ( WSJT, WSPR, WSJTX )
-
-Note(s):
-
+NOTES(s)
 1. Ubuntu includes Xubuntu, Lubuntu, Kubuntu
 2. Rasbian upgraded to Jessie. Wheezy is not supported.
 3. At present, WSPR-X and MAP65 are not supported on Linux.
 
 
-SUPPORT
+TO INSTALL
+* Download jtsdk-nix-2.0.4.tar.gz
+* Extract: tar -xf jtsdk-nix-2.0.4.tar.gz
+* cd ./jtsdk-nix-2.0.4
 
+
+ENABLE FEATURES
+--enable-separate      # Separate dir's by version & svn number
+--enable-docs          # Disable building docs and manpages
+--disable-parallel     # Disable building with multiple cores
+
+
+ALTERNATE PATHS 
+--with-distro=DISTRO   Distro Name: (debian, ubuntu, mint)
+--with-homedir=PATH    Change Default Home directory path
+--with-gfortran=PATH   Path to gfortran
+--with-python3=PATH    Path to python3
+--with-f2py3=PATH      Path to f2py3
+
+
+RECOMMENDED INVOCATION
+Ubuntu....: ./autogeh.sh --with-distro=ubuntu --enable-separate
+Mint......: ./autogeh.sh --with-distro=mint --enable-separate
+Debian....: ./autogeh.sh --with-distro=debian --enable-spearate
+Raspbian..: ./autogeh.sh --with-distro=debian --enable-separate
+
+
+AFTER CONFIGURING
+* make
+* sudo make install
+
+
+TO RUN JTSDK:
+* In a terminal..: jtsdk
+
+
+TO UNINSTALL
+* cd ./jtsdk-nix-2.0.4
+* sudo make uninstall
+
+
+APPLICATION BUILD NOTES
+* If building WSJT-X, build Hamlib3 first, then build WSJT-X.
+* WSPR and WSJT do not require Hamlib3.
+* Ensure you update Hamlib3 often, as updates are frequently posted.
+
+
+POTENTIAL ISSUES
+* The Mint 17.1 Cinnamon Desktop installs python-numpy as part of it's
+  desktop environment. If you encounter PObject errors when running
+  WSPR or WSJT, more than likely this is the cause. WSPR and WSJT requires
+  python3-numpy. To resolve, remove python-numpy, but be warned, this may
+  cause unexpected behavior in your Desktop Environment.
+
+
+SUPPORT
 If you have problems with the JTSDK, please report them to the WSJT-Devel 
 List at: < wsjt-devel@lists.sourceforge.net >
 
 
-WSJT INFORMATION
-
-WSJT Home Page:
-http://www.physics.princeton.edu/pulsar/K1JT/
-
-WSJT Program Development:
-www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
-
+WSJT PROJECT INFORMATION
+Home Page: http://www.physics.princeton.edu/pulsar/K1JT/
+Program Development: http://physics.princeton.edu/pulsar/k1jt/devel.html
