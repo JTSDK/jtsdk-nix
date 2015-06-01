@@ -22,23 +22,20 @@
 
 set -e
 
-# set home and system veriables
-HOMEDIR=@HOMEDIR@
-LOGS=@LOGD@
-SRCD=@SRCD@
-TMP=@TMPD@
-MKRD=@MKRD@
-SEPARATE=@SEPARATE@
+# set home and directory paths
+HOMEDIR=/home/$LOGNAME/jtsdk
+SRCD="$HOMEDIR/src"
+TMPD="$HOMEDIR/tmp"
+LOGS="$HOMEDIR/logs"
+MENU=@SHARE@
+
+# app specfic options
 APP_NAME=wspr
 APP_SRC="$SRCD/$APP_NAME"
 URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
-
-
-# Python3 and F2PY3
+SEPARATE=@SEPARATE@
 PYTHON3=@PYTHON3@
 F2PY3=@F2PY3@
-
-# App variables
 
 # Foreground colours
 C_R='\033[01;31m'		# red

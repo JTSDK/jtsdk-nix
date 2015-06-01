@@ -24,25 +24,31 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------#
 
+set -e
+
+# set home and directory paths
+HOMEDIR=/home/$LOGNAME/jtsdk
+SRCD="$HOMEDIR/src"
+TMPD="$HOMEDIR/tmp"
+LOGS="$HOMEDIR/logs"
+MENU=@SHARE@
+
+# hamlib3 directories
+HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
+HL3B="$HOMEDIR/src/build/hamlib"
+HL3I="$HOMEDIR/hamlib3"
+
 # branch names for svn urls
 APP_NAME=wsjtx
 EXP_APP_NAME=wsjtx_exp
 DEV_APP_NAME=wsjtx
 RC_APP_NAME=wsjtx-1.5
 
-# common variables
-HOMEDIR=@HOMEDIR@
-SRCD=@SRCD@
-JJ=@JJJJ@
-SRCD=@SRCD@
+# app specific options
 OPT1=$1
 OPT2=$2
+JJ=@JJJJ@
 SEPARATE=@SEPARATE@
-
-# hamlib path variables
-HL3SRC=@HL3SRC@
-HL3B=@HL3B@
-HL3I=@HL3I@
 
 # Foreground colours
 C_R='\033[01;31m'		# red
@@ -147,7 +153,7 @@ echo \
  jtsdk-wsjtx [ OPT-1 ] [ OPT-2 ]
  
  OPT-1 = ( rc | dev | help ) 
- OPT-2 = ( release | debug ) 
+ OPT-2 = ( release | debug | doc ) 
 
   help .....: Display this help page
   rc .......: Release Candidate Branch ( 1.5 RCx )
@@ -155,6 +161,7 @@ echo \
   exp ......: Experimental Branch ( 1.6.1 )
   release ..: Release Target
   debug ....: Debug Target
+  doc ......: User Guide Target
 
  Examples:
   WSJT-X 1.6.1 (exp) ...: jtsdk-wsjtx exp release
@@ -233,7 +240,7 @@ case "$OPT1" in
 			DESC="Release Target"
 
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
-			OPTION="package"
+			OPTION="Release"
 			DESC="User Guide"
 		else
 			cli_help
@@ -260,7 +267,7 @@ case "$OPT1" in
 			DESC="Package Target"
 			
 		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
-			OPTION="doc"
+			OPTION="Release"
 			DESC="User Guide"
 		else
 			cli_help
@@ -280,7 +287,7 @@ case "$OPT1" in
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
 			OPTION="package"
 		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
-			OPTION="doc"
+			OPTION="Release"
 			DESC="User Guide"
 		else
 			cli_help
@@ -296,7 +303,15 @@ esac
 # Make sure directories are present, in case they were deleted or new version
 # check hamlib for Release, Debug and Package
 # then ask to update from SVN
-hamlib_test
+
+# Do not test Hamlib3 for Usergiude Build
+case "$DESC" in
+	*Guide )
+	clear
+	;;
+	* )
+	hamlib_test ;;
+esac
 
 # Ask to update from SVN first
 echo ''
@@ -317,19 +332,16 @@ if [ $SEPARATE == "Yes" ] ; then
 	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER//build/$OPTION"
 	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/install/$OPTION"
 	PKGD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/package"
-	UGDIR="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/user-guide"
 else
 	BUILDD="$HOMEDIR/$APP_NAME/$AVER/build/$OPTION"
 	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
 	PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
-	UGDIR="$HOMEDIR/$APP_NAME/$AVER/user-guide"
 fi
 
 # make sure the build and install directories exist
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
-mkdir -p "$UGDIR" >/dev/null 2>&1
 
 # exit on errors
 set -e
@@ -337,7 +349,7 @@ set -e
 # start configuring the main build
 echo
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER )"${C_NC}
+echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo
 
@@ -346,7 +358,6 @@ if [[ $OPTION = "Release" ]] ; then
 cd "$BUILDD"
 cmake -G "Unix Makefiles" \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
--D WSJT_INCLUDE_KVASD=ON \
 -D CMAKE_BUILD_TYPE="$OPTION" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
 
@@ -365,7 +376,7 @@ cd "$BUILDD"
 cmake -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
 -D WSJT_INCLUDE_KVASD=ON \
 -D CMAKE_COLOR_MAKEFILE=ON \
--D CMAKE_BUILD_TYPE="$OPTION" \
+-D CMAKE_BUILD_TYPE="Release" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
 
 # configuration options for uder-guide build
@@ -373,8 +384,7 @@ elif [[ $OPTION = "doc" ]] ; then
 cd "$BUILDD"
 cmake -G "Unix Makefiles" \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
--D WSJT_CREATE_WINMAIN=ON \
--D CMAKE_BUILD_TYPE="Release" \
+-D CMAKE_BUILD_TYPE="$OPTION" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
 
 else
@@ -391,8 +401,8 @@ echo '-----------------------------------------------------'
 echo -e ${C_Y}" BUILDING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-case "$OPTION" in
-	Release|Debug )
+case "$DESC" in
+	Release*|Debug* )
 	cd "$BUILDD"
 	make -s clean
 	cmake --build . --target install -- -j "$JJ" ;;
@@ -405,20 +415,13 @@ case "$OPTION" in
 		cp -rf "$BUILDD"/wsjtx*.deb "$PKGD"/
 	fi ;;
 
-	doc )
+	*Guide )
 	cd "$BUILDD"
 	make -s clean
-	cmake --build . --target docs -- -j "$JJ"
-	if [[ $? = "0" ]] ; then
-		cp -rf "$BUILDD"/doc/wsjtx*.html "$UGDIR"/
-		FILENAME=$(ls -al $UGDIR |grep 'html' |awk '{print $9}')
-		echo ''
-		echo "Document Name ..: $FILENAME"
-		echo "Location .......: $UGDIR"
-		echo ''
-		read -p 'Press [Enter] to continue ...'
-	fi ;;
-
+	cmake --build . --target docs
+	cd $BUILDD/doc
+	make install > /dev/null 2>&1
+	FILENAME=$(ls -al $INSTALLD/share/doc/wsjtx |grep 'html' |awk '{print $9}') ;;
 	*)
 	;;
 esac
@@ -426,12 +429,11 @@ esac
 # Finished
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_G}" BUILD SUMMARY ( WSJT-X )"${C_NC}
+echo -e ${C_G}" BUILD SUMMARY ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-case "$OPTION" in
-
-	Release|Debug )
+case "$DESC" in
+	Release*|Debug* )
 		echo " App Version ..: $AVER"
 		echo " Build Type ...: $OPTION"
 		echo " Source .......: $APP_SRC"
@@ -452,6 +454,11 @@ case "$OPTION" in
 		echo ''
 		read -p "Press [ Enter ] to continue .."
 	;;
+	*Guide )
+		echo "Document Name ..: $FILENAME"
+		echo "Location .......: $INSTALLD/share/doc/wsjtx"
+		echo ''
+		read -p "Press [ Enter ] to continue .." ;;
 	* )
 	;;
 esac

@@ -2,7 +2,7 @@
 # Process this file with autoconf -*- autoconf -*-
 # ------------------------------------------------------------------------------
 AC_PREREQ([2.69])
-AC_INIT([JTSDK],[2.0.4],[wsjt-devel@lists.sourceforge.net],[],
+AC_INIT([JTSDK],[2.0.5],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
 JTSDK_COPYRIGHT="Copyright (C) 2015 Joseph H Taylor, Jr, K1JT"
@@ -252,8 +252,6 @@ src/jtsdk-hamlib3.sh
 src/jtsdk-wspr.sh
 src/jtsdk-wsjt.sh
 src/jtsdk-wsjtx.sh
-src/jtsdk-map65.sh
-src/jtsdk-wsprx.sh
 data/jtsdk.desktop
 docs/Makefile
 manpages/jtsdk.1.txt

@@ -22,15 +22,17 @@
 
 set -e
 
-# home directory paths
-HOMEDIR=@HOMEDIR@
-SRCD=@SRCD@
-LOGS=@LOGD@
-TMP=@TMPD@
-MKRD=@MKRD@
-HL3SRC=@HL3SRC@
-HL3B=@HL3B@
-HL3I=@HL3I@
+# set home and directory paths
+HOMEDIR=/home/$LOGNAME/jtsdk
+SRCD="$HOMEDIR/src"
+TMPD="$HOMEDIR/tmp"
+LOGS="$HOMEDIR/logs"
+MENU=@SHARE@
+
+# hamlib3 directories
+HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
+HL3B="$HOMEDIR/src/build/hamlib"
+HL3I="$HOMEDIR/hamlib3"
 
 # misc variables
 JJ=@JJJJ@
@@ -50,8 +52,8 @@ C_NC='\033[01;37m'		# no color
 
 make_pkg_list() {
 
-if [ -f "$TMP"/pkg_list_hamlib3 ]; then rm -f "$TMP"/pkg_list_hamlib3 ; fi
-touch "$TMP"/pkg_list_hamlib3
+if [ -f "$TMPD"/pkg_list_hamlib3 ]; then rm -f "$TMPD"/pkg_list_hamlib3 ; fi
+touch "$TMPD"/pkg_list_hamlib3
 
 (
 cat <<'EOF_HAMLIB3'
@@ -73,7 +75,7 @@ include/hamlib/rotator.h
 include/hamlib/rotclass.h
 include/hamlib/rotlist.h
 EOF_HAMLIB3
-) > "$TMP"/pkg_list_hamlib3
+) > "$TMPD"/pkg_list_hamlib3
 
 }
 
@@ -81,20 +83,20 @@ EOF_HAMLIB3
 post_build_test1() {
 echo
 echo '[1]' "Test-1 (file check)"
-rm -rf "$TMP"/counter && touch "$TMP"/counter
+rm -rf "$TMPD"/counter && touch "$TMPD"/counter
 
 # check that files exist at least
 while read f; do
 	if [[ -f $HL3I/$f ]]; then
 		echo -e " $f"'..'${C_G}'OK'${C_NC}
-		echo "$f" >> "$TMP"/counter
+		echo "$f" >> "$TMPD"/counter
 	else
 		echo -e "$f"'..'${C_R}' MISSING '${C_NC}
 	fi
-done < "$TMP"/pkg_list_hamlib3
+done < "$TMPD"/pkg_list_hamlib3
 
 # get counter info
-LINES=$(wc -l < "$TMP"/counter)
+LINES=$(wc -l < "$TMPD"/counter)
 if [[ $LINES -ge "16" ]]; then
 	echo -e ${C_G}" Passed"${C_NC}
 	echo

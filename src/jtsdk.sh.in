@@ -28,21 +28,16 @@ set -e
 # work in most Xterm windows
 echo -e "\e[8;35;110t"
 
-# host informaiton
+# host informaiton and apps
 HOST_OS=@HOST_OS@
 HOST_CPU=@HOST_CPU@
 
-# set home directory path
-HOMEDIR=@HOMEDIR@
-
-# home directory paths
-LOGS=@LOGD@
-SRCD=@SRCD@
-DOCS=@DOCDIR@
-TMP=@TMPD@
-MKRD=@MKRD@
-HAMLIBD=@HAMLIBD@
-ADOCD=@ADOCD@
+# set home and directory paths
+HOMEDIR=/home/$LOGNAME/jtsdk
+SRCD="$HOMEDIR/src"
+TMPD="$HOMEDIR/tmp"
+LOGS="$HOMEDIR/logs"
+MENU=@SHARE@
 
 ################################################################################
 # Language Section
@@ -92,18 +87,13 @@ WSJTXHELPTITLE="WSJT-X BUILD HELP"
 WSJTXRCHELPTITLE="WSJT-X RC BUILD HELP"
 WSJTXEXPHELPTITLE="WSJT-X EXP BUILD HELP"
 
-# setup check lang
-SETUPTITLE="  SETUP REQUIRED"
-SETUPMSG="\n   In Order to use @PROGRAM@, you must first run setup.sh \n\
-     Select 'OK' then at command prompt run: ./setup.sh\n"
-
 # under development
 UD=" UNDER DEVELOPMENT"
 UDMSG="\n      Build Selection is Under Development"
 
 # main menu
-touch @TMPD@/MMenu.tmp
-cat << 'EOF' > @TMPD@/MMenu.tmp 
+touch $TMPD/MMenu.tmp
+cat << 'EOF' > $TMPD/MMenu.tmp 
 "1" "WSJT ..... v10.0  (devel" \
 "2" "WSPR ..... v4.0.0 (devel)" \
 "3" "WSJT-X ... v1.6.1 (exp)" \
@@ -115,8 +105,8 @@ cat << 'EOF' > @TMPD@/MMenu.tmp
 EOF
 
 # WSJTX 1.6.1 exp menu
-touch @TMPD@/WSJTXEXPMenu.tmp
-cat << 'EOF' > @TMPD@/WSJTXEXPMenu.tmp 
+touch $TMPD/WSJTXEXPMenu.tmp
+cat << 'EOF' > $TMPD/WSJTXEXPMenu.tmp 
 "1" "Release Target" \
 "2" "Debug Target" \
 "H" "Help" \
@@ -124,8 +114,8 @@ cat << 'EOF' > @TMPD@/WSJTXEXPMenu.tmp
 EOF
 
 # WSJTX 1.6.0 devel menu
-touch @TMPD@/WSJTXMenu.tmp
-cat << 'EOF' > @TMPD@/WSJTXMenu.tmp 
+touch $TMPD/WSJTXMenu.tmp
+cat << 'EOF' > $TMPD/WSJTXMenu.tmp 
 "1" "Release Target" \
 "2" "Debug Target" \
 "3" "Compile User Guide" \
@@ -134,8 +124,8 @@ cat << 'EOF' > @TMPD@/WSJTXMenu.tmp
 EOF
 
 # WSJTX 1.5 RC
-touch @TMPD@/WSJTXRCMenu.tmp
-cat << 'EOF' > @TMPD@/WSJTXRCMenu.tmp 
+touch $TMPD/WSJTXRCMenu.tmp
+cat << 'EOF' > $TMPD/WSJTXRCMenu.tmp 
 "1" "Release Target" \
 "2" "Debug Target" \
 "3" "Compile User Guide" \
@@ -185,7 +175,7 @@ dialog --backtitle "$BACKTITLE" --title "$SIGCAUGHT" --infobox "$SIGCAUGHTMSG" 5
 	sleep 1
 
 dialog --backtitle "$BACKTITLE" --title "$CLEANTMP" --infobox "$CLEANTMPMSG" 5 50
-	rm -r  $TMP/*
+	rm -r  $TMPD/*
 	sleep 1
 
 dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 50
@@ -263,7 +253,7 @@ dialog --backtitle "$BACKTITLE" --title "$EXITWSDT" --infobox "$EXITWSDTMSG" 5 5
    sleep 1
 
 dialog --backtitle "$BACKTITLE" --title "$CLEANTMP" --infobox "$CLEANTMPMSG" 5 50
-   rm -r $TMP/*
+   rm -r $TMPD/*
    wait
    sleep 1
 
@@ -285,8 +275,8 @@ exit
 #--dialog rc file---------------------------------------------------------------
 make_dialogrc() {
 
-if [ -f "$TMP"/.dialogrc ]; then rm -f "$TMP"/.dialogrc ; fi
-touch "$TMP"/.dialogrc
+if [ -f "$TMPD"/.dialogrc ]; then rm -f "$TMPD"/.dialogrc ; fi
+touch "$TMPD"/.dialogrc
 
 (
 cat <<'EOF_DIALOGRC'
@@ -331,11 +321,11 @@ form_text_color = (WHITE,CYAN,ON)
 form_item_readonly_color = (CYAN,WHITE,ON)
 gauge_color = (BLUE,WHITE,ON)
 EOF_DIALOGRC
-) > "$TMP"/.dialogrc
+) > "$TMPD"/.dialogrc
 
 # use preset dialog config file
-if [ -f "$TMP"/.dialogrc ]; then
-	export DIALOGRC="$TMP"/.dialogrc
+if [ -f "$TMPD"/.dialogrc ]; then
+	export DIALOGRC="$TMPD"/.dialogrc
 fi
 
 }
@@ -360,28 +350,28 @@ dialog_chk
 make_dialogrc
 
 # menu help files
-HELP="$DOCS"/main_menu_help.txt
-WSJTXHELP="$DOCS"/wsjtx_menu_help.txt
-WSJTXRCHELP="$DOCS"/wsjtxrc_menu_help.txt
-WSJTXEXPHELP="$DOCS"/wsjtxexp_menu_help.txt
+HELP="$MENU"/main_menu_help.txt
+WSJTXHELP="$MENU"/wsjtx_menu_help.txt
+WSJTXRCHELP="$MENU"/wsjtxrc_menu_help.txt
+WSJTXEXPHELP="$MENU"/wsjtxexp_menu_help.txt
 
 # MAIN MANU --------------------------------------------------------------------
 clear
 while [ 0 ]; do
 
 dialog --ok-label SELECT --nocancel --backtitle "$BACKTITLE" --title \
-"$MMTITLE" --menu "$MENUMSG" 17 60 20 --file "$TMP/MMenu.tmp" 2> "$TMP/selection"
+"$MMTITLE" --menu "$MENUMSG" 17 60 20 --file "$TMPD/MMenu.tmp" 2> "$TMPD/selection"
 
-MMSELECT=$(head -c 1 < $TMP/selection)
+MMSELECT=$(head -c 1 < $TMPD/selection)
 
 # WSJT Menu
 if [[ $MMSELECT = "1" ]]; then
-	jtsdk-wsjt.sh
+	jtsdk-wsjt
 	continue
 
 # WSPR Menu --------------------------------------------------------------------
 elif [[ $MMSELECT = "2" ]]; then
-	jtsdk-wspr.sh
+	jtsdk-wspr
 	continue
 
 
@@ -389,9 +379,9 @@ elif [[ $MMSELECT = "2" ]]; then
 	elif [[ $MMSELECT = "3" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 --file "$TMP/WSJTXEXPMenu.tmp" 2> "$TMP/buildselect"
+"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 --file "$TMPD/WSJTXEXPMenu.tmp" 2> "$TMPD/buildselect"
 
-	BUILDSELECT=$(head -c 1 < $TMP/buildselect)
+	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
 
 	# Release
 	if [[ $BUILDSELECT = "1" ]]; then
@@ -410,7 +400,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" \
 
 	# Back ( return to main menu )
 	elif [[ $BUILDSELECT = "B" ]]; then
-		rm -f "$TMP/buildselect"
+		rm -f "$TMPD/buildselect"
 		continue
 	fi
 # End WSJT-X 1.6.1 Menu---------------------------------------------------------
@@ -420,9 +410,9 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" \
 	elif [[ $MMSELECT = "4" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXTITLE" --menu "$MENUMSG" 14 60 19 --file "$TMP/WSJTXMenu.tmp" 2> "$TMP/buildselect"
+"$WSJTXTITLE" --menu "$MENUMSG" 14 60 19 --file "$TMPD/WSJTXMenu.tmp" 2> "$TMPD/buildselect"
 
-	BUILDSELECT=$(head -c 1 < $TMP/buildselect)
+	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
 
 	# Release
 	if [[ $BUILDSELECT = "1" ]]; then
@@ -446,7 +436,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
 
 	# Back ( return to main menu )
 	elif [[ $BUILDSELECT = "B" ]]; then
-		rm -f "$TMP/buildselect"
+		rm -f "$TMPD/buildselect"
 		continue
 	fi
 # End WSJT-X 1.6.0 (devel) Menu-------------------------------------------------
@@ -456,9 +446,9 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
 	elif [[ $MMSELECT = "5" ]]; then
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXRCTITLE" --menu "$MENUMSG" 14 60 19 --file "$TMP/WSJTXMenu.tmp" 2> "$TMP/buildselect"
+"$WSJTXRCTITLE" --menu "$MENUMSG" 14 60 19 --file "$TMPD/WSJTXMenu.tmp" 2> "$TMPD/buildselect"
 
-	BUILDSELECT=$(head -c 1 < $TMP/buildselect)
+	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
 
 	# Release
 	if [[ $BUILDSELECT = "1" ]]; then
@@ -483,7 +473,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
 
 	# Back ( return to main menu )
 	elif [[ $BUILDSELECT = "B" ]]; then
-		rm -f "$TMP/buildselect"
+		rm -f "$TMPD/buildselect"
 		continue
 	fi
 # End WSJT-X 1.5 RC Menu--------------------------------------------------------
@@ -491,7 +481,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
 
 # Build Hamlib3-----------------------------------------------------------------
    elif [[ $MMSELECT = "6" ]]; then
-	jtsdk-hamlib3.sh
+	jtsdk-hamlib3
 	continue
 
 
@@ -507,5 +497,4 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" \
    clean_exit
    fi
 done
-
 
