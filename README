@@ -15,9 +15,9 @@ NOTES(s)
 
 
 TO INSTALL
-* Download jtsdk-nix-2.0.4.tar.gz
-* Extract: tar -xf jtsdk-nix-2.0.4.tar.gz
-* cd ./jtsdk-nix-2.0.4
+* Download jtsdk-nix-2.0.5.tar.gz
+* Extract: tar -xf jtsdk-nix-2.0.5.tar.gz
+* cd ./jtsdk-nix-2.0.5
 
 
 ENABLE FEATURES
@@ -51,7 +51,7 @@ TO RUN JTSDK:
 
 
 TO UNINSTALL
-* cd ./jtsdk-nix-2.0.4
+* cd ./jtsdk-nix-2.0.5
 * sudo make uninstall
 
 
