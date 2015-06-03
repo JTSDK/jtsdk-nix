@@ -35,10 +35,10 @@ ALTERNATE PATHS
 
 
 RECOMMENDED INVOCATION
-Ubuntu....: ./autogeh.sh --with-distro=ubuntu --enable-separate
-Mint......: ./autogeh.sh --with-distro=mint --enable-separate
-Debian....: ./autogeh.sh --with-distro=debian --enable-spearate
-Raspbian..: ./autogeh.sh --with-distro=debian --enable-separate
+Ubuntu....: ./autogen.sh --with-distro=ubuntu --enable-separate
+Mint......: ./autogen.sh --with-distro=mint --enable-separate
+Debian....: ./autogen.sh --with-distro=debian --enable-spearate
+Raspbian..: ./autogen.sh --with-distro=debian --enable-separate
 
 
 AFTER CONFIGURING
