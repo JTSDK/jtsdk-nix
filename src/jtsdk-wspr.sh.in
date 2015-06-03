@@ -22,6 +22,9 @@
 
 set -e
 
+# set $1 var from jtsdk main scipt
+TARGET=$1
+
 # set home and directory paths
 HOMEDIR=/home/$LOGNAME/jtsdk
 SRCD="$HOMEDIR/src"
@@ -52,7 +55,7 @@ check_svn() {
 if [[ ! -d $APP_SRC/.svn ]]
 then
 	echo
-	echo "Checking Out New Version of $APP_NAME"
+	echo " Checking Out New Version of $APP_NAME"
 	cd $SRCD
 	svn co $URL
 else
@@ -60,21 +63,21 @@ else
 	while [ 1 ]
 	do
 		echo
-		read -p "Update from SVN Before Building? [ Y/N ]: " yn
+		read -p " Update from SVN Before Building? [ Y/N ]: " yn
 		case "$yn" in
 		
 		[Yy]* )
 			cd "$APP_SRC" 
-			echo "Updating ( $APP_NAME )"
+			echo " Updating ( $APP_NAME )"
 			svn cleanup && svn update
 			break ;;
 		[Nn]* )
-			echo 'Nothing to be done..'
+			echo ' Nothing to be done..'
 			break ;;
 		
 		* )
 			clear
-			echo "Please use "Y" yes or "N" No." ;;
+			echo " Please use "Y" yes or "N" No." ;;
 		esac
 	done
 fi
@@ -82,37 +85,27 @@ fi
 }
 
 # get WSPR Version information from: wspy.py
-get_version() {
+get_version_info() {
 
 # Example
 # ------------------------------------------------------------------------------
 # Using wspy.py line: Version="4.0 r" + "$Rev: 4889 $"[6:-2]
 # ------------------------------------------------------------------------------
 
-echo "-- Getting App Version from Repository"
 AVER=$(cat $APP_SRC/wspr.py |grep 'Version="' |awk '{print $1}' |cut -c10-13)
-echo "-- Repository Version Is ..: $AVER"
-
-}
-
-# get the last changed svn number
-get_svn_revision() {
-
-echo "-- Getting SVN Revision Number"
 SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
-echo "-- SVN Revision Is ........: $SVN_VER"
-
+echo " Application Version..: $AVER"
+echo " SVN Version..........: $SVN_VER"
 }
-
 
 ################################################################################
 # START MAIN SCRIPT
 ################################################################################
 
-# Make sure directories are present, in case they were deleted
+# start the build
 clear
 echo '-----------------------------------------------------'
-echo -e ${C_Y}"STARTING BUILD for ( WSPR )"${C_NC}
+echo -e ${C_Y}" STARTING BUILD for ( WSPR )"${C_NC}
 echo '-----------------------------------------------------'
 check_svn
 
@@ -120,17 +113,28 @@ echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
 echo '-----------------------------------------------------'
-get_version
-get_svn_revision
+get_version_info
 
-# set install locaiton
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SETTING UP DIRRECTORIES"${C_NC}
+echo '-----------------------------------------------------'
+
+# setup install locaiton
 if [ $SEPARATE == "Yes" ] ; then 
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/install/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/r$SVN_VER/install"
+	echo ' Using Enable Separate'
 else
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install"
+	echo ' Using Consolidated Install Location'
 fi
 
+# Make sure directories are present, in case they were deleted
+echo " Install Location: $INSTALLD"
+echo ' Creating Install Directory'
+mkdir -p $INSTALLD
 
+# reun autoreconf to generate configure and makfiles
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}' RUN AUTORECONF'${C_NC}
@@ -138,11 +142,11 @@ echo '-----------------------------------------------------'
 cd "$APP_SRC"
 # clelan first
 if [[ -f Makefile ]] ; then
-	echo "Running make clean first"
+	echo " Running make clean first"
 	make clean >/dev/null 2>&1
 fi
 # run autoreconf to generate new Makefile & configure script
-echo 'Generating Makefile and Configure scripts'
+echo ' Generating Makefile and Configure scripts'
 autoreconf -f -i
 
 echo ''
@@ -150,42 +154,54 @@ echo '-----------------------------------------------------'
 echo -e ${C_Y}'RUN CONFIGURE'${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-./configure --prefix="$INSTALLD" --with-python3=@PYTHON3@ --with-f2py=@F2PY3@
+./configure --prefix="$INSTALLD" --with-python3=$PYTHON3 --with-f2py=$F2PY3
 
-echo ''
+# Note: This is done manually due to the way WSPR runs in a normal system
+# This is only needed for use with JTSDK
 echo '-----------------------------------------------------'
-echo -e ${C_Y}'COMPILE and INSTALL TARGETS'${C_NC}
+echo -e ${C_Y}"COMPILING [ $TARGET ] TARGET "${C_NC}
 echo '-----------------------------------------------------'
-echo ''
-# get the targets from Makefile all: line into an array
-targets=$(grep '^all\:' Makefile |awk 'FNR==1' |cut -f2-)
-
-# loop through the targets
-for i in "${targets[@]}"
-do
-	make $i
-done
-
-# now install the targets
-mkdir -p "$INSTALLD"/{doc/examples,save/Samples,WsprMod}
-install -m 644 save/Samples/* "$INSTALLD"/save/Samples/
-install -m 755 gocal Pmw*.py wspr.py wsprrc "$INSTALLD"
-install -m 644 AUTHORS	README NEWS COPYING COPYRIGHT "$INSTALLD"
-install -m 644 hamlib_rig* "$INSTALLD"
-install -m 755 WsprMod/* "$INSTALLD"/WsprMod
-install -m 644 doc/examples/* "$INSTALLD"/doc/examples/
-chmod -R 644 "$INSTALLD"/doc/examples/*
-
-# loop through binaries && install strip
-binaries=(fmtest fcal fmeasure fmtave wspr0 wsprcode)
-for i in "${binaries[@]}"
-do
-	install -m 755 -s $i "$INSTALLD" 
-done
-
-if [[ -f $INSTALLD/$APP_NAME.sh ]] ; then rm -f "$INSTALLD/$APP_NAME.sh" ; fi
-touch "$INSTALLD/$APP_NAME.sh" && chmod +x "$INSTALLD/$APP_NAME.sh"
-
+case "$TARGET" in
+	user-guide )
+	make user-guide
+	echo ' Creating Doc directory'
+	mkdir -p "$INSTALLD"/doc
+	echo " Copying wspr-main-$AVER.html"
+	cp -u $APP_SRC/doc/wspr-main-$AVER.html $INSTALLD/doc/
+	echo " Location..: "$INSTALLD"/doc/wspr-main-$AVER.html"
+	echo ''
+	read -p "Press [ENTER] to continue ..." ;;
+	install )	
+	echo ''
+	echo '-----------------------------------------------------'
+	echo -e ${C_Y}'INSTALLING WSPR'${C_NC}
+	echo '-----------------------------------------------------'
+	echo ''
+	echo ' Installing Base Files'
+	mkdir -p "$INSTALLD"/{doc/examples,save/Samples,WsprMod,man1}
+	install -m 644 save/Samples/* "$INSTALLD"/save/Samples/
+	install -m 755 gocal Pmw*.py wspr.py wsprrc "$INSTALLD"
+	install -m 644 AUTHORS	README NEWS COPYING COPYRIGHT "$INSTALLD"
+	install -m 644 hamlib_rig* "$INSTALLD"
+	install -m 755 WsprMod/* "$INSTALLD"/WsprMod
+	install -m 644 manpages/*.1 "$INSTALLD"/man1
+	install -m 644 doc/wspr-main-$AVER.html "$INSTALLD"/doc
+	install -m 644 doc/examples/* "$INSTALLD"/doc/examples/
+	chmod -R 644 "$INSTALLD"/doc/examples/*
+	
+	# loop through binaries && install strip
+	echo ' Installing binaries'
+	binaries=(fmtest fcal fmeasure fmtave wspr0 wsprcode)
+	for i in "${binaries[@]}"
+	do
+		install -m 755 -s $i "$INSTALLD" 
+	done
+	
+	# Prepare for new wspr.sh script
+	echo ' Generating wspr.sh script'
+	rm -f "$INSTALLD/$APP_NAME.sh"
+	touch "$INSTALLD/$APP_NAME.sh" && chmod +x "$INSTALLD/$APP_NAME.sh"
+	
 # Generate a simple wsspr.sh run script
 (
 cat <<'EOF_WSPRSH'
@@ -203,27 +219,35 @@ set -e
 EOF_WSPRSH
 ) > "$INSTALLD"/wspr.sh
 
-# ensure ownership is for the current user
-chown -R "$USER":"$USER" "$INSTALLD" 
+	# ensure ownership is for the current user
+	echo " Changing Install Ownership To [ $USER ]"
+	chown -R "$USER":"$USER" "$INSTALLD"
+	
+	# Finished
+	echo
+	echo '-----------------------------------------------------'
+	echo -e ${C_G}"BUILD SUMMARY for ( WSPR )"${C_NC}
+	echo '-----------------------------------------------------'
+	echo ''
+	echo " Source ......: $APP_SRC"
+	echo " Install .....: $INSTALLD"
+	echo " Manpages.....: $INSTALLD/man1"
+	echo " User Guide ..: $INSTALLD/doc/wspr-main-$AVER.html"
+	echo ''
+	echo ' FMT Tools'
+	echo " Install .....: $INSTALLD"
+	echo ''
+	echo " TO RUN $APP_NAME"
+	echo " cd ..........: $INSTALLD"
+	echo " Type, .......: ./$APP_NAME.sh"
+	echo ''
+	read -p "Press [ Enter ] to return to the main menu .."
+	exit 0 ;;
+	* )
+	exit 0 ;;
+esac
 
-# Finished
-echo
-echo '-----------------------------------------------------'
-echo -e ${C_G}"BUILD SUMMARY for ( WSPR )"${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-echo " Build Type ..: Release"
-echo " Source ......: $APP_SRC"
-echo " Install .....: $INSTALLD"
-echo ''
-echo ' FMT Tools'
-echo " Install .....: $INSTALLD"
-echo ''
-echo " TO RUN $APP_NAME"
-echo " cd ..........: $INSTALLD"
-echo " Type, .......: ./$APP_NAME.sh"
-echo ''
-read -p "Press [ Enter ] to return to the main menu .."
 
-exit 0
+
+
 
