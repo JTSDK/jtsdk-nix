@@ -171,7 +171,16 @@ case "$TARGET" in
 	echo " Location..: "$INSTALLD"/doc/wspr-main-$AVER.html"
 	echo ''
 	read -p "Press [ENTER] to continue ..." ;;
-	install )	
+	install )
+	
+	# make clean if previous build found
+	if [ -f Makefile ] ; then make clean ; fi
+	
+	# now run Make to build all targets, then install
+	echo ''
+	make
+	
+	# start the install process
 	echo ''
 	echo '-----------------------------------------------------'
 	echo -e ${C_Y}'INSTALLING WSPR'${C_NC}
