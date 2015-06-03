@@ -282,8 +282,10 @@ case "$OPT1" in
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
 			OPTION="Debug"
+			DESC="Debug Target"
 		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
 			OPTION="Release"
+			DESC="Release Target"
 		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
 			OPTION="package"
 		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
