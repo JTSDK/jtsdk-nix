@@ -2,7 +2,7 @@
 # Process this file with autoconf -*- autoconf -*-
 # ------------------------------------------------------------------------------
 AC_PREREQ([2.69])
-AC_INIT([JTSDK],[2.0.6],[wsjt-devel@lists.sourceforge.net],[],
+AC_INIT([JTSDK],[2.0.7],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
 JTSDK_COPYRIGHT="Copyright (C) 2014-2015 Joseph H Taylor, Jr, K1JT"
@@ -30,6 +30,51 @@ if test "$prefix" = "NONE"; then
 	prefix=${ac_default_prefix}
 fi
 
+
+# ------------------------------------------------------------------------------
+#  set path to Python2
+# ------------------------------------------------------------------------------
+AC_ARG_WITH([python2],
+AC_HELP_STRING([--with-python2=PATH], [Path to python2]), [python2=$with_python2])
+
+if test -n "$with_python2"; then
+	AC_SUBST([PYTHON2], ["$with_python2"])
+
+else
+	AC_PATH_PROG([PYTHON2], [python])
+	AC_SUBST([PYTHON2], ["$ac_cv_path_PYTHON2"])
+
+fi
+
+# ------------------------------------------------------------------------------
+#  set path to Python3
+# ------------------------------------------------------------------------------
+AC_ARG_WITH([python3],
+AC_HELP_STRING([--with-python3=PATH], [Path to python3]), [python3=$with_python3])
+
+if test -n "$with_python3"; then
+	AC_SUBST([PYTHON3], ["$with_python3"])
+
+else
+	AC_PATH_PROG([PYTHON3], [python3])
+	AC_SUBST([PYTHON3], ["$ac_cv_path_PYTHON3"])
+
+fi
+
+# ------------------------------------------------------------------------------
+#  set Path to F2PY3
+# ------------------------------------------------------------------------------
+AC_ARG_WITH([f2py3],
+AC_HELP_STRING([--with-f2py3=PATH], [Path to f2py3]), [f2py3=$with_f2py3])
+
+if test -n "$with_f2py3"; then
+	AC_SUBST([F2PY3], ["$with_f2py3"])
+else
+	AC_PATH_PROG([F2PY3], [f2py3])
+	AC_SUBST([F2PY3], ["$ac_cv_path_F2PY3"])
+fi
+
+
 # ------------------------------------------------------------------------------
 #  set general use variables
 # ------------------------------------------------------------------------------
@@ -38,7 +83,7 @@ BINDIR="$prefix/bin"
 SHARE="$prefix/share/jtsdk"
 MANDIR="$prefix/share/man/man1"
 DOCDIR="$prefix/share/jtsdk/doc"
-DTDIR=/usr/share/applications
+DTDIR="$prefix/share/applications"
 MANSRC=$(exec pwd)/manpages
 DOCSRC=$(exec pwd)/docs/source
 DATASRC=$(exec pwd)/data
@@ -48,12 +93,12 @@ distrosd=$(lsb_release -sd)
 distrov=$(lsb_release -sr)
 distroc=$(lsb_release -sc)
 
+
 # ------------------------------------------------------------------------------
 #  check general use tools
 # ------------------------------------------------------------------------------
 AC_PATH_PROG([ASCIIDOC], [asciidoc])
 AC_PATH_PROG([A2X], [a2x])
-AC_PATH_PROG([F2PY3], [f2py3])
 AC_PATH_PROG([CHMOD], [chmod])
 AC_PATH_PROG([CHOWN], [chown])
 AC_PATH_PROG([CP], [cp])
@@ -101,7 +146,6 @@ AC_SUBST([DISTROC], [${distroc}])
 AC_SUBST([DESC], [${distrosd}])
 AC_SUBST([DOCSRC], ["$DOCSRC"])
 AC_SUBST([DTDIR], ["$DTDIR"])
-AC_SUBST([F2PY3], ["$ac_cv_path_F2PY3"])
 AC_SUBST([HOMEDIR], ["$HOMEDIR"])
 AC_SUBST([ICOND], [/usr/share/pixmaps])
 AC_SUBST([MANSRC], ["$MANSRC"])
