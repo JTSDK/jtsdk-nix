@@ -1,5 +1,5 @@
 = JTSDK - Software Development Kit
-:revision: v2.0.1
+:revision: v2.0.3
 :icons:
 :numbered:
 :keywords: amateur radio weak signal communication K1JT WSJT FSK441 JT65 JT6M JT9 WSJTX

@@ -28,6 +28,8 @@ set -e
 # work in most Xterm windows
 echo -e "\e[8;35;110t"
 
+
+
 # host informaiton and apps
 HOST_OS=@HOST_OS@
 HOST_CPU=@HOST_CPU@
@@ -91,15 +93,19 @@ WSJTXEXPHELPTITLE="WSJT-X EXP BUILD HELP"
 UD=" UNDER DEVELOPMENT"
 UDMSG="\n      Build Selection is Under Development"
 
+# Dormant Branch
+IB=" Inactive Branch"
+IBMSG="\n      Branch Activity Is Currently Dormant"
+
 # main menu
 touch $TMPD/MMenu.tmp
 cat << 'EOF' > $TMPD/MMenu.tmp 
-"1" "WSJT ..... v10.0  (devel" \
-"2" "WSPR ..... v4.0.0 (devel)" \
-"3" "WSJT-X ... v1.6.1 (exp)" \
-"4" "WSJT-X ... v1.6.0 (devel)" \
-"5" "WSJT-X ... v1.5.0 (RC)" \
-"6" "Hamlib3 .. v3.0.0 (devel)" \
+"1" "WSJT ..... v10.0" \
+"2" "WSPR ..... v4.0.0" \
+"3" "WSJT-X ... v1.6.1" \
+"4" "WSJT-X ... v1.6.0" \
+"5" "WSJT-X ... v1.5.0" \
+"6" "Hamlib3 .. v3.0.0" \
 "H" "Help" \
 "E" "Exit"
 EOF
@@ -123,7 +129,7 @@ cat << 'EOF' > $TMPD/WSJTXMenu.tmp
 "B" "Back"
 EOF
 
-# WSJTX 1.5 RC
+# WSJTX 1.5.0
 touch $TMPD/WSJTXRCMenu.tmp
 cat << 'EOF' > $TMPD/WSJTXRCMenu.tmp 
 "1" "Release Target" \
@@ -132,25 +138,6 @@ cat << 'EOF' > $TMPD/WSJTXRCMenu.tmp
 "H" "Help" \
 "B" "Back"
 EOF
-
-# WSPR Menu
-touch $TMPD/WSPRMenu.tmp
-cat << 'EOF' > $TMPD/WSPRMenu.tmp 
-"1" "Install Target" \
-"2" "Compile User Guide" \
-"H" "Help" \
-"B" "Back"
-EOF
-
-# WSJT Menu
-touch $TMPD/WSJTMenu.tmp
-cat << 'EOF' > $TMPD/WSJTMenu.tmp 
-"1" "Install Target" \
-"2" "Compile User Guide" \
-"H" "Help" \
-"B" "Back"
-EOF
-
 
 ################################################################################
 # Functions Section
@@ -179,6 +166,12 @@ dialog --backtitle "$BACKTITLE" --title "$UD" --msgbox "$UDMSG" 7 50
 
 }
 
+#--inactive branch--------------------------------------------------------------
+function inactive_branch() {
+
+dialog --backtitle "$BACKTITLE" --title "$IB" --msgbox "$IBMSG" 7 50
+
+}
 
 #--signal catch-----------------------------------------------------------------
 sig_catch_cleanup() {
@@ -390,60 +383,39 @@ if [[ $MMSELECT = "1" ]]; then
 
 # WSPR Menu --------------------------------------------------------------------
 elif [[ $MMSELECT = "2" ]]; then
+	jtsdk-wspr
+	continue
 
-dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 --file "$TMPD/WSPRMenu.tmp" 2> "$TMPD/buildselect"
-
-	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
-
-	# Install Target
-	if [[ $BUILDSELECT = "1" ]]; then
-		jtsdk-wspr install
-		continue
-
-	# User Guide
-	elif [[ $BUILDSELECT = "2" ]]; then
-		jtsdk-wspr user-guide
-		continue
-
-	# Help
-	elif [[ $BUILDSELECT = "H" ]]; then
-	dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" --textbox "$WSJTXEXPHELP" 20 80
-
-	# Back ( return to main menu )
-	elif [[ $BUILDSELECT = "B" ]]; then
-		rm -f "$TMPD/buildselect"
-		continue
-	fi
 
 # WSJT-X 1.6.1 Menu (exp)-------------------------------------------------------
 	elif [[ $MMSELECT = "3" ]]; then
+	inactive_branch
 
-dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 --file "$TMPD/WSJTXEXPMenu.tmp" 2> "$TMPD/buildselect"
+#dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
+#"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 --file "$TMPD/WSJTXEXPMenu.tmp" 2> "$TMPD/buildselect"
 
-	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
+#	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
 
-	# Release
-	if [[ $BUILDSELECT = "1" ]]; then
-		jtsdk-wsjtx exp release
-		continue
+#	# Release
+#	if [[ $BUILDSELECT = "1" ]]; then
+#		jtsdk-wsjtx exp release
+#		continue
 
-	# Debug
-	elif [[ $BUILDSELECT = "2" ]]; then
-		jtsdk-wsjtx exp debug
-		continue
+#	# Debug
+#	elif [[ $BUILDSELECT = "2" ]]; then
+#		jtsdk-wsjtx exp debug
+#		continue
 
-	# Help
-	elif [[ $BUILDSELECT = "H" ]]; then
-dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" \
---textbox "$WSJTXEXPHELP" 20 80
+#	# Help
+#	elif [[ $BUILDSELECT = "H" ]]; then
+#dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" \
+#--textbox "$WSJTXEXPHELP" 20 80
 
-	# Back ( return to main menu )
-	elif [[ $BUILDSELECT = "B" ]]; then
-		rm -f "$TMPD/buildselect"
-		continue
-	fi
+#	# Back ( return to main menu )
+#	elif [[ $BUILDSELECT = "B" ]]; then
+#		rm -f "$TMPD/buildselect"
+#		continue
+#	fi
 # End WSJT-X 1.6.1 Menu---------------------------------------------------------
 
 
@@ -538,4 +510,5 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" \
    clean_exit
    fi
 done
+
 

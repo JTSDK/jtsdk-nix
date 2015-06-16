@@ -1,17 +1,17 @@
 :doctype: manpage
-:man manual: JTSDK Manpage
+:man manual: JTSDK WSJT Manpage
 :man date: {date}
-:man version: Version 2.0.3
+:man version: Version @VERSION@
 
-= jtsdk(1)
+= jtsdk-wsjt(1)
 
 == NAME
 
-jtsdk - Build System for WSJT Applications
+jtsdk-wsjt - Build Script for WSJT APplication
 
 
 == SYNOPSIS
-jtsdk ['OPTION']
+jtsdk-wsjt ['OPTION']
 
 
 == DESCRIPTION

@@ -3,15 +3,15 @@
 :man date: {date}
 :man version: Version @VERSION@
 
-= jtsdk(1)
+= jtsdk-wspr(1)
 
 == NAME
 
-jtsdk - Build System for WSJT Applications
+jtsdk-wspr - Build Script for WSPR Applications
 
 
 == SYNOPSIS
-jtsdk ['OPTION']
+jtsdk-wspr ['OPTION']
 
 
 == DESCRIPTION

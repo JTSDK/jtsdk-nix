@@ -3,7 +3,7 @@
 # Name			: autogen.sh
 # Execution		: As normal user ./autogen.sh
 # Copyright		: Copyright (C) 2014 Joseph H Taylor, Jr, K1JT
-# Contributors	: Greg Beam, Joseph H Taylor, and others
+# Contributors		: Greg Beam, Joseph H Taylor, and others
 # Comment		: Part of the JTSDK Linux Project
 #
 # JTSDK is free software: you can redistribute it and/or modify

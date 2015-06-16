@@ -1,0 +1,14 @@
+jtsdk (2.0.6-1) unstable; urgency=medium
+
+  * Initial release version 2.0.6
+  * Initial Debian Release, closes (#786330)
+
+ -- Greg Beam <ki7mt@yahoo.com>  Mon, 15 Jun 2015 14:36:32 -0600
+
+jtsdk (2.0.5-1) unstable; urgency=medium
+
+  * Initial release version 2.0.5
+  * Initial Debian Release, closes (#786330)
+  
+ -- Greg Beam <ki7mt@yahoo.com>  Sun, 31 May 2015 00:00:03 -0600
+

@@ -331,9 +331,9 @@ get_svn_revision
 
 # set build and install locaitons
 if [ $SEPARATE == "Yes" ] ; then 
-	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER//build/$OPTION"
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/install/$OPTION"
-	PKGD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/package"
+	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER//build/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install/$OPTION"
+	PKGD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/package"
 else
 	BUILDD="$HOMEDIR/$APP_NAME/$AVER/build/$OPTION"
 	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
@@ -354,48 +354,11 @@ echo '-----------------------------------------------------'
 echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo
-
-# configuration options release target
-if [[ $OPTION = "Release" ]] ; then
 cd "$BUILDD"
 cmake -G "Unix Makefiles" \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
 -D CMAKE_BUILD_TYPE="$OPTION" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
-
-# configuration options for debug target
-elif [[ $OPTION = "Debug" ]] ; then
-cd "$BUILDD"
-cmake -G "Unix Makefiles" \
--D CMAKE_PREFIX_PATH:PATH="$HL3I" \
--D WSJT_CREATE_WINMAIN=ON \
--D CMAKE_BUILD_TYPE="$OPTION" \
--D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
-
-# configuration options for package target
-elif [[ $OPTION = "package" ]] ; then
-cd "$BUILDD"
-cmake -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
--D WSJT_INCLUDE_KVASD=ON \
--D CMAKE_COLOR_MAKEFILE=ON \
--D CMAKE_BUILD_TYPE="Release" \
--D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
-
-# configuration options for uder-guide build
-elif [[ $OPTION = "doc" ]] ; then
-cd "$BUILDD"
-cmake -G "Unix Makefiles" \
--D CMAKE_PREFIX_PATH:PATH="$HL3I" \
--D CMAKE_BUILD_TYPE="$OPTION" \
--D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
-
-else
-	echo 'Bad Configure Type.'
-	echo 'Check JTSDK main script for errors'
-	echo ''
-	read -p "Press [ Enter ] to exit $0"
-	clean_exit
-fi
 
 # build the target
 echo ''

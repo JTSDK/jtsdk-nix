@@ -126,7 +126,7 @@ get_svn_revision
 
 # set install locaiton
 if [ $SEPARATE == "Yes" ] ; then 
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$AVER-r$SVN_VER/install/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install/$OPTION"
 else
 	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
 fi

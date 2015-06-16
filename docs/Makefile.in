@@ -2,26 +2,28 @@
 # Re-direct stdout and stderr:		bash
 #					make >& junk
 #
-# Prerequisites: Asciidoc, A2x, Python ( > =2.5 < 3.0 ) 
+# Prerequisites: Asciidoc, Python ( > =2.5 < 3.0 ) 
 
 # Program Infomation
 PROGRAM		:=	@PROGRAM@
 VERSION		:=	@VERSION@
 BUGS		:=	@BUGS@
-WEB			:=	@WEB@
+WEB		:=	@WEB@
 
 # General Vars
 DOCSRC		:=	@DOCSRC@
-RM			:=	@RM@
+RM		:=	@RM@
 ASCIIDOC	:=	@ASCIIDOC@
+PYTHON2		:=	@PYTHON2@
 
 all: docs
 
-# Build Docs
+# Build JTSDK Main HTML Document
 docs:
-	@$(ASCIIDOC) -b xhtml11 -a data-uri -a toc2 -o jtsdk.html $(DOCSRC)/dev-guide-main.adoc
+	@$(ASCIIDOC) -b xhtml11 -a data-uri -a toc2 -o jtsdk.html $(DOCSRC)/jtsdk-main.adoc
 
 # Cleanup Source Tree
 .PHONY: clean
 clean:
 	$(RM) -f ./jtsdk.html
+

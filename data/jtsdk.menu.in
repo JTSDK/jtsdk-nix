@@ -1,0 +1,7 @@
+?package(jtsdk):needs="X11" \
+ section="Development" \
+ description="Build System for WSJT Applications" \
+ hints="WSJT,WSJT-X" \
+ title="@PROGRAM@ @VERSION@" \
+ icon="/usr/share/pixmaps/jtsdk.xpm" \
+ command="@BINDIR@/jtsdk"
