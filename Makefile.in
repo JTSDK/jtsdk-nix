@@ -132,7 +132,7 @@ install:
 	@$(MKDIR) -p $(DESTDIR)$(DOCDIR)
 	@echo '..Installing Misc Files'
 	@install -m 644 src/docs/* $(DESTDIR)$(SHARE)
-	@install -m 644 AUTHORS ChangeLog COPYING COPYRIGHT README TO-DO $(DESTDIR)$(DOCDIR)
+	@install -m 644 AUTHORS ChangeLog COPYING COPYRIGHT README README.* TO-DO $(DESTDIR)$(DOCDIR)
 	@install -m 644 $(DATASRC)/jtsdk.menu $(DESTDIR)$(DTDIR)
 	@install -m 644 $(DATASRC)/jtsdk.desktop $(DESTDIR)$(DTDIR)
 	@install -m 644 $(DATASRC)/jtsdk.xpm $(DESTDIR)$(ICOND)
