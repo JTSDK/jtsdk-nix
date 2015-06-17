@@ -38,6 +38,7 @@ MANSRC		:=	@MANSRC@
 DATASRC		:=	@DATASRC@
 
 # Install locations
+PREFIX		:=	@PREFIX@
 INSTALL		:=	install
 BINDIR		:=	@BINDIR@
 SHARE		:=	@SHARE@
@@ -52,6 +53,8 @@ HOMEDIR		:=	/home/$(LOGNAME)/jtsdk
 
 # Config Definitions
 BDOC		:=	@BDOC@
+SEPARATE		:=	@SEPARATE@
+
 DEFS		:=	@DEFS@
 
 # Foreground colours
@@ -66,7 +69,7 @@ A2X			:=	@A2X@
 MANPSRC		:= $(wildcard manpages/*.1.txt)
 
 # Targets
-all: build-doc
+all: build-doc make-summary
 
 build-doc:
 ifeq ($(BDOC),Yes)
@@ -88,8 +91,24 @@ endif
 	echo " $$f" ; \
 	$(A2X) --doctype manpage --format manpage --no-xmllint $$f ; \
 	done
+
+make-summary:
+	echo ''
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Make Summary"$(C_NC)
+	@echo '---------------------------------------------'
 	@echo ''
-	@echo ' To Install, type ..: sudo make install'
+	@echo "Package ...................: $(PROGRAM) $(VERSION)"
+	@echo " Distribution ..............: $(DESC) $(HOST_CPU)"
+	@echo " Install prefix ............: $(PREFIX)"
+	@echo " Working Directory .........: $(HOMEDIR)"
+	@echo ''
+	@echo 'OPTIONS'
+	@echo " CPU Cores .................: $(JJJJ)"
+	@echo " With HTML Docs ............: $(BDOC)"
+	@echo " Enable Folder Separation ..: $(SEPARATE)"
+	@echo ''
+	@echo ' To Install, type ..........: sudo make install'
 	@echo ''
 
 # Install System Files
