@@ -93,13 +93,13 @@ endif
 	done
 
 make-summary:
-	echo ''
+	@echo ''
 	@echo '---------------------------------------------'
 	@echo -e $(C_Y)"Make Summary"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
-	@echo "Package ...................: $(PROGRAM) $(VERSION)"
-	@echo " Distribution ..............: $(DESC) $(HOST_CPU)"
+	@echo "Package ....................: $(PROGRAM) $(VERSION)"
+	@echo " Distribution ..............: $(DESC) $(ARCH)"
 	@echo " Install prefix ............: $(PREFIX)"
 	@echo " Working Directory .........: $(HOMEDIR)"
 	@echo ''
