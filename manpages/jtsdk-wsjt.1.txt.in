@@ -6,7 +6,6 @@
 = jtsdk-wsjt(1)
 
 == NAME
-
 jtsdk-wsjt - Build Script for WSJT APplication
 
 
@@ -15,40 +14,15 @@ jtsdk-wsjt ['OPTION']
 
 
 == DESCRIPTION
-*JTSDK* is a set of shell scripts and small utilities designed to assist users
-with compiling the WSJT suit eof applications.
+*JTSDK WSJT* is a simple shell script for building WSJT
 
 
 == OPTIONS
-Options are functions that extend or enhance the primary purpose of *JTSDK*. You
-must use the double-hyphen (*--*) to initiate them. The following extended
-functions are currently enabled:
-
-*--clean::
-*Currently-Disabled*: This function will attempt to clean up, +remove+, older
-builds, leaving only the last build compiled for a given application. It is
-still in beta testing.
-
-[FILEBUG]
-*--file-bug
-*Currently-Disabled*: This function is used is similar to +++--sysinfo+++,
-in that, it will use the same code to gather information, then combine them in
-an easy to use .tar.gz file for sending vial email.
-
-*--help::
-*Currently-Disabled*: Displays the main help page, and information HTML and
-manpage documents.
-
-*--supported::
-*Currently-Disabled*: List what WSJT applications are currently supported.
-
-*--sysinfo::
-*Currently-Disabled*: Generates, then displays information about installed
-packages, system architectures, distribution in use.
+This script should be run from within JTSDK. No options are available.
 
 
 == BUGS
-If you find a bug or suspect *JTSDK* is not acting as you think it should,
+If you find a bug or suspect *JTSDK WSJT* is not acting as you think it should,
 send an email with as much detail as possible to:
 <wsjt-devel@lists.sourceforge.net>
 
@@ -60,6 +34,7 @@ system information beforehand.
 --------------------------------------------------------------------------------
 Greg Beam, KI7MT, <ki7mt@yahoo.com> .... Manpage Editor
 --------------------------------------------------------------------------------
+
 
 == RESOURCES
 --------------------------------------------------------------------------------
