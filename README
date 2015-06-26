@@ -3,6 +3,29 @@ users in compiling the various WSJT applications used by
 Amateur Radio Operators.
 
 
+PACKAGE LIST / REQUIRMENTS ( Debian/Ubuntu Example )
+
+ 1. The list facilitates compiling WSJT-X, WSJT and WSPR including
+    documentation plus Manpages using AsciiDoc.
+ 2. This is an all inclusive list. Your distribution may already have one
+    or more of the packages installed by default.
+ 3. Some packages may be dependencies of others and automatically installed.
+    The list makes no attempt determine the reverse depends.
+ 4. This list provides both Build and Runtime dependencies
+ 5. Other distributions may have totally different package names. Consult
+    your distribution package management software and adjust accordinly.
+
+autotools-dev, autoconf, automake, asciidoc, clang-3.5, cmake (>= 2.8.9),
+gcc (>= 4.8.2), g++ (>= 4.8.2), gfortran, git, gettext, libtool, libfftw3-dev,
+libhamlib-dev, libhamlib-utils, libusb-dev, libqt5multimedia5-plugins,
+libqt5serialport5-dev, libqt5opengl5-dev, libsamplerate0-dev, libtool,
+libusb-dev, libxml2-utils, libqt5serialport5-dev, libqt5opengl5-dev,
+portaudio19-dev, pkg-config, python-dev, python3-dev, python3-numpy,
+python3-pil (>> 2.6.1), python3-pil.imagetk, python3-tk, python3-pip,
+python3-setuptools, texinfo, qtbase5-dev, qtmultimedia5-dev, source-highlight,
+subversion, texinfo, xsltproc, xmlto, libxml2-utils
+
+
 TO INSTALL
 * Download jtsdk-nix-2.0.8.tar.gz
 * Extract: tar -xf jtsdk-nix-2.0.8.tar.gz
