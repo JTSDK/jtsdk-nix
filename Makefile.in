@@ -95,7 +95,7 @@ endif
 make-summary:
 	@echo ''
 	@echo '---------------------------------------------'
-	@echo -e $(C_Y)"Make Summary"$(C_NC)
+	@echo -e $(C_G)"Make Summary"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo "Package ....................: $(PROGRAM) $(VERSION)"
@@ -169,8 +169,7 @@ uninstall:
 	@echo ''
 	@echo 'UNINSTALL NOTES'
 	@echo ''
-	@echo ' 1. All user generated files remain in:'
-	@echo "    PATH: $(HOMEDIR)"
+	@echo ' 1. All user generated files remain in: ~/jtsdk'
 	@echo ''
 
 # Cleanup Source Tree

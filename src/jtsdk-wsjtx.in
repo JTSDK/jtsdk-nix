@@ -139,40 +139,6 @@ else
 fi
 }
 
-cli_help() {
-clear
-echo \
-'
------------------------------------------------------
- COMMAND LINE HELP MENU
------------------------------------------------------
-
- To use jtsdk-wsjtx from the command line, the 
- following sytnax applies:
-
- jtsdk-wsjtx [ OPT-1 ] [ OPT-2 ]
- 
- OPT-1 = ( rc | dev | help ) 
- OPT-2 = ( release | debug | doc ) 
-
-  help .....: Display this help page
-  rc .......: Release Candidate Branch ( 1.5 RCx )
-  dev ......: Latest Development Branch ( 1.6 )
-  exp ......: Experimental Branch ( 1.6.1 )
-  release ..: Release Target
-  debug ....: Debug Target
-  doc ......: User Guide Target
-
- Examples:
-  WSJT-X 1.6.1 (exp) ...: jtsdk-wsjtx exp release
-  WSJT-X 1.6.0 (devel)..: jtsdk-wsjtx dev release
-  WSJT-X 1.5.0 (RC) ....: jtsdk-wsjtx rc release
-
-'
-
-exit 0
-}
-
 # get WSJTX Version information from: Version.cmake
 # Note: must be performed "After" SVN checkout
 get_version() {
@@ -247,7 +213,7 @@ case "$OPT1" in
 		fi
 	;;
 	
-	# Main WSJT-X Development Branch
+# Main WSJT-X Development Branch
 	dev|devel|-d|-D ) # $1 from jtsdk main
 		APP_SRC_NAME="$DEV_APP_NAME"
 		APP_SRC="$SRCD/$APP_SRC_NAME"
@@ -273,7 +239,7 @@ case "$OPT1" in
 			cli_help
 		fi
 	;;
-	# Release Candidate Branch
+# Release Candidate Branch
 	rc|RC|-rc|-RC ) # $1 from jtsdk main
 		APP_SRC_NAME="$RC_APP_NAME"
 		APP_SRC="$SRCD/$APP_SRC_NAME"
@@ -344,6 +310,21 @@ fi
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
+
+# Build experimental version of WSPRD
+echo
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" BUILD WSPRD_EXP ( WSJT-X $AVER $DESC )"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+echo '-- JTSDK Building WSPRD_EXP and WSPRSIM' 
+cd "$APP_SRC/lib/wsprd"
+make -f Makefile > /dev/null 2>&1
+mkdir -p "$INSTALLD/bin"
+echo "-- Copy wspr_exp wsprsim $INSTALLD/bin/"
+cp wsprd_exp wsprsim "$INSTALLD"/bin/ > /dev/null 2>&1
+echo "-- Cleaning build directory"
+make clean > /dev/null 2>&1
 
 # exit on errors
 set -e
