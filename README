@@ -2,25 +2,30 @@ JTSDK is a collection of Bash scripts designed to assist
 users in compiling the various WSJT applications used by
 Amateur Radio Operators.
 
+
 TO INSTALL
-* Download jtsdk-nix-2.0.7.tar.gz
-* Extract: tar -xf jtsdk-nix-2.0.7.tar.gz
-* cd ./jtsdk-nix-2.0.7
-* ./autogeh.sh
+* Download jtsdk-nix-2.0.8.tar.gz
+* Extract: tar -xf jtsdk-nix-2.0.8.tar.gz
+* cd ./jtsdk-nix-2.0.8
+* ./autogeh.sh --prefix=/usr/local
 * make
 * sudo make install
+
 
 TO RUN JTSDK:
 * In a terminal..: jtsdk
 
+
 TO UNINSTALL
-* cd ./jtsdk-nix-2.0.4
+* cd ./jtsdk-nix-2.0.8
 * sudo make uninstall
+
 
 APPLICATION BUILD NOTES
 * If building WSJT-X, build Hamlib3 first, then build WSJT-X.
 * WSPR and WSJT do not require Hamlib3.
 * Ensure you update Hamlib3 often, as updates are frequently posted.
+
 
 POTENTIAL ISSUES
 * The Mint 17.1 Cinnamon Desktop installs python-numpy as part of it's
@@ -31,7 +36,6 @@ POTENTIAL ISSUES
 
 
 SUPPORT
---------------------------------------------------------------------------------
 
 *SETUP HELP*
 The best source of help in setting up your station or configuring WSJT-X is the
@@ -58,7 +62,6 @@ it out in as much detail as seems useful and send it to us at one the the email
 addresses given a few lines above. Be sure to explain why you think the feature
 is desirable, and what sort of other users might find it so. 
 
---------------------------------------------------------------------------------
 
 WSJT PROJECT INFORMATION
 Home Page: http://www.physics.princeton.edu/pulsar/K1JT/
