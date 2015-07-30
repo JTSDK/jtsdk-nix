@@ -48,8 +48,8 @@ DTDIR		:=	@DTDIR@
 ICOND		:=	@ICOND@
 
 # Home directory locations
-LOGNAME		:=	$(LOGNAME)
-HOMEDIR		:=	/home/$(LOGNAME)/jtsdk
+LOGNAME		:=	@LOGNAME@
+HOMEDIR		:=	/home/@LOGNAME@/jtsdk
 
 # Config Definitions
 BDOC		:=	@BDOC@
@@ -124,8 +124,6 @@ install:
 	$(CP) -u orig-install.txt $(HOMEDIR)/package-info ; fi 
 	@if [ -f orig-needed.txt ] ; then \
 	$(CP) -u orig-needed.txt $(HOMEDIR)/package-info ; fi 
-	@echo '..Changing Directory Ownership to: '"[ $(LOGNAME) ]"
-	@$(CHOWN) -R $(LOGNAME):$(LOGNAME) $(HOMEDIR)
 	@echo '..Installing Main Scripts'
 	@install -m 755 src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wsjtx-sb \
 	src/jtsdk-wspr src/jtsdk-wsjt $(DESTDIR)$(BINDIR)
@@ -147,6 +145,8 @@ ifeq ($(BDOC),Yes)
 	@echo '..Installing Documentation and Manpages'
 	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)/jtsdk.html
 endif
+	@echo "..Changing $(HOMEDIR) Ownership to: [ $(LOGNAME) ]"
+	@$(CHOWN) -R $(LOGNAME):$(LOGNAME) $(HOMEDIR)
 	@echo '..Finished'
 	@echo ''
 	@echo "To Run $(PROGRAM), type ..: jtsdk"

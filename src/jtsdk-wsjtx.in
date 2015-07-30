@@ -188,14 +188,29 @@ function link_kvasd() {
 
 # Link KVASD Binary to $INSTALLD/bin
 if [[ -f /usr/bin/kvasd ]] ; then
-	KVSTATUS=Yes
+	KVSTATUS=YES
 	echo "-- Linking KVASD binary to: $INSTALLD/bin"
-	ln -s /usr/bin/kvasd "$INSTALLD"/bin/kvasd
+	if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
 else
-	KVSTATUS=No
-	echo "WARNING: KVASD Binary was not found in /usr/bin"
-	echo "Use KVASD-Installer package to Install the Binary"
-	echo "before running WSJT-X"
+	KVSTATUS=NO
+	echo ''
+	echo '-------------------------------------------'
+	echo -e ${C_R}' KVASD WARNING'${C_NC}
+	echo '-------------------------------------------'
+	echo ''
+	echo ' * The KVASD Binary was not found in /usr/bin'
+	echo ' * Use the KVASD-Installer package to install the binary'
+	echo '   before running WSJT-X'
+	echo ' * After installation, in a terminal, you should link the'
+	echo '   binary to your installation directory, for example:'
+	echo ''
+	echo "   ln -s /usr/bin/kvasd $INSTALLD/bin/kvasd"
+	echo ''
+	echo ' * Alternatively, after installing the binary with KVASD-Installer,'
+	echo '   re-run the last build, which will automatically perform the'
+	echo '   link for you.'
+	echo ''
+	read -p "Press [ Enter ] to continue ..."
 fi
 
 }
@@ -283,10 +298,6 @@ case "$OPT1" in
 	;;
 esac
 
-# Make sure directories are present, in case they were deleted or new version
-# check hamlib for Release, Debug and Package
-# then ask to update from SVN
-
 # Do not test Hamlib3 for Usergiude Build
 case "$DESC" in
 	*Guide )
@@ -332,12 +343,12 @@ echo '-----------------------------------------------------'
 echo -e ${C_Y}" BUILD WSPRD_EXP ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-echo '-- JTSDK Building WSPRD_EXP and WSPRSIM' 
+echo '-- JTSDK Building WSPRD_EXP' 
 cd "$APP_SRC/lib/wsprd"
 make -f Makefile > /dev/null 2>&1
 mkdir -p "$INSTALLD/bin"
-echo "-- Copy wspr_exp wsprsim $INSTALLD/bin/"
-cp wsprd_exp wsprsim "$INSTALLD"/bin/ > /dev/null 2>&1
+echo "-- Copy wsprd_exp to: $INSTALLD/bin/"
+cp wsprd_exp "$INSTALLD"/bin/ > /dev/null 2>&1
 echo "-- Cleaning build directory"
 make clean > /dev/null 2>&1
 
@@ -401,7 +412,11 @@ case "$DESC" in
 		echo " Source ...........: $APP_SRC"
 		echo " Build ............: $BUILDD"
 		echo " Install ..........: $INSTALLD/bin"
-		echo " KVASD Installed ..: $KVSTATUS"
+		if [[ $KVSTATUS = "YES" ]] ; then
+			echo -e ' KVASD Installed ..: '${C_G}"$KVSTATUS"${C_NC}
+		else
+			echo -e ' KVASD Installed ..: '${C_R}"$KVSTATUS"${C_NC}
+		fi
 		echo ''
 		echo " TO RUN $APP_NAME"
 		echo " cd ...............: $INSTALLD/bin"

@@ -78,6 +78,7 @@ fi
 # ------------------------------------------------------------------------------
 #  set general use variables
 # ------------------------------------------------------------------------------
+LOGNAME="$LOGNAME"
 BINDIR="$prefix/bin"
 SHARE="$prefix/share/jtsdk"
 MANDIR="$prefix/share/man/man1"
@@ -146,6 +147,7 @@ AC_SUBST([DESC], [${distrosd}])
 AC_SUBST([DOCSRC], ["$DOCSRC"])
 AC_SUBST([DTDIR], ["$DTDIR"])
 AC_SUBST([ICOND], [/usr/share/pixmaps])
+AC_SUBST([LOGNAME], ["$LOGNAME"])
 AC_SUBST([MANSRC], ["$MANSRC"])
 AC_SUBST([PKGMGR], [${PKGMGR}])
 AC_SUBST([PREFIX], ["$prefix"])

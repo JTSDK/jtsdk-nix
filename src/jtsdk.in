@@ -407,6 +407,7 @@ elif [[ $MMSELECT = "2" ]]; then
 # WSJT-X 1.6.1 Menu (exp)-------------------------------------------------------
 	elif [[ $MMSELECT = "3" ]]; then
 	inactive_branch
+	break
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 "$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 --file "$TMPD/WSJTXEXPMenu.tmp" 2> "$TMPD/buildselect"
