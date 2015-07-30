@@ -1,4 +1,4 @@
-4#! /usr/bin/env bash
+#! /usr/bin/env bash
 #
 # Name			: @PROGRAM@ @VERSION@
 # Execution		: As normal user type: jtsdk
