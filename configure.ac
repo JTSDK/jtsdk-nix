@@ -2,7 +2,7 @@
 # Process this file with autoconf -*- autoconf -*-
 # ------------------------------------------------------------------------------
 AC_PREREQ([2.69])
-AC_INIT([JTSDK],[2.0.10],[wsjt-devel@lists.sourceforge.net],[],
+AC_INIT([JTSDK],[2.0.11],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
 JTSDK_COPYRIGHT="Copyright (C) 2014-2015 Joseph H Taylor, Jr, K1JT"
@@ -78,7 +78,6 @@ fi
 # ------------------------------------------------------------------------------
 #  set general use variables
 # ------------------------------------------------------------------------------
-HOMEDIR=~/jtsdk
 BINDIR="$prefix/bin"
 SHARE="$prefix/share/jtsdk"
 MANDIR="$prefix/share/man/man1"
@@ -146,7 +145,6 @@ AC_SUBST([DISTROC], [${distroc}])
 AC_SUBST([DESC], [${distrosd}])
 AC_SUBST([DOCSRC], ["$DOCSRC"])
 AC_SUBST([DTDIR], ["$DTDIR"])
-AC_SUBST([HOMEDIR], ["$HOMEDIR"])
 AC_SUBST([ICOND], [/usr/share/pixmaps])
 AC_SUBST([MANSRC], ["$MANSRC"])
 AC_SUBST([PKGMGR], [${PKGMGR}])
@@ -197,7 +195,6 @@ echo "
  Package ...................: ${PROGRAM} ${VERSION}
  Distribution ..............: ${DESC} ${HOST_CPU}
  Install prefix ............: ${PREFIX}
- Working Directory .........: ${HOMEDIR}
  Python2 Directory .........: ${PYTHON2}
  Python3 Directory .........: ${PYTHON3}
  F2PY3 Directory ...........: ${F2PY3}
