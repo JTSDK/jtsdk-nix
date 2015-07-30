@@ -127,8 +127,8 @@ install:
 	@echo '..Changing Directory Ownership to: '"[ $(LOGNAME) ]"
 	@$(CHOWN) -R $(LOGNAME):$(LOGNAME) $(HOMEDIR)
 	@echo '..Installing Main Scripts'
-	@install -m 755 src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wspr \
-	src/jtsdk-wsjt $(DESTDIR)$(BINDIR)
+	@install -m 755 src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wsjtx-sb \
+	src/jtsdk-wspr src/jtsdk-wsjt $(DESTDIR)$(BINDIR)
 	@$(MKDIR) -p $(DESTDIR)$(DOCDIR)
 	@echo '..Installing Misc Files'
 	@install -m 644 src/docs/* $(DESTDIR)$(SHARE)
@@ -141,6 +141,7 @@ install:
 	@install -m 644 manpages/jtsdk-hamlib3.1 $(DESTDIR)$(MANDIR)/jtsdk-hamlib3.1
 	@install -m 644 manpages/jtsdk-wsjt.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjt.1
 	@install -m 644 manpages/jtsdk-wsjtx.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjtx.1
+	@install -m 644 manpages/jtsdk-wsjtx-sb.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjtx-sb.1
 	@install -m 644 manpages/jtsdk-wsjt.1 $(DESTDIR)$(MANDIR)/jtsdk-wspr.1
 ifeq ($(BDOC),Yes)
 	@echo '..Installing Documentation and Manpages'
@@ -177,7 +178,8 @@ uninstall:
 clean:
 	$(RM) -f config.log configure config.status autoscan.log configure.scan Makefile \
 	installed.txt temp.list needed.txt installed.txt
-	$(RM) -f src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wspr src/jtsdk-wsjt
+	$(RM) -f src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wsjtx-sb \
+	src/jtsdk-wspr src/jtsdk-wsjt
 	$(RM) -rf ./autom4*
 	$(RM) -f data/jtsdk.menu data/jtsdk.desktop
 	$(RM) -f docs/*.html docs/Makefile docs/*.1

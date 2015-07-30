@@ -23,11 +23,12 @@
 set -e
 
 # set home and directory paths
-HOMEDIR=/home/$LOGNAME/jtsdk
+HOMEDIR=@HOMEDIR@
+MENU=@SHARE@
 SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
-MENU=@SHARE@
+
 
 # app specfic options
 APP_NAME=wspr
@@ -36,6 +37,7 @@ URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
 SEPARATE=@SEPARATE@
 PYTHON3=@PYTHON3@
 F2PY3=@F2PY3@
+
 
 # Foreground colours
 C_R='\033[01;31m'		# red

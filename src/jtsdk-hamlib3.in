@@ -23,16 +23,18 @@
 set -e
 
 # set home and directory paths
-HOMEDIR=/home/$LOGNAME/jtsdk
+HOMEDIR=@HOMEDIR@
+MENU=@SHARE@
 SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
-MENU=@SHARE@
+
 
 # hamlib3 directories
 HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
 HL3B="$HOMEDIR/src/build/hamlib"
 HL3I="$HOMEDIR/hamlib3"
+
 
 # misc variables
 JJ=@JJJJ@
