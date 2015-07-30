@@ -78,7 +78,7 @@ fi
 # ------------------------------------------------------------------------------
 #  set general use variables
 # ------------------------------------------------------------------------------
-HOMEDIR=/home/$LOGNAME/jtsdk
+HOMEDIR=~/jtsdk
 BINDIR="$prefix/bin"
 SHARE="$prefix/share/jtsdk"
 MANDIR="$prefix/share/man/man1"

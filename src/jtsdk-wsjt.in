@@ -23,7 +23,7 @@
 set -e
 
 # set home and directory paths
-HOMEDIR=@HOMEDIR@
+HOMEDIR=~/jtsdk
 MENU=@SHARE@
 SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"

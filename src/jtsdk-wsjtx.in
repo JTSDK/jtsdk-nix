@@ -27,7 +27,7 @@
 set -e
 
 # set home and directory paths
-HOMEDIR=/home/$LOGNAME/jtsdk
+HOMEDIR=~/jtsdk
 SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
