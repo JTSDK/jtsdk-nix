@@ -181,6 +181,7 @@ manpages/jtsdk.1.txt
 manpages/jtsdk-hamlib3.1.txt
 manpages/jtsdk-wsjt.1.txt
 manpages/jtsdk-wsjtx.1.txt
+manpages/jtsdk-wsjtx-sb.1.txt
 manpages/jtsdk-wspr.1.txt
 ])
 AC_OUTPUT
