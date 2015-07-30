@@ -403,11 +403,8 @@ elif [[ $MMSELECT = "2" ]]; then
 	jtsdk-wspr
 	continue
 
-
 # WSJT-X 1.6.1 Menu (exp)-------------------------------------------------------
 	elif [[ $MMSELECT = "3" ]]; then
-	inactive_branch
-	break
 
 dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 "$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 --file "$TMPD/WSJTXEXPMenu.tmp" 2> "$TMPD/buildselect"
@@ -416,14 +413,12 @@ dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 
 	# Release
 	if [[ $BUILDSELECT = "1" ]]; then
-		# jtsdk-wsjtx exp release
-		under_development
+		jtsdk-wsjtx exp release
 		continue
 
 	# Debug
 	elif [[ $BUILDSELECT = "2" ]]; then
-		# jtsdk-wsjtx exp debug
-		under_development
+		jtsdk-wsjtx exp debug
 		continue
 
 	# Help
@@ -460,12 +455,12 @@ dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
 		jtsdk-wsjtx dev debug
 		continue
 
-	# Documentation
+	# Superbuild
 	elif [[ $BUILDSELECT = "3" ]]; then
 		jtsdk-wsjtx-sb
 		continue
 
-	# Documentation
+	# Documentation Build
 	elif [[ $BUILDSELECT = "4" ]]; then
 		jtsdk-wsjtx dev doc
 		continue
