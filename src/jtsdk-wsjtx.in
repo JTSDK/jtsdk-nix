@@ -184,6 +184,21 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 
 }
 
+function link_kvasd() {
+
+# Link KVASD Binary to $INSTALLD/bin
+if [[ -f /usr/bin/kvasd ]] ; then
+	KVSTATUS=Yes
+	echo "-- Linking KVASD binary to: $INSTALLD/bin"
+	ln -s /usr/bin/kvasd "$INSTALLD"/bin/kvasd
+else
+	KVSTATUS=No
+	echo "WARNING: KVASD Binary was not found in /usr/bin"
+	echo "Use KVASD-Installer package to Install the Binary"
+	echo "before running WSJT-X"
+fi
+
+}
 
 ################################################################################
 # START MAIN SCRIPT
@@ -351,8 +366,9 @@ case "$DESC" in
 	Release*|Debug* )
 	cd "$BUILDD"
 	make -s clean
-	cmake --build . --target install -- -j "$JJ" ;;
-
+	cmake --build . --target install -- -j "$JJ"
+	link_kvasd ;;
+	
 	package )
 	cd "$BUILDD"
 	make -s clean
@@ -371,18 +387,6 @@ case "$DESC" in
 	*)
 	;;
 esac
-
-# Link KVASD Binary to $INSTALLD/bin
-if [[ -f /usr/bin/kvasd ]] ; then
-	KVSTATUS=Yes
-	echo "-- Linking KVASD binary to: $INSTALLD/bin"
-	ln -s /usr/bin/kvasd "$INSTALLD"/bin/kvasd
-else
-	KVSTATUS=No
-	echo "WARNING: KVASD Binary was not found in /usr/bin"
-	echo "Use KVASD-Installer package to Install the Binary"
-	echo "before running WSJT-X"
-fi
 
 # Finished
 echo ''
@@ -414,8 +418,8 @@ case "$DESC" in
 		read -p "Press [ Enter ] to continue .."
 	;;
 	*Guide )
-		echo "Document Name ......: $FILENAME"
-		echo "Location ...........: $INSTALLD/share/doc/wsjtx"
+		echo "Document Name .....: $FILENAME"
+		echo "Location ..........: $INSTALLD/share/doc/wsjtx"
 		echo ''
 		read -p "Press [ Enter ] to continue .." ;;
 	* )

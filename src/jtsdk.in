@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+4#! /usr/bin/env bash
 #
 # Name			: @PROGRAM@ @VERSION@
 # Execution		: As normal user type: jtsdk
@@ -99,7 +99,7 @@ UDMSG="\n      Build Selection is Under Development"
 
 # released message
 BS=" BUILD STATUS"
-BSMSG="\n  There Are No Pending RC Builds At This Time"
+BSMSG="\n There Are No Pending RC Builds At This Time"
 
 # Dormant Branch
 IB=" Inactive Branch"
@@ -112,7 +112,7 @@ cat << 'EOF' > $TMPD/MMenu.tmp
 "2" "WSPR ..... v4.0.0" \
 "3" "WSJT-X ... v1.6.1" \
 "4" "WSJT-X ... v1.6.0" \
-"5" "WSJT-X ... v1.5.0" \
+"5" "WSJT-X ... Next RC" \
 "6" "Hamlib3 .. v3.0.0" \
 "H" "Help" \
 "E" "Exit"
