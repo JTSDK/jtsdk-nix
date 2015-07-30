@@ -64,7 +64,8 @@ echo ' * Download the latest Hamlib3 sources'
 echo ' * Download the latest WSJT-X sources'
 echo ' * Create a single tar.gz file ready for compiling'
 echo ' * Configre and Build WSJT-X'
-
+echo ' * Install WSJT-X to the user space for testing'
+sleep 2
 
 # Setup checkout and build directories -----------------------------------------
 echo ''
@@ -115,7 +116,7 @@ echo -e ${C_Y} "CONFIGURE SOURCE PACKAGE"${C_NC}
 echo "-------------------------------------------"
 echo ''
 cd "$BUILDD"
-cmake -D WSJTX_TAG=branches/wsjtx $SRCD
+cmake -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$BASED/wsjtx-superbuild"
 
 
 # Build Source Package ------------------------------------------------------------
@@ -125,7 +126,7 @@ echo -e ${C_Y} "BUILD SOURCE PACKAGE [ wsjtx.tgz ]"${C_NC}
 echo "-------------------------------------------"
 echo  ''
 # For verbose builds, use: cmake --build . --target source -- VERBOSE=1
-echo '..Please be patient as this can take a few minutes.'
+echo '** Please be patient as this can take a few minutes **'
 echo ''
 cd "$BUILDD"
 
@@ -166,7 +167,7 @@ echo "-------------------------------------------"
 echo -e ${C_Y} "SETUP WSJTX-BUILD"${C_NC}
 echo "-------------------------------------------"
 echo ''
-echo '..Moving Souorce Tarball'
+echo '..Moving Source Tarball'
 mv $BUILDD/wsjtx_1.6.0-r$WSJTXV.orig.tar.gz $BASED/
 echo '..Extracting Source file'
 cd $BASED
@@ -185,9 +186,9 @@ echo ''
 echo "..Configuring the build"
 # set install locaiton
 if [ $SEPARATE == "Yes" ] ; then 
-	INSTALLD="$PREFIXD/$APP_NAME/$VERSION/$WSJTXV"
+	INSTALLD="$HOMEDIR/$APP_NAME/$VERSION/$WSJTXV"
 else
-	INSTALLD="$PREFIXD/$APP_NAME/$VERSION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$VERSION"
 fi
 # Configure the build
 cmake -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$BASED/wsjtx"
@@ -198,12 +199,17 @@ echo "-------------------------------------------"
 echo -e ${C_Y} "COMPILING WSJTX v1.6.0 r$WSJTXV"${C_NC}
 echo "-------------------------------------------"
 echo ''
+echo '** Please be patient as this can take a few minutes **'
+echo ''
 cmake --build . --target install -- -j "$JJ"
 
+# Link KVASD Binary to $INSTALLD/bin
 if [[ -f /usr/bin/kvasd ]] ; then
-	echo " -- Linking KVASD binary to $INSTALLD"
-	ln -s /usr/bin/kvasd "$INSTALLD"/kvasd
+	KVSTATUS=Yes
+	echo "-- Linking KVASD binary to: $INSTALLD/bin"
+	ln -s /usr/bin/kvasd "$INSTALLD"/bin/kvasd
 else
+	KVSTATUS=No
 	echo "WARNING: KVASD Binary was not found in /usr/bin"
 	echo "Use KVASD-Installer package to Install the Binary"
 	echo "before running WSJT-X"
@@ -220,5 +226,12 @@ echo " WSJT-X Version ......: $WSJTXV"
 echo " Hamlib3 Hash ........: $HL3HASH"
 echo " Source Package ......: wsjtx_1.6.0-r$WSJTXV.orig.tar.gz"
 echo " Install Location ....: $INSTALLD"
+echo " KVASD Installed .....: $KVSTATUS"
 echo ''
+read -p " Press [ Enter ] to continue .."
+
+exit 0
+
+
+
 

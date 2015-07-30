@@ -97,6 +97,10 @@ WSJTXEXPHELPTITLE="WSJT-X EXP BUILD HELP"
 UD=" UNDER DEVELOPMENT"
 UDMSG="\n      Build Selection is Under Development"
 
+# released message
+BS=" BUILD STATUS"
+BSMSG="\n  There Are No Pending RC Builds At This Time"
+
 # Dormant Branch
 IB=" Inactive Branch"
 IBMSG="\n      Branch Activity Is Currently Dormant"
@@ -170,6 +174,14 @@ function under_development() {
 dialog --backtitle "$BACKTITLE" --title "$UD" --msgbox "$UDMSG" 7 50
 
 }
+
+#--released message-------------------------------------------------------------
+function build_status() {
+
+dialog --backtitle "$BACKTITLE" --title "$BS" --msgbox "$BSMSG" 7 50
+
+}
+
 
 #--inactive branch--------------------------------------------------------------
 function inactive_branch() {
@@ -472,39 +484,44 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
 
 # WSJT-X 1.5 RC Menu ---------------------------------------------------------
 	elif [[ $MMSELECT = "5" ]]; then
-
-dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXRCTITLE" --menu "$MENUMSG" 14 60 19 --file "$TMPD/WSJTXMenu.tmp" 2> "$TMPD/buildselect"
-
-	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
-
-	# Release
-	if [[ $BUILDSELECT = "1" ]]; then
-		jtsdk-wsjtx rc release
+		build_status
 		continue
 
-	# Debug
-	elif [[ $BUILDSELECT = "2" ]]; then
-		jtsdk-wsjtx rc debug
-		continue
+# These builds are disabled as there are currently no v1.5.0 / v1.5.1 RC builds
+# being tested.
 
-	# Documentation
-	elif [[ $BUILDSELECT = "3" ]]; then
-		jtsdk-wsjtx rc doc
-		continue
+#dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
+#"$WSJTXRCTITLE" --menu "$MENUMSG" 14 60 19 --file "$TMPD/WSJTXRCMenu.tmp" 2> "$TMPD/buildselect"
 
-	# Help
-	elif [[ $BUILDSELECT = "H" ]]; then
-dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
---textbox "$WSJTXRCHELP" 20 80
+#	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
+
+#	# Release
+#	if [[ $BUILDSELECT = "1" ]]; then
+#		jtsdk-wsjtx rc release
+#		continue
+
+#	# Debug
+#	elif [[ $BUILDSELECT = "2" ]]; then
+#		jtsdk-wsjtx rc debug
+#		continue
+
+#	# Documentation
+#	elif [[ $BUILDSELECT = "3" ]]; then
+#		jtsdk-wsjtx rc doc
+#		continue
+
+#	# Help
+#	elif [[ $BUILDSELECT = "H" ]]; then
+#dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
+#--textbox "$WSJTXRCHELP" 20 80
 
 
-	# Back ( return to main menu )
-	elif [[ $BUILDSELECT = "B" ]]; then
-		rm -f "$TMPD/buildselect"
-		continue
-	fi
-# End WSJT-X 1.5 RC Menu--------------------------------------------------------
+#	# Back ( return to main menu )
+#	elif [[ $BUILDSELECT = "B" ]]; then
+#		rm -f "$TMPD/buildselect"
+#		continue
+#	fi
+# End WSJT-X 1.5.0 RC Menu--------------------------------------------------------
 
 
 # Build Hamlib3-----------------------------------------------------------------
@@ -515,8 +532,7 @@ dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
 
 # Help File---------------------------------------------------------------------
    elif [[ $MMSELECT = "H" ]]; then
-dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" \
---textbox "$HELP" 20 80
+dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" --textbox "$HELP" 20 80
 	continue
 
 

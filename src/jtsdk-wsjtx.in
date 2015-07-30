@@ -372,6 +372,18 @@ case "$DESC" in
 	;;
 esac
 
+# Link KVASD Binary to $INSTALLD/bin
+if [[ -f /usr/bin/kvasd ]] ; then
+	KVSTATUS=Yes
+	echo "-- Linking KVASD binary to: $INSTALLD/bin"
+	ln -s /usr/bin/kvasd "$INSTALLD"/bin/kvasd
+else
+	KVSTATUS=No
+	echo "WARNING: KVASD Binary was not found in /usr/bin"
+	echo "Use KVASD-Installer package to Install the Binary"
+	echo "before running WSJT-X"
+fi
+
 # Finished
 echo ''
 echo '-----------------------------------------------------'
@@ -380,29 +392,30 @@ echo '-----------------------------------------------------'
 echo ''
 case "$DESC" in
 	Release*|Debug* )
-		echo " App Version ..: $AVER"
-		echo " Build Type ...: $OPTION"
-		echo " Source .......: $APP_SRC"
-		echo " Build ........: $BUILDD"
-		echo " Install ......: $INSTALLD/bin"
+		echo " App Version ......: $AVER"
+		echo " Build Type .......: $OPTION"
+		echo " Source ...........: $APP_SRC"
+		echo " Build ............: $BUILDD"
+		echo " Install ..........: $INSTALLD/bin"
+		echo " KVASD Installed ..: $KVSTATUS"
 		echo ''
 		echo " TO RUN $APP_NAME"
-		echo " cd ..........: $INSTALLD/bin"
-		echo " Type, .......: ./$APP_NAME"
+		echo " cd ...............: $INSTALLD/bin"
+		echo " Type, ............: ./$APP_NAME"
 		echo ''
 		read -p "Press [ Enter ] to continue.."
 	;;
 	package )
 		PKG_NAME=$(ls -m1 $PKGD)
-		echo " Type ......: $OPTION"
-		echo " Name ......: $PKG_NAME"
-		echo " Location ..: $PKGD"
+		echo " Type .............: $OPTION"
+		echo " Name .............: $PKG_NAME"
+		echo " Location .........: $PKGD"
 		echo ''
 		read -p "Press [ Enter ] to continue .."
 	;;
 	*Guide )
-		echo "Document Name ..: $FILENAME"
-		echo "Location .......: $INSTALLD/share/doc/wsjtx"
+		echo "Document Name ......: $FILENAME"
+		echo "Location ...........: $INSTALLD/share/doc/wsjtx"
 		echo ''
 		read -p "Press [ Enter ] to continue .." ;;
 	* )
