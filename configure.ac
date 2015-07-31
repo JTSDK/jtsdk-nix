@@ -89,7 +89,7 @@ DOCSRC=$(exec pwd)/docs/source
 DATASRC=$(exec pwd)/data
 
 # Get Distro Information
-distrosd=$(lsb_release -sd)
+distrosd=$(lsb_release -sd | tr -d [\(\)])
 distrov=$(lsb_release -sr)
 distroc=$(lsb_release -sc)
 

@@ -49,6 +49,7 @@ ICOND		:=	@ICOND@
 
 # Home directory locations
 LOGNAME		:=	@LOGNAME@
+LOGGRP		:=	$(shell groups @LOGNAME@ | cut -d ' ' -f 3)
 HOMEDIR		:=	/home/@LOGNAME@/jtsdk
 
 # Config Definitions
@@ -146,7 +147,7 @@ ifeq ($(BDOC),Yes)
 	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)/jtsdk.html
 endif
 	@echo "..Changing $(HOMEDIR) Ownership to: [ $(LOGNAME) ]"
-	@$(CHOWN) -R $(LOGNAME):$(LOGNAME) $(HOMEDIR)
+	@$(CHOWN) -R $(LOGNAME):$(LOGGRP) $(HOMEDIR)
 	@echo '..Finished'
 	@echo ''
 	@echo "To Run $(PROGRAM), type ..: jtsdk"

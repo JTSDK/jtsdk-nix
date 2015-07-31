@@ -3,7 +3,7 @@
 # Name			: autogen.sh
 # Execution		: As normal user ./autogen.sh
 # Copyright		: Copyright (C) 2014 Joseph H Taylor, Jr, K1JT
-# Contributors		: Greg Beam, Joseph H Taylor, and others
+# Contributors	: Greg Beam, Joseph H Taylor, and others
 # Comment		: Part of the JTSDK Linux Project
 #
 # JTSDK is free software: you can redistribute it and/or modify
@@ -37,16 +37,18 @@ clear
 echo \
 'JTSDK Autogen Help Options
 
-Distribution  Suported Release(s)
-   debian        8.0
-   ubuntu        14.04|14.10|5.04
-   mint          17
+Distribution  Supported Versions
+ debian        8.0
+ fedora        21|22
+ ubuntu        14.04|14.10|15.04
+ mint          17.1|17.2
 
 Several options exist for pre-processing the configure script: 
 --with-python3		# Alternate location for python3
 --with-f2py3		# alternalte locaiton for f2py3
 --disable-docs		# Disable building HTML documentation
 --disable-parallel	# Disable Multi-Core builds
+--disable-separate	# Disable separation by svn version (not recommended)
 
 STANDARD INVOCATION:
 ./autogen.sh'
@@ -60,7 +62,10 @@ exit 0
 cd $BASED
 
 # Display Autogen help message
-if [ "$1" = "help" ] ; then autogen_help ; fi
+case "$1" in
+	-h|-H|--help|--HELP|help )
+	autogen_help ;;
+esac
 
 # Test if subversion is installed
 svn --version > /dev/null 2>&1 || {
