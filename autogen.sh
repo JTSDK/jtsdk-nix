@@ -76,10 +76,10 @@ svn --version > /dev/null 2>&1 || {
 	echo "checkout and compile $PROGRAM. Please install the"
 	echo 'appropriate package for your distribution.'	
 	echo ''
-	echo 'For Debian, Ubuntu, Mint, try:'
+	echo 'For Debian, Ubuntu, Mint, try: sudo apt-get install subvesion'
 	echo ''
-	echo 'sudo apt-get install subvesion'
-	echo ''
+	echo 'For Fedora, try: yum install subversion'
+	echo ''	
 	exit 1
 }
 
@@ -92,9 +92,9 @@ lsb_release -v > /dev/null 2>&1 || {
 	echo "compile $PROGRAM. Please install the appropriate package"
 	echo 'for your distribution.'	
 	echo ''
-	echo 'For Debian, Ubuntu, Mint, try:'
+	echo 'For Debian, Ubuntu, Mint, try: sudo apt-get install lsb-release'
 	echo ''
-	echo 'sudo apt-get install lsb-release'
+	echo 'For Fedora, try: yum install redhat-lsb'
 	echo ''
 	exit 1
 }
@@ -107,9 +107,9 @@ gcc --version > /dev/null 2>&1 || {
 	echo "You must have a C compiler installed to compile $PROGRAM."
 	echo 'Please install the appropriate package for your distribution.'
 	echo ''
-	echo 'For Debian, Ubuntu, Mint, try:'
+	echo 'For Debian, Ubuntu, Mint, try: sudo apt-get install gcc'
 	echo ''
-	echo 'sudo apt-get install gcc'	
+	echo 'For Fedora, try: yum groupinstall "Development Tools"'
 	echo ''
 	exit 1
 }
@@ -125,6 +125,8 @@ autoconf --version > /dev/null 2>&1 || {
 	echo 'For Debian, Ubuntu, Min, try:'
 	echo ''
 	echo 'sudo apt-get install autoconf'
+	echo ''
+	echo 'For Fedora, try: yum groupinstall "Development Tools"'
 	echo ''
 	exit 1
 }
