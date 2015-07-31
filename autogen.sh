@@ -76,7 +76,7 @@ svn --version > /dev/null 2>&1 || {
 	echo "checkout and compile $PROGRAM. Please install the"
 	echo 'appropriate package for your distribution.'	
 	echo ''
-	echo 'For Debian, Ubuntu, Mint, try: sudo apt-get install subvesion'
+	echo 'For Debian, Ubuntu, Mint, try: sudo apt-get install subversion'
 	echo ''
 	echo 'For Fedora, try: yum install subversion'
 	echo ''	
