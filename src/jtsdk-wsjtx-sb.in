@@ -56,11 +56,6 @@ C_NC='\033[01;37m'		# no color
 
 # Link KVASD Binary to $INSTALLD/bin
 function link_kvasd() {
-
-	echo '-------------------------------------------'
-	echo -e ${C_Y}' LINKING KVASD BINARY'${C_NC}
-	echo '-------------------------------------------'
-	echo ''
 	if [[ -f /usr/bin/kvasd ]] ; then
 		KVSTATUS=YES
 		echo "-- Linking KVASD binary to: $INSTALLD/bin"
@@ -248,6 +243,7 @@ echo
 echo "-------------------------------------------"
 echo -e ${C_Y} "LINKING KVASD for r$WSJTXV"${C_NC}
 echo "-------------------------------------------"
+echo ''
 link_kvasd
 
 # Finished building source package ---------------------------------------------
