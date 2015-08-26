@@ -1,0 +1,444 @@
+#! /usr/bin/env bash
+#
+# Name			: jtsdk-wsjtx.sh
+# Execution		: As normal user type: jtsdk-wsjtx.sh
+# Copyright		: @JTSDK_COPYRIGHT@
+# Contributors	: @JTSDK_AUTHORS@
+# Comment		: Part of the JTSDK Linux Project
+#                 This script builds:
+#                 WSJT-X 1.6.1 exp branch
+#                 WSJT-X 1.6.0 development branch
+#                 WSJT-X 1.5.0 RC branch
+#
+# @PROGRAM@ is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation either version 3 of the License, or
+# (at your option) any later version. 
+#
+# @PROGRAM@ is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-------------------------------------------------------------------------#
+
+set -e
+
+# set home and directory paths
+HOMEDIR=~/jtsdk
+SRCD="$HOMEDIR/src"
+TMPD="$HOMEDIR/tmp"
+LOGS="$HOMEDIR/logs"
+MENU=@SHARE@
+
+# hamlib3 directories
+HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
+HL3B="$HOMEDIR/src/build/hamlib"
+HL3I="$HOMEDIR/hamlib3"
+
+# branch names for svn urls
+APP_NAME=wsjtx
+EXP_APP_NAME=wsjtx_exp
+DEV_APP_NAME=wsjtx
+RC_APP_NAME=wsjtx-1.5
+
+# app specific options
+OPT1=$1
+OPT2=$2
+JJ=@JJJJ@
+SEPARATE=@SEPARATE@
+
+# Foreground colours
+C_R='\033[01;31m'		# red
+C_G='\033[01;32m'		# green
+C_Y='\033[01;33m'		# yellow
+C_C='\033[01;36m'		# cyan
+C_NC='\033[01;37m'		# no color
+
+################################################################################
+# FUNCTOINS
+################################################################################
+
+# simple hamlib test
+hamlib_test() {
+clear
+echo '-------------------------------------------'
+echo -e ${C_Y}' Testing Hamlib3'${C_NC}
+echo '-------------------------------------------'
+echo
+
+if [[ -f $HL3I/bin/rigctl ]] ; then
+
+	TEST=$($HL3I/bin/rigctl -m1 f)
+
+	if [ "$TEST" == "145000000" ] ; then
+		echo " Rig Control ......: OK"
+		echo ' Tested With ......: rigctl -m1 f'
+		echo ' Expected Result ..: 145000000'
+		echo " Returned Result ..: $TEST"
+	else
+		echo "Rig Controll Test .. FAILED"
+		echo
+		echo "If you have not built hamlib3 yet:"
+		echo ''
+		echo '1. Return to the Main Menu.'
+		echo "2. Select Hamlib3 to build it."
+		echo '3. Then try to build WSJT-X again'
+		echo ''
+		read -p "Press [Enter] to continue ..."
+		exit
+	fi
+else
+		echo "Cannot Find ( rigctl binary )"
+		echo ''
+		echo "If you have not built hamlib3 yet:"
+		echo ''
+		echo '1. Return to the Main Menu.'
+		echo "2. Select Hamlib3 to build it."
+		echo '3. Then try to build WSJT-X again'
+		echo ''
+		read -p "Press [Enter] to continue ..."
+		exit
+fi
+
+}
+
+check_svn() {
+
+if [[ ! -d $APP_SRC/.svn ]]
+then
+	echo ''
+	echo "Checking Out New Version of $APP_NAME"
+	cd $SRCD
+	svn co $URL
+else
+	# Yy / Nn answer to update from svn	
+	while [ 1 ]
+	do
+		echo ''
+		read -p "Update from SVN Before Building? [ Y/N ]: " yn
+		case $yn in
+		
+		[Yy]* )
+			cd "$APP_SRC"
+			echo "Updating ( $APP_NAME )"
+			svn cleanup && svn update
+			break ;;
+		
+		[Nn]* )
+			echo "Nothign to be done..."
+			break ;;
+		
+		* )
+			clear
+			echo "Please use "Y" yes or "N" No." ;;
+		esac
+	done
+fi
+}
+
+# get WSJTX Version information from: Version.cmake
+# Note: must be performed "After" SVN checkout
+get_version() {
+
+# Example Versions.cmake
+# ------------------------------------------------------------------------------
+# set (WSJTX_VERSION_MAJOR 1)
+# set (WSJTX_VERSION_MINOR 6)
+# set (WSJTX_VERSION_PATCH 1)
+# set (WSJTX_RC 0)					# release candidate number, comment out or zero for development versions
+# set (WSJTX_VERSION_IS_RELEASE 0)	# set to 1 for final release build
+# ------------------------------------------------------------------------------
+
+
+echo "-- Getting App Version from Repository"
+VER_FILE="$APP_SRC/Versions.cmake"
+# get Major number
+MA=$(cat $VER_FILE |grep '_MAJOR' |awk '{print $3}' |cut -c1)
+# get Minor number 
+MI=$(cat $VER_FILE |grep '_MINOR' |awk '{print $3}' |cut -c1)
+# get Patch number
+PA=$(cat $VER_FILE |grep '_PATCH' |awk '{print $3}' |cut -c1)
+# get RC version
+RC=$(cat $VER_FILE |grep '_RC' |awk '{print $3}' |cut -c1)
+# combine into a string
+if [ "$RC" == "0" ] ; then 
+	AVER="$MA.$MI.$PA"
+else
+	AVER="$MA.$MI.$PA-RC$RC"
+fi
+
+echo "-- Repository Version Is ..: $AVER"
+
+
+}
+
+# get the last changed svn number
+get_svn_revision() {
+
+echo "-- Getting SVN Revision Number"
+SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
+echo "-- SVN Revision Is ........: $SVN_VER"
+
+}
+
+function link_kvasd() {
+
+# Link KVASD Binary to $INSTALLD/bin
+if [[ -f /usr/bin/kvasd ]] ; then
+	KVSTATUS=YES
+	echo "-- Linking KVASD binary to: $INSTALLD/bin"
+	if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
+else
+	KVSTATUS=NO
+	echo ''
+	echo '-------------------------------------------'
+	echo -e ${C_R}' KVASD WARNING'${C_NC}
+	echo '-------------------------------------------'
+	echo ''
+	echo ' * The KVASD Binary was not found in /usr/bin'
+	echo ' * Use the KVASD-Installer package to install the binary'
+	echo '   before running WSJT-X'
+	echo ' * After installation, in a terminal, you should link the'
+	echo '   binary to your installation directory, for example:'
+	echo ''
+	echo "   ln -s /usr/bin/kvasd $INSTALLD/bin/kvasd"
+	echo ''
+	echo ' * Alternatively, after installing the binary with KVASD-Installer,'
+	echo '   re-run the last build, which will automatically perform the'
+	echo '   link for you.'
+	echo ''
+	read -p "Press [ Enter ] to continue ..."
+fi
+
+}
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
+
+# Joe's v1.6.1 ( devel - Joe's Branch )
+case "$OPT1" in
+	exp|EXP|-e|-E ) # $1 from jtsdk main
+		APP_SRC_NAME="$EXP_APP_NAME"
+		APP_SRC="$SRCD/$APP_SRC_NAME"
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx_exp"
+		
+		# setup variables based on $2 from jtsdk main
+		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
+			OPTION="Debug"
+			DESC="Debug Target"
+
+		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
+			OPTION="Release"
+			DESC="Release Target"
+
+		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
+			OPTION="Release"
+			DESC="User Guide"
+		else
+			cli_help
+		fi
+	;;
+	
+# Main WSJT-X Development Branch
+	dev|devel|-d|-D ) # $1 from jtsdk main
+		APP_SRC_NAME="$DEV_APP_NAME"
+		APP_SRC="$SRCD/$APP_SRC_NAME"
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx"
+
+		# setup variables based on $2 from jtsdk main
+		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
+			OPTION="Debug"
+			DESC="Debug Target"
+
+		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
+			OPTION="Release"
+			DESC="Release Target"
+
+		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
+			OPTION="package"
+			DESC="Package Target"
+			
+		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
+			OPTION="Release"
+			DESC="User Guide"
+		else
+			cli_help
+		fi
+	;;
+# Release Candidate Branch
+	rc|RC|-rc|-RC ) # $1 from jtsdk main
+		APP_SRC_NAME="$RC_APP_NAME"
+		APP_SRC="$SRCD/$APP_SRC_NAME"
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.5"
+
+		# setup variables based on $2 from jtsdk main
+		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
+			OPTION="Debug"
+			DESC="Debug Target"
+		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
+			OPTION="Release"
+			DESC="Release Target"
+		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
+			OPTION="package"
+		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
+			OPTION="Release"
+			DESC="User Guide"
+		else
+			cli_help
+		fi
+	;;
+	--help|help|-h|-H )
+		cli_help ;;
+	* )
+		cli_help
+	;;
+esac
+
+# Do not test Hamlib3 for Usergiude Build
+case "$DESC" in
+	*Guide )
+	clear
+	;;
+	* )
+	hamlib_test ;;
+esac
+
+# Ask to update from SVN first
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SVN UPDATE"${C_NC}
+echo '-----------------------------------------------------'
+check_svn
+
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
+echo '-----------------------------------------------------'
+get_version
+get_svn_revision
+
+# set build and install locaitons
+if [ $SEPARATE == "Yes" ] ; then 
+	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER//build/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install/$OPTION"
+	PKGD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/package"
+else
+	BUILDD="$HOMEDIR/$APP_NAME/$AVER/build/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
+	PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
+fi
+
+# make sure the build and install directories exist
+mkdir -p "$BUILDD" >/dev/null 2>&1
+mkdir -p "$INSTALLD" >/dev/null 2>&1
+mkdir -p "$PKGD" >/dev/null 2>&1
+
+# Build experimental version of WSPRD
+echo
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" BUILD WSPRD_EXP ( WSJT-X $AVER $DESC )"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+echo '-- JTSDK Building WSPRD_EXP' 
+cd "$APP_SRC/lib/wsprd"
+make -f Makefile > /dev/null 2>&1
+mkdir -p "$INSTALLD/bin"
+echo "-- Copy wsprd_exp to: $INSTALLD/bin/"
+cp wsprd_exp "$INSTALLD"/bin/ > /dev/null 2>&1
+echo "-- Cleaning build directory"
+make clean > /dev/null 2>&1
+
+# exit on errors
+set -e
+
+# start configuring the main build
+echo
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
+echo '-----------------------------------------------------'
+echo
+cd "$BUILDD"
+cmake -G "Unix Makefiles" \
+-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
+-D CMAKE_BUILD_TYPE="$OPTION" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
+
+# build the target
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" BUILDING ( WSJT-X $AVER $DESC )"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+case "$DESC" in
+	Release*|Debug* )
+	cd "$BUILDD"
+	make -s clean
+	cmake --build . --target install -- -j "$JJ"
+	link_kvasd ;;
+	
+	package )
+	cd "$BUILDD"
+	make -s clean
+	cmake --build . --target package -- -j "$JJ"
+	if [[ $? = "0" ]] ; then
+		cp -rf "$BUILDD"/wsjtx*.deb "$PKGD"/
+	fi ;;
+
+	*Guide )
+	cd "$BUILDD"
+	make -s clean
+	cmake --build . --target docs
+	cd $BUILDD/doc
+	make install > /dev/null 2>&1
+	FILENAME=$(ls -al $INSTALLD/share/doc/wsjtx |grep 'html' |awk '{print $9}') ;;
+	*)
+	;;
+esac
+
+# Finished
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_G}" BUILD SUMMARY ( WSJT-X $AVER $DESC )"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+case "$DESC" in
+	Release*|Debug* )
+		echo " App Version ......: $AVER"
+		echo " Build Type .......: $OPTION"
+		echo " Source ...........: $APP_SRC"
+		echo " Build ............: $BUILDD"
+		echo " Install ..........: $INSTALLD/bin"
+		if [[ $KVSTATUS = "YES" ]] ; then
+			echo -e ' KVASD Installed ..: '${C_G}"$KVSTATUS"${C_NC}
+		else
+			echo -e ' KVASD Installed ..: '${C_R}"$KVSTATUS"${C_NC}
+		fi
+		echo ''
+		echo " TO RUN $APP_NAME"
+		echo " cd ...............: $INSTALLD/bin"
+		echo " Type, ............: ./$APP_NAME"
+		echo ''
+		read -p "Press [ Enter ] to continue.."
+	;;
+	package )
+		PKG_NAME=$(ls -m1 $PKGD)
+		echo " Type .............: $OPTION"
+		echo " Name .............: $PKG_NAME"
+		echo " Location .........: $PKGD"
+		echo ''
+		read -p "Press [ Enter ] to continue .."
+	;;
+	*Guide )
+		echo "Document Name .....: $FILENAME"
+		echo "Location ..........: $INSTALLD/share/doc/wsjtx"
+		echo ''
+		read -p "Press [ Enter ] to continue .." ;;
+	* )
+	;;
+esac
+
+exit 0

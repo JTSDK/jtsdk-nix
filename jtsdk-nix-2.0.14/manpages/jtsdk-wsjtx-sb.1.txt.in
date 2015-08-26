@@ -1,0 +1,75 @@
+:doctype: manpage
+:man manual: JTSDK Manpage
+:man date: {date}
+:man version: Version @VERSION@
+
+= jtsdk-wsjtx-sb(1)
+
+== NAME
+jtsdk-wsjtx-sb - WSJT-X Superbuild Script
+
+
+== SYNOPSIS
+jtsdk-wsjtx-sb
+
+
+== DESCRIPTION
+*WSJT-X Superbuild* builds the WSJT-X application. It  does not  directly
+contain the source files, instead it consists of a CMake script that
+builds the application  by fetching the sources from their respective
+source control repositories and then building the application.
+
+WSJT-X also has a CMake build system  but currently it also has a
+dependency on a library called Hamlib which itself has to built from a
+fork of the official Hamlib project. The Hamlib fork is used because
+it contains the latest patches not yet accepted by the Hamlib
+development team.
+
+This script combines the building of Hamlib and WSJT-X. I also has a
+two phase mode that builds a complete source package in phase one that
+can then be transferred to another build host to be built in phase two
+there. This two  phase mode is aimed at Linux package maintainers who
+have to have a complete upstream source package that can be built on a
+restricted build server.
+
+
+== OPTIONS
+This script should be run from within JTSDK. No options are available.
+
+
+== BUGS
+If you find a bug or suspect *JTSDK WSJTX* is not acting as you think it should,
+send an email with as much detail as possible to:
+<wsjt-devel@lists.sourceforge.net>
+
+It may also be helpful to use the +++file-bug+++ options to gather more system
+system information beforehand.
+
+
+== AUTHORS
+--------------------------------------------------------------------------------
+Greg Beam, KI7MT, <ki7mt@yahoo.com> .... Manpage Editor
+--------------------------------------------------------------------------------
+
+
+== RESOURCES
+--------------------------------------------------------------------------------
+Main web site: .. <http://www.physics.princeton.edu/pulsar/K1JT/>
+Project Site: ... <http://sourceforge.net/projects/jtsdk/>
+--------------------------------------------------------------------------------
+
+
+== COPYING
+Copyright &copy; 2014-2015 Joseph H Taylor, Jr, K1JT
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+GPL version 3 or later <http://gnu.org/licenses/gpl.html>.

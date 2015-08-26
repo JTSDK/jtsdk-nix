@@ -1,0 +1,188 @@
+# Makefile for Linux
+# Re-direct stdout and stderr:		bash
+#								make >& junk
+#
+# Prerequisites: Bash, Git, Subversion
+
+# Program Infomation
+PROGRAM		:=	@PROGRAM@
+VERSION		:=	@VERSION@
+BUGS		:=	@BUGS@
+WEB		:=	@WEB@
+
+# System Information
+DESC		:=	@DESC@
+OS		:=	@HOST_OS@
+DISTV		:=	@DISTROV@
+DISTC		:=	@DISTROC@
+ARCH		:=	@HOST_CPU@
+JJJJ		:=	@JJJJ@
+
+# General Use Tools
+CP		:=	@CP@
+CHOWN		:=	@CHOWN@
+CHMOD		:=	@CHMOD@
+DIALOG		:=	@DIALOG@
+LN		:=	@LN@
+MV		:=	@MV@
+RM		:=	@RM@
+SED		:=	@SED@
+SHELL		:=	@SHELL@
+SVN		:=	@SVN@
+MKDIR		:=	@MKDIR@
+PYTHON2		:=	@PYTHON2@
+PYTHON3		:=	@PYTHON3@
+F2PY3		:=	@F2PY3@
+DOCSRC		:=	@DOCSRC@
+MANSRC		:=	@MANSRC@
+DATASRC		:=	@DATASRC@
+
+# Install locations
+PREFIX		:=	@PREFIX@
+INSTALL		:=	install
+BINDIR		:=	@BINDIR@
+SHARE		:=	@SHARE@
+MANDIR		:=	@MANDIR@
+DOCDIR		:=	@DOCDIR@
+DTDIR		:=	@DTDIR@
+ICOND		:=	@ICOND@
+
+# Home directory locations
+LOGNAME		:=	@LOGNAME@
+LOGGRP		:=	$(shell groups @LOGNAME@ | cut -d ' ' -f 3)
+HOMEDIR		:=	/home/@LOGNAME@/jtsdk
+
+# Config Definitions
+BDOC		:=	@BDOC@
+SEPARATE		:=	@SEPARATE@
+
+DEFS		:=	@DEFS@
+
+# Foreground colours
+C_R		:=	'\033[01;31m'	# red
+C_G		:=	'\033[01;32m'	# green
+C_Y		:=	'\033[01;33m'	# yellow
+C_C		:=	'\033[01;36m'	# cyan
+C_NC		:=	'\033[01;37m'	# no color
+
+# For Manpages
+A2X			:=	@A2X@
+MANPSRC		:= $(wildcard manpages/*.1.txt)
+
+# Targets
+all: build-doc make-summary
+
+build-doc:
+ifeq ($(BDOC),Yes)
+	@echo ''
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Building Documentation"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo ' Generating HTML Documentation, please wait..'
+	@(cd docs/ ; make clean > /dev/null 2>&1 ; make all > /dev/null 2>&1)
+	@echo " Finished"  
+	@echo ''
+endif
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Building Manpages"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@for f in $(MANPSRC) ; do \
+	echo " $$f" ; \
+	$(A2X) --doctype manpage --format manpage --no-xmllint $$f ; \
+	done
+
+make-summary:
+	@echo ''
+	@echo '---------------------------------------------'
+	@echo -e $(C_G)"Make Summary"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo "Package ....................: $(PROGRAM) $(VERSION)"
+	@echo " Distribution ..............: $(DESC) $(ARCH)"
+	@echo " Install prefix ............: $(PREFIX)"
+	@echo " Working Directory .........: $(HOMEDIR)"
+	@echo ''
+	@echo 'OPTIONS'
+	@echo " CPU Cores .................: $(JJJJ)"
+	@echo " With HTML Docs ............: $(BDOC)"
+	@echo " Enable Folder Separation ..: $(SEPARATE)"
+	@echo ''
+	@echo ' To Install, type ..........: sudo make install'
+	@echo ''
+
+# Install System Files
+install:
+	@clear
+	@echo '---------------------------------------------'
+	@echo -e $(C_G)"Installing @PROGRAM@ @VERSION@"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo '..Installing Directories'
+	@$(MKDIR) -p $(HOMEDIR)/package-info
+	@if [ -f orig-install.txt ] ; then \
+	$(CP) -u orig-install.txt $(HOMEDIR)/package-info ; fi 
+	@if [ -f orig-needed.txt ] ; then \
+	$(CP) -u orig-needed.txt $(HOMEDIR)/package-info ; fi 
+	@echo '..Installing Main Scripts'
+	@install -m 755 src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wsjtx-sb \
+	src/jtsdk-wspr src/jtsdk-wsjt $(DESTDIR)$(BINDIR)
+	@$(MKDIR) -p $(DESTDIR)$(DOCDIR)
+	@echo '..Installing Misc Files'
+	@install -m 644 src/docs/* $(DESTDIR)$(SHARE)
+	@install -m 644 AUTHORS ChangeLog COPYING COPYRIGHT README README.* TO-DO $(DESTDIR)$(DOCDIR)
+	@install -m 644 $(DATASRC)/jtsdk.menu $(DESTDIR)$(DTDIR)
+	@install -m 644 $(DATASRC)/jtsdk.desktop $(DESTDIR)$(DTDIR)
+	@install -m 644 $(DATASRC)/jtsdk.xpm $(DESTDIR)$(ICOND)
+	@$(MKDIR) -p $(MANDIR)
+	@install -m 644 $(MANSRC)/jtsdk.1 $(DESTDIR)$(MANDIR)/jtsdk.1
+	@install -m 644 manpages/jtsdk-hamlib3.1 $(DESTDIR)$(MANDIR)/jtsdk-hamlib3.1
+	@install -m 644 manpages/jtsdk-wsjt.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjt.1
+	@install -m 644 manpages/jtsdk-wsjtx.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjtx.1
+	@install -m 644 manpages/jtsdk-wsjtx-sb.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjtx-sb.1
+	@install -m 644 manpages/jtsdk-wsjt.1 $(DESTDIR)$(MANDIR)/jtsdk-wspr.1
+ifeq ($(BDOC),Yes)
+	@echo '..Installing Documentation and Manpages'
+	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)/jtsdk.html
+endif
+	@echo "..Changing $(HOMEDIR) Ownership to: [ $(LOGNAME) ]"
+	@$(CHOWN) -R $(LOGNAME):$(LOGGRP) $(HOMEDIR)
+	@echo '..Finished'
+	@echo ''
+	@echo "To Run $(PROGRAM), type ..: jtsdk"
+	@echo ''
+
+# Uninstall System Files
+uninstall:
+	@clear
+	@echo '---------------------------------------------'
+	@echo -e $(C_Y)"Uninstall @PROGRAM@ @VERSION@"$(C_NC)
+	@echo '---------------------------------------------'
+	@echo ''
+	@echo '..Removing installed scripts'
+	@$(RM) -f $(DESTDIR)$(BINDIR)/jtsdk*
+	@echo '..Removing installed manpages'
+	@$(RM) -f ${DESTDIR}$(MANDIR)/jtsdk.1 ${DESTDIR}$(MANDIR)/jtsdk-*.1
+	@echo '..Removing installed share files'
+	@$(RM) -rf $(DESTDIR)$(SHARE)
+	@$(RM) -f $(ICOND)/jtsdk.xpm
+	@$(RM) -f $(DTDIR)/jtsdk.desktop
+	@echo ''
+	@echo 'UNINSTALL NOTES'
+	@echo ''
+	@echo ' 1. All user generated files remain in: ~/jtsdk'
+	@echo ''
+
+# Cleanup Source Tree
+.PHONY: clean
+clean:
+	$(RM) -f config.log configure config.status autoscan.log configure.scan Makefile \
+	installed.txt temp.list needed.txt installed.txt
+	$(RM) -f src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wsjtx-sb \
+	src/jtsdk-wspr src/jtsdk-wsjt
+	$(RM) -rf ./autom4*
+	$(RM) -f data/jtsdk.menu data/jtsdk.desktop
+	$(RM) -f docs/*.html docs/Makefile docs/*.1
+	$(RM) -f manpages/*.1 manpages/*.txt
+

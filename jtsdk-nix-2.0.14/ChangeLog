@@ -1,0 +1,15 @@
+Current Development Version: JTSDK Nix v2.0.4
+
+2015-29-05 Greg Beam <ki7mt@yahoo.com>
+
+* Fix a problem with installing manpages
+* Added a menu item to build HTML docs for v1.5.0 and v1.6.0
+* Minor updates to misc text docs.
+
+
+2015-27-05 Greg Beam <ki7mt@yahoo.com>
+
+* Add Documentation builds to WSJT-X menus
+
+
+

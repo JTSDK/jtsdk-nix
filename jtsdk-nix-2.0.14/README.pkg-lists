@@ -1,0 +1,48 @@
+Last Update: 15-JUN-2015
+
+The following package installations have been tested and known to work for the
+respective distribution / version:
+
+
+Ubuntu 14.04, 15.04, 15.10
+--------------------------------------------------------------------------------
+
+sudo apt-get install automake asciidoc clang-3.5 cmake dialog g++ gettext \
+gfortran git libfftw3-dev libhamlib-dev libhamlib-utils libqt5multimedia5-plugins \
+libqt5serialport5-dev libqt5opengl5-dev libsamplerate0-dev libtool libusb-dev \
+libxml2-utils pkg-config portaudio19-dev python3-pil python3-pil.imagetk \
+python3-tk python3-dev python3-numpy python3-pip python3-setuptools python-dev \
+qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo xmlto
+
+
+Linux Mint 17.1 ( may work with others )
+--------------------------------------------------------------------------------
+
+sudo apt-get install automake asciidoc clang-3.5 cmake dialog g++ gettext \
+gfortran git libfftw3-dev libhamlib-dev libhamlib-utils libqt5multimedia5-plugins \
+libqt5serialport5-dev libqt5opengl5-dev libsamplerate0-dev libtool libusb-dev \
+libxml2-utils pkg-config portaudio19-dev python3-pil python3-pil.imagetk \
+python3-tk python3-dev python3-numpy python3-pip python3-setuptools python-dev \
+qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo xmlto
+
+Note: Due to portaudio-dev dependency on the package jack1, jack2 may be
+uninsatalled during the above command. If your using Jack2 for other applications,
+you should be able to re-install it.
+
+
+SPECIAL: Ubuntu 14.10 (Utopic) and Debian 8.x (Jessie) 
+--------------------------------------------------------------------------------
+sudo apt-get install automake asciidoc clang-3.5 cmake dialog g++ gettext \
+gfortran git libfftw3-dev libhamlib-dev libhamlib-utils libqt5multimedia5-plugins \
+libqt5serialport5-dev libqt5opengl5-dev libsamplerate0-dev libtool libusb-dev \
+libxml2-utils pkg-config portaudio19-dev python3-pil python3-pil.imagetk \
+python3-tk python3-dev python3-numpy python3-pip python3-setuptools \
+python-dev qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo \
+xmlto libfreetype6-dev libjpeg-dev liblcms2-dev libtiff5-dev libwebp-dev \
+libwebpmux1 mime-support tcl8.6-dev tk8.6-dev zlib1g-dev
+
+**IMPORTANT - See Also **
+README.python-pil
+/usr/share/jtsdk/README.python3-pil
+
+

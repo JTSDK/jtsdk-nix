@@ -1,0 +1,265 @@
+#!/usr/bin/env bash
+#
+# Name			: jtsdk-wsjtx-sb.sh
+# Execution		: As normal user type: jtsdk-wsjtx-sb.sh
+# Copyright		: @COPYRIGHT@
+# Contributors	: @AUTHORS@
+# Comment		: Part of the @PROGRAM@ Linux Project
+#
+# @PROGRAM@ is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation either version 3 of the License, or
+# (at your option) any later version. 
+#
+# @PROGRAM@ is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-------------------------------------------------------------------------#
+
+set -e
+
+# App information
+APP_NAME=wsjtx-sb
+VERSION=1.6.0
+
+# set home and directory paths
+HOMEDIR=~/jtsdk
+MENU=@SHARE@
+SRCD="$HOMEDIR/src"
+TMPD="$HOMEDIR/tmp"
+LOGS="$HOMEDIR/logs"
+
+# General use variables
+BASED=$HOMEDIR/tmp/wsjtx-sb
+BUILDD="$BASED/build"
+SRCD="$BASED/wsjtx-superbuild"
+SBCOURL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-superbuild"
+HAMLIBSRC="$BUILDD/hamlib-prefix/src/hamlib"
+JJ=@JJJJ@
+SEPARATE=@SEPARATE@
+
+
+# Foreground colours
+C_R='\033[01;31m'		# red
+C_G='\033[01;32m'		# green
+C_Y='\033[01;33m'		# yellow
+C_C='\033[01;36m'		# cyan
+C_NC='\033[01;37m'		# no color
+
+################################################################################
+# FUNCTOINS
+################################################################################
+
+# Link KVASD Binary to $INSTALLD/bin
+function link_kvasd() {
+	if [[ -f /usr/bin/kvasd ]] ; then
+		KVSTATUS=YES
+		echo "-- Linking KVASD binary to: $INSTALLD/bin"
+		if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
+	else
+		KVSTATUS=NO
+		echo ''
+		echo '-------------------------------------------'
+		echo -e ${C_R}' KVASD WARNING'${C_NC}
+		echo '-------------------------------------------'
+		echo ''
+		echo ' * The KVASD Binary was not found in /usr/bin'
+		echo ' * Use the KVASD-Installer package to install the binary'
+		echo '   before running WSJT-X'
+		echo ' * After installation, in a terminal, you should link the'
+		echo '   binary to your installation directory, for example:'
+		echo ''
+		echo "   ln -s /usr/bin/kvasd $INSTALLD/bin/kvasd"
+		echo ''
+		echo ' * Alternatively, after installing the binary with KVASD-Installer,'
+		echo '   re-run the last build, which will automatically perform the'
+		echo '   link for you.'
+		echo ''
+		read -p "Press [ Enter ] to continue ..."
+	fi
+}
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
+
+# Display build information ----------------------------------------------------
+clear
+echo "-------------------------------------------"
+echo -e ${C_G} "WSJT-X SUPERBUILD"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo 'This scipt will perform the following:'
+echo ''
+echo ' * Get WSJT-X SVN verion'
+echo ' * Download the latest Hamlib3 sources'
+echo ' * Download the latest WSJT-X sources'
+echo ' * Create a single tar.gz file ready for compiling'
+echo ' * Configre and Build WSJT-X'
+echo ' * Install WSJT-X to the user space for testing'
+sleep 2
+
+# Setup checkout and build directories -----------------------------------------
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "SETUP DIRECTORIES"${C_NC}
+echo "-------------------------------------------"
+echo ''
+
+# remove old checkout and build directories if exists
+if [ -d "$BASED" ]
+then
+	echo '..Removing old build and checkout directories'
+	rm -rf "$BASED"
+fi
+
+# Add the required directories
+echo '..Creating directory structure'
+mkdir -p "$BASED" "$BUILDD" 
+cd "$BASED"
+
+# Get remote SVN version -------------------------------------------------------
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "GET WSJT-X SVN VERSION"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo '..Get WSJT-X and Superbuild version infomation from SourceForge'
+WSJTXV=$(svn info https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx |grep "Last Changed Rev:" |awk '{print $4}')
+WSJTXSBV=$(svn info https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-superbuild |grep "Last Changed Rev:" |awk '{print $4}')
+echo "..Superbuild SVN Version ..: $WSJTXSBV"
+echo "..WSJT-X SVN Version ......: $WSJTXV" 
+
+
+# Checkout WSJTX-SuperBuild ----------------------------------------------------
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "CHECKOUT SUPERBUILD"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo '..Downloading from SourceForge'
+svn co $SBCOURL
+echo ''
+
+# Configure Source Package -----------------------------------------------------
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "CONFIGURE SOURCE PACKAGE"${C_NC}
+echo "-------------------------------------------"
+echo ''
+cd "$BUILDD"
+cmake -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$BASED/wsjtx-superbuild"
+
+
+# Build Source Package ------------------------------------------------------------
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "BUILD SOURCE PACKAGE [ wsjtx.tgz ]"${C_NC}
+echo "-------------------------------------------"
+echo  ''
+# For verbose builds, use: cmake --build . --target source -- VERBOSE=1
+echo '** Please be patient as this can take a few minutes **'
+echo ''
+cd "$BUILDD"
+
+# Verbose option settings
+case "$OPT1" in
+	1) cmake --build . --target source -- VERBOSE=1 ;;
+	*) cmake --build . --target source ;;
+esac
+
+# Move the source file
+mv wsjtx.tgz wsjtx_1.6.0-r$WSJTXV.orig.tar.gz
+
+
+# Get Hamlib3 Hash -------------------------------------------------------------
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "GET HAMLIB3 HASH"${C_NC}
+echo "-------------------------------------------"
+echo  ''
+echo '..Get Hamlib3 Hash from checkout'
+cd $HAMLIBSRC
+HL3HASH=$(git rev-parse HEAD)
+cd "$BASED"
+
+# Source Package Complete
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_G} "SOURCE PACKAGE COMPLETE"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo "..WSJT-X Version ...: $WSJTXV"
+echo "..Build Directory ..: $BUILDD"
+echo "..Source Package ...: wsjtx_1.6.0-r$WSJTXV.orig.tar.gz"
+
+# Setup to compile WSJT-X
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "SETUP WSJTX-BUILD"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo '..Moving Source Tarball'
+mv $BUILDD/wsjtx_1.6.0-r$WSJTXV.orig.tar.gz $BASED/
+echo '..Extracting Source file'
+cd $BASED
+tar -xf wsjtx_1.6.0-r$WSJTXV.orig.tar.gz
+echo '..Removing source package diretories'
+rm -rf "$BUILDD" "$BASED/wsjtx-superbiild"
+echo '..Creating new build diretory'
+mkdir -p "$BUILDD" && cd "$BUILDD"
+
+# Setup to compile WSJT-X
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "CONFIGURING WSJTX v1.6.0 r$WSJTXV"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo "..Configuring the build"
+# set install locaiton
+if [ $SEPARATE == "Yes" ] ; then 
+	INSTALLD="$HOMEDIR/$APP_NAME/$VERSION/$WSJTXV"
+else
+	INSTALLD="$HOMEDIR/$APP_NAME/$VERSION"
+fi
+# Configure the build
+cmake -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$BASED/wsjtx"
+
+# Compile and Install the Release Target
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "COMPILING WSJTX v1.6.0 r$WSJTXV"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo '** Please be patient as this can take a few minutes **'
+echo ''
+cmake --build . --target install -- -j "$JJ"
+
+echo
+echo "-------------------------------------------"
+echo -e ${C_Y} "LINKING KVASD for r$WSJTXV"${C_NC}
+echo "-------------------------------------------"
+echo ''
+link_kvasd
+
+# Finished building source package ---------------------------------------------
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_G} "FINISHED SUPERBUILD"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo " Superbuild Version ..: $WSJTXSBV"
+echo " WSJT-X Version ......: $WSJTXV"
+echo " Hamlib3 Hash ........: $HL3HASH"
+echo " Source Package ......: wsjtx_1.6.0-r$WSJTXV.orig.tar.gz"
+echo " Install Location ....: $INSTALLD"
+echo " KVASD Installed .....: $KVSTATUS"
+echo ''
+read -p " Press [ Enter ] to continue .."
+
+exit 0
+

@@ -1,0 +1,59 @@
+:doctype: manpage
+:man manual: JTSDK Manpage
+:man date: {date}
+:man version: Version @VERSION@
+
+= jtsdk-wspr(1)
+
+== NAME
+jtsdk-wspr - Build Script for WSPR Applications
+
+
+== SYNOPSIS
+jtsdk-wspr ['OPTION']
+
+
+== DESCRIPTION
+*JTSDK WSPR* is a simple shell script for building WSPR
+
+
+== OPTIONS
+This script should be run from within JTSDK. No options are available.
+
+
+== BUGS
+If you find a bug or suspect *JTSDK WSJTX* is not acting as you think it should,
+send an email with as much detail as possible to:
+<wsjt-devel@lists.sourceforge.net>
+
+It may also be helpful to use the +++file-bug+++ options to gather more system
+system information beforehand.
+
+
+== AUTHORS
+--------------------------------------------------------------------------------
+Greg Beam, KI7MT, <ki7mt@yahoo.com> .... Manpage Editor
+--------------------------------------------------------------------------------
+
+
+== RESOURCES
+--------------------------------------------------------------------------------
+Main web site: .. <http://www.physics.princeton.edu/pulsar/K1JT/>
+Project Site: ... <http://sourceforge.net/projects/jtsdk/>
+--------------------------------------------------------------------------------
+
+
+== COPYING
+Copyright &copy; 2014-2015 Joseph H Taylor, Jr, K1JT
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
