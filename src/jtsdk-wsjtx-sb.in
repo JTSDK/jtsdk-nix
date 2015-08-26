@@ -50,6 +50,47 @@ C_Y='\033[01;33m'		# yellow
 C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
 
+################################################################################
+# FUNCTOINS
+################################################################################
+
+# Link KVASD Binary to $INSTALLD/bin
+function link_kvasd() {
+
+	echo '-------------------------------------------'
+	echo -e ${C_Y}' LINKING KVASD BINARY'${C_NC}
+	echo '-------------------------------------------'
+	echo ''
+	if [[ -f /usr/bin/kvasd ]] ; then
+		KVSTATUS=YES
+		echo "-- Linking KVASD binary to: $INSTALLD/bin"
+		if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
+	else
+		KVSTATUS=NO
+		echo ''
+		echo '-------------------------------------------'
+		echo -e ${C_R}' KVASD WARNING'${C_NC}
+		echo '-------------------------------------------'
+		echo ''
+		echo ' * The KVASD Binary was not found in /usr/bin'
+		echo ' * Use the KVASD-Installer package to install the binary'
+		echo '   before running WSJT-X'
+		echo ' * After installation, in a terminal, you should link the'
+		echo '   binary to your installation directory, for example:'
+		echo ''
+		echo "   ln -s /usr/bin/kvasd $INSTALLD/bin/kvasd"
+		echo ''
+		echo ' * Alternatively, after installing the binary with KVASD-Installer,'
+		echo '   re-run the last build, which will automatically perform the'
+		echo '   link for you.'
+		echo ''
+		read -p "Press [ Enter ] to continue ..."
+	fi
+}
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
 
 # Display build information ----------------------------------------------------
 clear
@@ -203,17 +244,11 @@ echo '** Please be patient as this can take a few minutes **'
 echo ''
 cmake --build . --target install -- -j "$JJ"
 
-# Link KVASD Binary to $INSTALLD/bin
-if [[ -f /usr/bin/kvasd ]] ; then
-	KVSTATUS=Yes
-	echo "-- Linking KVASD binary to: $INSTALLD/bin"
-	ln -s /usr/bin/kvasd "$INSTALLD"/bin/kvasd
-else
-	KVSTATUS=No
-	echo "WARNING: KVASD Binary was not found in /usr/bin"
-	echo "Use KVASD-Installer package to Install the Binary"
-	echo "before running WSJT-X"
-fi
+echo
+echo "-------------------------------------------"
+echo -e ${C_Y} "LINKING KVASD for r$WSJTXV"${C_NC}
+echo "-------------------------------------------"
+link_kvasd
 
 # Finished building source package ---------------------------------------------
 echo ''

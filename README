@@ -23,9 +23,9 @@ python-dev, qtbase5-dev, qtmultimedia5-dev, source-highlight, subversion, texinf
 
 
 TO INSTALL
-* Download jtsdk-nix-2.0.13.tar.gz
-* Extract: tar -xf jtsdk-nix-2.0.13.tar.gz
-* cd ./jtsdk-nix-2.0.13
+* Download jtsdk-nix-2.0.14.tar.gz
+* Extract: tar -xf jtsdk-nix-2.0.14.tar.gz
+* cd ./jtsdk-nix-2.0.14
 * ./autogeh.sh --prefix=/usr/local
 * make
 * sudo make install
@@ -36,7 +36,7 @@ TO RUN JTSDK:
 
 
 TO UNINSTALL
-* cd ./jtsdk-nix-2.0.13
+* cd ./jtsdk-nix-2.0.14
 * sudo make uninstall
 
 
