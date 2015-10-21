@@ -152,8 +152,6 @@ get_version() {
 # set (WSJTX_VERSION_IS_RELEASE 0)	# set to 1 for final release build
 # ------------------------------------------------------------------------------
 
-
-echo "-- Getting App Version from Repository"
 VER_FILE="$APP_SRC/Versions.cmake"
 # get Major number
 MA=$(cat $VER_FILE |grep '_MAJOR' |awk '{print $3}' |cut -c1)
@@ -178,7 +176,6 @@ echo "-- Repository Version Is ..: $AVER"
 # get the last changed svn number
 get_svn_revision() {
 
-echo "-- Getting SVN Revision Number"
 SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
 echo "-- SVN Revision Is ........: $SVN_VER"
 

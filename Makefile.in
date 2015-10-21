@@ -7,6 +7,7 @@
 # Program Infomation
 PROGRAM		:=	@PROGRAM@
 VERSION		:=	@VERSION@
+AUTHORS		:=	@AUTHORS@
 BUGS		:=	@BUGS@
 WEB		:=	@WEB@
 

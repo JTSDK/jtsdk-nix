@@ -23,19 +23,6 @@ INSTALL LOCATIONS
  Release ..: /home/$USER/jtsdk/wsjtx/1.6.0/install/Release
  Debug ....: /home/$USER/jtsdk/wsjtx/1.6.0/install/Debug
 
- If you used --enable-separate during the configure process, each of the
- base folders will be appended with the SVN revision number. This allow for
- separating the each revision into it's owb build and install tree. For
- example:
- 
- WSJT-X Version ...: 1.6.0
- SVN Change Rev ...: r5295
- 
- The above would result in the following paths:
-
- Release ..: /home/$USER/jtsdk/wsjtx/1.6.0/1.6.0-r5295/install/Release
- Debug ....: /home/$USER/jtsdk/wsjtx/1.6.0/1.6.0-r5295/install/Debug
-
 
 RUN AFTER BUILD
  To run WSJT-X after a build, browse to the install location

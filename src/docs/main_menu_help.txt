@@ -40,22 +40,8 @@ BUILD DESCRIPTIONS
  and all kinds of improvements.
  
  Available build targets: ( Release, Debug and Package )
- 
- 
- WSJT-X 1.5 RC
- 
- This branch is the release candidate branch. On any give day is can be
- incremented upwards to produce the next public testing version.
- 
- Available build targets: ( Release, Debug and Package )
- 
- 
- WSJTX 1.4 (Released)
- 
- JTSDK no longer builds this version, as it has been formally relseased by
- the project team.
- 
- 
+
+
  WSJT v10 and WSPR v4.0
  
  Both WSJT and WSPR have many targets. Currently, the build script

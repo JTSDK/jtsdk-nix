@@ -91,16 +91,14 @@ get_version() {
 # Using wspy.py line: Version="4.0 r" + "$Rev: 4889 $"[6:-2]
 # ------------------------------------------------------------------------------
 
-echo "-- Getting App Version from Repository"
 AVER=$(cat $APP_SRC/wspr.py |grep 'Version="' |awk '{print $1}' |cut -c10-13)
 echo "-- Repository Version Is ..: $AVER"
 
 }
 
+
 # get the last changed svn number
 get_svn_revision() {
-
-echo "-- Getting SVN Revision Number"
 SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
 echo "-- SVN Revision Is ........: $SVN_VER"
 
@@ -133,17 +131,12 @@ else
 fi
 
 
+# run autoreconf to generate new Makefile & configure script
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}' RUN AUTORECONF'${C_NC}
 echo '-----------------------------------------------------'
 cd "$APP_SRC"
-# clelan first
-if [[ -f Makefile ]] ; then
-	echo "Running make clean first"
-	make clean >/dev/null 2>&1
-fi
-# run autoreconf to generate new Makefile & configure script
 echo 'Generating Makefile and Configure scripts'
 autoreconf -f -i
 
