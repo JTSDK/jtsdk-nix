@@ -8,7 +8,6 @@
 #                 This script builds:
 #                 WSJT-X 1.6.1 exp branch
 #                 WSJT-X 1.6.0 development branch
-#                 WSJT-X 1.5.0 RC branch
 #
 # @PROGRAM@ is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -183,32 +182,40 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 
 function link_kvasd() {
 
-# Link KVASD Binary to $INSTALLD/bin
-if [[ -f /usr/bin/kvasd ]] ; then
-	KVSTATUS=YES
-	echo "-- Linking KVASD binary to: $INSTALLD/bin"
-	if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
-else
-	KVSTATUS=NO
-	echo ''
-	echo '-------------------------------------------'
-	echo -e ${C_R}' KVASD WARNING'${C_NC}
-	echo '-------------------------------------------'
-	echo ''
-	echo ' * The KVASD Binary was not found in /usr/bin'
-	echo ' * Use the KVASD-Installer package to install the binary'
-	echo '   before running WSJT-X'
-	echo ' * After installation, in a terminal, you should link the'
-	echo '   binary to your installation directory, for example:'
-	echo ''
-	echo "   ln -s /usr/bin/kvasd $INSTALLD/bin/kvasd"
-	echo ''
-	echo ' * Alternatively, after installing the binary with KVASD-Installer,'
-	echo '   re-run the last build, which will automatically perform the'
-	echo '   link for you.'
-	echo ''
-	read -p "Press [ Enter ] to continue ..."
-fi
+# Only display KVASD message for v1.6.0 and next RC based on 1.6.0, not v1.6.1
+case "$OPT1" in
+    dev|devel|-d|-D|rc|RC|-rc|-RC )
+        # Link KVASD Binary to $INSTALLD/bin
+        if [[ -f /usr/bin/kvasd ]] ; then
+	        KVSTATUS=YES
+	        echo "-- Linking KVASD binary to: $INSTALLD/bin"
+	        if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
+        else
+	        KVSTATUS=NO
+	        echo ''
+	        echo '-------------------------------------------'
+	        echo -e ${C_R}' KVASD WARNING'${C_NC}
+	        echo '-------------------------------------------'
+	        echo ''
+	        echo ' * The KVASD Binary was not found in /usr/bin'
+	        echo ' * Use the KVASD-Installer package to install the binary'
+	        echo '   before running WSJT-X'
+	        echo ' * After installation, in a terminal, you should link the'
+	        echo '   binary to your installation directory, for example:'
+	        echo ''
+	        echo "   ln -s /usr/bin/kvasd $INSTALLD/bin/kvasd"
+	        echo ''
+	        echo ' * Alternatively, after installing the binary with KVASD-Installer,'
+	        echo '   re-run the last build, which will automatically perform the'
+	        echo '   link for you.'
+	        echo ''
+	        read -p "Press [ Enter ] to continue ..."
+        fi
+        ;;
+    * )
+         KVSTATUS="Not Required"
+    ;;
+esac
 
 }
 
@@ -409,7 +416,7 @@ case "$DESC" in
 		echo " Source ...........: $APP_SRC"
 		echo " Build ............: $BUILDD"
 		echo " Install ..........: $INSTALLD/bin"
-		if [[ $KVSTATUS = "YES" ]] ; then
+		if [[ $KVSTATUS = "YES" ]] || [[ $KVSTATUS = "Not Required" ]] ; then
 			echo -e ' KVASD Installed ..: '${C_G}"$KVSTATUS"${C_NC}
 		else
 			echo -e ' KVASD Installed ..: '${C_R}"$KVSTATUS"${C_NC}
