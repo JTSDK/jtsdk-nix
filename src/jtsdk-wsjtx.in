@@ -41,7 +41,7 @@ HL3I="$HOMEDIR/hamlib3"
 APP_NAME=wsjtx
 EXP_APP_NAME=wsjtx_exp
 DEV_APP_NAME=wsjtx
-RC_APP_NAME=wsjtx-1.5
+RC_APP_NAME=wsjtx-1.6
 
 # app specific options
 OPT1=$1
@@ -182,9 +182,10 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 
 function link_kvasd() {
 
-# Only display KVASD message for v1.6.0 and next RC based on 1.6.0, not v1.6.1
+# Only display KVASD message for RC (v1.6 series ) as 
+# Development version 1.7.0 longer requires it
 case "$OPT1" in
-    dev|devel|-d|-D|rc|RC|-rc|-RC )
+    rc|RC|-rc|-RC )
         # Link KVASD Binary to $INSTALLD/bin
         if [[ -f /usr/bin/kvasd ]] ; then
 	        KVSTATUS=YES
@@ -223,7 +224,7 @@ esac
 # START MAIN SCRIPT
 ################################################################################
 
-# Joe's v1.6.1 ( devel - Joe's Branch )
+# Joe's Experimental Branch, Currently Dorment ^\branches\wsjtx_exp
 case "$OPT1" in
 	exp|EXP|-e|-E ) # $1 from jtsdk main
 		APP_SRC_NAME="$EXP_APP_NAME"
@@ -247,7 +248,7 @@ case "$OPT1" in
 		fi
 	;;
 	
-# Main WSJT-X Development Branch
+# Main WSJT-X Development Branch ^\branches\wsjtx
 	dev|devel|-d|-D ) # $1 from jtsdk main
 		APP_SRC_NAME="$DEV_APP_NAME"
 		APP_SRC="$SRCD/$APP_SRC_NAME"
@@ -273,11 +274,11 @@ case "$OPT1" in
 			cli_help
 		fi
 	;;
-# Release Candidate Branch
+# Release Candidate Branch, Current: ^\branches\wsjtx-1.6
 	rc|RC|-rc|-RC ) # $1 from jtsdk main
 		APP_SRC_NAME="$RC_APP_NAME"
 		APP_SRC="$SRCD/$APP_SRC_NAME"
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.5"
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.6"
 
 		# setup variables based on $2 from jtsdk main
 		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
@@ -366,7 +367,7 @@ echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo
 cd "$BUILDD"
-cmake -G "Unix Makefiles" \
+cmake -G "Unix Makefiles" -Wno-dev \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
 -D CMAKE_BUILD_TYPE="$OPTION" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"

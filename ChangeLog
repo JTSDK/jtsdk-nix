@@ -1,4 +1,10 @@
-Current Development Version: JTSDK Nix v2.0.16
+Current Development Version: JTSDK Nix v2.0.17
+
+2015-11-15 Greg Beam <ki7mt@yahoo.com>
+
+* Updated superbuild script
+* Updated WSJT-X Build script for 1.6.0 RC builds
+* Disabled WSJTX Exp builds, branch is no longer active
 
 2015-11-07 Greg Beam <ki7mt@yahoo.com>
 

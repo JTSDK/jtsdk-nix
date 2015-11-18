@@ -1,4 +1,4 @@
-Last Update: 15-JUN-2015
+Last Update: 08-NOV-2015
 
 The following package installations have been tested and known to work for the
 respective distribution / version:
@@ -7,7 +7,7 @@ respective distribution / version:
 Ubuntu 14.04, 15.04, 15.10
 --------------------------------------------------------------------------------
 
-sudo apt-get install automake asciidoc clang-3.5 cmake dialog g++ gettext \
+sudo apt-get install automake asciidoctor clang-3.5 cmake dialog g++ gettext \
 gfortran git libfftw3-dev libhamlib-dev libhamlib-utils libqt5multimedia5-plugins \
 libqt5serialport5-dev libqt5opengl5-dev libsamplerate0-dev libtool libusb-dev \
 libxml2-utils pkg-config portaudio19-dev python3-pil python3-pil.imagetk \
