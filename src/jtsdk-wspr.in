@@ -75,7 +75,7 @@ else
 			break ;;
 		
 		* )
-			clear
+			clear ||:
 			echo "Please use "Y" yes or "N" No." ;;
 		esac
 	done
@@ -110,7 +110,7 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 ################################################################################
 
 # Make sure directories are present, in case they were deleted
-clear
+clear ||:
 echo '-----------------------------------------------------'
 echo -e ${C_Y}"STARTING BUILD for ( WSPR )"${C_NC}
 echo '-----------------------------------------------------'

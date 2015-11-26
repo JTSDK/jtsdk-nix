@@ -62,7 +62,7 @@ C_NC='\033[01;37m'		# no color
 
 # simple hamlib test
 hamlib_test() {
-clear
+clear ||:
 echo '-------------------------------------------'
 echo -e ${C_Y}' Testing Hamlib3'${C_NC}
 echo '-------------------------------------------'
@@ -131,7 +131,7 @@ else
 			break ;;
 		
 		* )
-			clear
+			clear ||:
 			echo "Please use "Y" yes or "N" No." ;;
 		esac
 	done
@@ -306,7 +306,7 @@ esac
 # Do not test Hamlib3 for Usergiude Build
 case "$DESC" in
 	*Guide )
-	clear
+	clear ||:
 	;;
 	* )
 	hamlib_test ;;

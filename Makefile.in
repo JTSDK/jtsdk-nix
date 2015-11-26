@@ -115,7 +115,7 @@ make-summary:
 
 # Install System Files
 install:
-	@clear
+	@clear ||:
 	@echo '---------------------------------------------'
 	@echo -e $(C_G)"Installing @PROGRAM@ @VERSION@"$(C_NC)
 	@echo '---------------------------------------------'
@@ -156,7 +156,7 @@ endif
 
 # Uninstall System Files
 uninstall:
-	@clear
+	@clear ||:
 	@echo '---------------------------------------------'
 	@echo -e $(C_Y)"Uninstall @PROGRAM@ @VERSION@"$(C_NC)
 	@echo '---------------------------------------------'

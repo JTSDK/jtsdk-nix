@@ -167,7 +167,7 @@ dialog --backtitle "$BACKTITLE" --title "$CLEANTMP" --infobox "$CLEANTMPMSG" 5 5
 dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 50
 	unset_options
 	wait
-	clear
+	clear ||:
 
 	echo "Exit Status ""[ "$EXIT_STATUS" ]"
 	echo "@PROGRAM@ Signal Catch Cleanup Complete"
@@ -189,7 +189,7 @@ then
   else
    MSGCLIENT="whiptail"
 fi
-clear
+clear ||:
 
 if [[ $EUID = "0" ]]
 then
@@ -197,7 +197,7 @@ then
 clean_exit
 exit
 fi
-clear
+clear ||:
 
 unset {TESTVAR,MSGCLIENT}
 }
@@ -212,7 +212,7 @@ if [[ $INSTALLED == Version: ]]; then
 
 elif [[ $INSTALLED != dialog ]]; then
    MSGCLIENT="whiptail"
-   clear
+   clear ||:
 
 "$MSGCLIENT" --title "$DITITLE" --backtitle "$BACKTITLE" --msgbox "$DIMSG" 7 70
    touch "$LOGS"/install_log
@@ -222,7 +222,7 @@ elif [[ $INSTALLED != dialog ]]; then
    wait
    cp "$CONFIG"/debian.rc ~/.dialogrc
    wait
-   clear
+   clear ||:
 
 dialog --title "$DISUCTITLE" --backtitle "$BACKTITLE" --msgbox "$DISUCMSG" 7 40
 sudo -k
@@ -247,7 +247,7 @@ dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 5
 	unset_options
 	wait
 	sleep 1
-	clear
+	clear ||:
 
    echo "Exit Status ""[ "$EXIT_STATUS" ]"
    echo "@PROGRAM@ Clean Exit Complete."
@@ -342,7 +342,7 @@ WSJTXRCHELP="$MENU"/wsjtxrc_menu_help.txt
 WSJTXEXPHELP="$MENU"/wsjtxexp_menu_help.txt
 
 # MAIN MANU --------------------------------------------------------------------
-clear
+clear ||:
 while [ 0 ]; do
 
 dialog --ok-label SELECT --nocancel --backtitle "$BACKTITLE" --title \

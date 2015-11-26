@@ -79,7 +79,7 @@ else
 			break ;;
 		
 		* )
-			clear
+			clear ||:
 			echo "Please use "Y" yes or "N" No." ;;
 		esac
 	done
@@ -130,7 +130,7 @@ EOF_WSJTSH
 # START MAIN SCRIPT
 ################################################################################
 
-clear
+clear ||:
 echo '-----------------------------------------------------'
 echo -e ${C_Y}"STARTING BUILD for ( $APP_NAME )"${C_NC}
 echo '-----------------------------------------------------'

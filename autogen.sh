@@ -33,7 +33,7 @@ C_C='\033[01;36m'	# cyan
 C_NC='\033[01;37m'	# no color
 
 autogen_help() {
-clear
+clear ||:
 echo \
 'JTSDK Autogen Help Options
 
@@ -69,7 +69,7 @@ esac
 
 # Test if subversion is installed
 svn --version > /dev/null 2>&1 || {
-	clear
+	clear ||:
 	echo 'PACKAGE DEPENDENCY ERROR'
 	echo ''
 	echo 'You must have the package Subvesion installed to'
@@ -85,7 +85,7 @@ svn --version > /dev/null 2>&1 || {
 
 # Test if lsb-release is installed
 lsb_release -v > /dev/null 2>&1 || {
-	clear
+	clear ||:
 	echo 'PACKAGE DEPENDENCY ERROR'
 	echo ''
 	echo 'You must have the package lsb-release installed to'
@@ -101,7 +101,7 @@ lsb_release -v > /dev/null 2>&1 || {
 
 # Test if a basic C Compiler is availabe
 gcc --version > /dev/null 2>&1 || {
-	clear
+	clear ||:
 	echo 'PACKAGE DEPENDENCY ERROR'
 	echo ''
 	echo "You must have a C compiler installed to compile $PROGRAM."
@@ -116,7 +116,7 @@ gcc --version > /dev/null 2>&1 || {
 
 # Test if autoconf is installed
 autoconf --version > /dev/null 2>&1 || {
-	clear
+	clear ||:
 	echo 'PACKAGE DEPENDENCY ERROR'
 	echo ''
 	echo "You must have autoconf installed to compile $PROGRAM."
@@ -133,7 +133,7 @@ autoconf --version > /dev/null 2>&1 || {
 
 # run make clean if makefile and configure are found
 if test -f ./Makefile -a ./configure ; then
-	clear
+	clear ||:
 	echo '---------------------------------------------------'
 	echo ${C_Y}"Checking for Old Makefile & Configure Script"${C_NC}
 	echo '---------------------------------------------------'
@@ -146,7 +146,7 @@ if test -f ./Makefile -a ./configure ; then
 	echo '---------------------------------------------------'
 	autoconf -f -i
 else
-	clear
+	clear ||:
 	echo '---------------------------------------------------'
 	echo ${C_Y}"Running ( autoconf ) to process configure.ac"${C_NC}
 	echo '---------------------------------------------------'
