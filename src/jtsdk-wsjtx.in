@@ -48,6 +48,7 @@ OPT1=$1
 OPT2=$2
 JJ=@JJJJ@
 SEPARATE=@SEPARATE@
+CM_PREFIX="/usr"
 
 # Foreground colours
 C_R='\033[01;31m'		# red
@@ -342,35 +343,37 @@ mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
 
-# Build experimental version of WSPRD
-echo
-echo '-----------------------------------------------------'
-echo -e ${C_Y}" BUILD WSPRD_EXP ( WSJT-X $AVER $DESC )"${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-echo '-- JTSDK Building WSPRD_EXP' 
-cd "$APP_SRC/lib/wsprd"
-make -f Makefile > /dev/null 2>&1
-mkdir -p "$INSTALLD/bin"
-echo "-- Copy wsprd_exp to: $INSTALLD/bin/"
-cp wsprd_exp "$INSTALLD"/bin/ > /dev/null 2>&1
-echo "-- Cleaning build directory"
-make clean > /dev/null 2>&1
+# Makefile method is not longer needed
+## Build experimental version of WSPRD
+#echo
+#echo '-----------------------------------------------------'
+#echo -e ${C_Y}" BUILD WSPRD_EXP ( WSJT-X $AVER $DESC )"${C_NC}
+#echo '-----------------------------------------------------'
+#echo ''
+#echo '-- JTSDK Building WSPRD_EXP' 
+#cd "$APP_SRC/lib/wsprd"
+#make -f Makefile > /dev/null 2>&1
+#mkdir -p "$INSTALLD/usr/bin"
+#echo "-- Copy wsprd_exp to: $INSTALLD$CM_PREFIX/bin"
+#cp wsprd_exp "$INSTALLD/$CM_PREFIX"/bin > /dev/null 2>&1
+#echo "-- Cleaning build directory"
+#make clean > /dev/null 2>1
 
-# exit on errors
-set -e
+## exit on errors
+#set -e
 
 # start configuring the main build
 echo
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
-echo
+echo ''
+# Always run the configure step to ensure any changes were made
 cd "$BUILDD"
 cmake -G "Unix Makefiles" -Wno-dev \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
 -D CMAKE_BUILD_TYPE="$OPTION" \
--D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
+-D CMAKE_INSTALL_PREFIX="$CM_PREFIX" "$SRCD/$APP_SRC_NAME"
 
 # build the target
 echo ''
@@ -381,25 +384,26 @@ echo ''
 case "$DESC" in
 	Release*|Debug* )
 	cd "$BUILDD"
-	make -s clean
-	cmake --build . --target install -- -j "$JJ"
+	make -j"$JJ" install DESTDIR="$INSTALLD"
+	# cmake --build . --target install -- -j "$JJ"
 	link_kvasd ;;
 	
 	package )
 	cd "$BUILDD"
-	make -s clean
 	cmake --build . --target package -- -j "$JJ"
 	if [[ $? = "0" ]] ; then
-		cp -rf "$BUILDD"/wsjtx*.deb "$PKGD"/
+		cp -u "$BUILDD"/wsjtx*.deb "$PKGD"/
 	fi ;;
 
 	*Guide )
 	cd "$BUILDD"
-	make -s clean
-	cmake --build . --target docs
+	cmake --build . --target docs  >/dev/null 2>&1
 	cd $BUILDD/doc
-	make install > /dev/null 2>&1
-	FILENAME=$(ls -al $INSTALLD/share/doc/wsjtx |grep 'html' |awk '{print $9}') ;;
+	make install DESTDIR="$INSTALLD"  >/dev/null 2>&1
+	FILENAME=$(ls -al $INSTALLD$CM_PREFIX/share/doc/wsjtx |grep 'html' |awk '{print $9}')
+		echo "Finished Building..: $FILENAME"
+	echo '' ;;
+	
 	*)
 	;;
 esac
@@ -416,7 +420,7 @@ case "$DESC" in
 		echo " Build Type .......: $OPTION"
 		echo " Source ...........: $APP_SRC"
 		echo " Build ............: $BUILDD"
-		echo " Install ..........: $INSTALLD/bin"
+		echo " Install ..........: $INSTALLD$CM_PREFIX"
 		if [[ $KVSTATUS = "YES" ]] || [[ $KVSTATUS = "Not Required" ]] ; then
 			echo -e ' KVASD Installed ..: '${C_G}"$KVSTATUS"${C_NC}
 		else
@@ -424,7 +428,7 @@ case "$DESC" in
 		fi
 		echo ''
 		echo " TO RUN $APP_NAME"
-		echo " cd ...............: $INSTALLD/bin"
+		echo " cd ...............: $INSTALLD$CM_PREFIX/bin"
 		echo " Type, ............: ./$APP_NAME"
 		echo ''
 		read -p "Press [ Enter ] to continue.."
@@ -439,7 +443,7 @@ case "$DESC" in
 	;;
 	*Guide )
 		echo "Document Name .....: $FILENAME"
-		echo "Location ..........: $INSTALLD/share/doc/wsjtx"
+		echo "Location ..........: $INSTALLD$CM_PREFIX/share/doc/wsjtx"
 		echo ''
 		read -p "Press [ Enter ] to continue .." ;;
 	* )

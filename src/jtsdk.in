@@ -341,7 +341,7 @@ WSJTXHELP="$MENU"/wsjtx_menu_help.txt
 WSJTXRCHELP="$MENU"/wsjtxrc_menu_help.txt
 WSJTXEXPHELP="$MENU"/wsjtxexp_menu_help.txt
 
-# MAIN MANU --------------------------------------------------------------------
+# MAIN MENU --------------------------------------------------------------------
 clear ||:
 while [ 0 ]; do
 
