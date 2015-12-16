@@ -1,28 +1,25 @@
-Current Development Version: JTSDK Nix v2.0.17
+Current Development Version: JTSDK Nix v2.0.18
+
+2015-12-16 Greg Beam <ki7mt@yahoo.com>
+* Removed wsprd_exp build via developer Makefile
+* Fixed User Guide builds
+* Removed make clean steps to increase rebuuild speed
 
 2015-11-15 Greg Beam <ki7mt@yahoo.com>
-
 * Updated superbuild script
 * Updated WSJT-X Build script for 1.6.0 RC builds
 * Disabled WSJTX Exp builds, branch is no longer active
 
 2015-11-07 Greg Beam <ki7mt@yahoo.com>
-
 * Remove KVASD requirment for WSJT-X Exp Branch
 * Fixed menus after a dialog package update
 * Currently, there are not RC builds, so it is disabled
 
-
 2015-29-05 Greg Beam <ki7mt@yahoo.com>
-
 * Fix a problem with installing manpages
 * Added a menu item to build HTML docs for v1.5.0 and v1.6.0
 * Minor updates to misc text docs.
 
-
 2015-27-05 Greg Beam <ki7mt@yahoo.com>
-
 * Add Documentation builds to WSJT-X menus
-
-
 
