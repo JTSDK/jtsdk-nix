@@ -2,12 +2,9 @@
 #
 # Name			: jtsdk-wsjtx.sh
 # Execution		: As normal user type: jtsdk-wsjtx.sh
-# Copyright		: @JTSDK_COPYRIGHT@
-# Contributors	: @JTSDK_AUTHORS@
+# Copyright		: @COPYRIGHT@
+# Contributors	: @AUTHORS@
 # Comment		: Part of the JTSDK Linux Project
-#                 This script builds:
-#                 WSJT-X 1.6.1 exp branch
-#                 WSJT-X 1.6.0 development branch
 #
 # @PROGRAM@ is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,7 +45,6 @@ OPT1=$1
 OPT2=$2
 JJ=@JJJJ@
 SEPARATE=@SEPARATE@
-CM_PREFIX="/usr"
 
 # Foreground colours
 C_R='\033[01;31m'		# red
@@ -343,37 +339,18 @@ mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
 
-# Makefile method is not longer needed
-## Build experimental version of WSPRD
-#echo
-#echo '-----------------------------------------------------'
-#echo -e ${C_Y}" BUILD WSPRD_EXP ( WSJT-X $AVER $DESC )"${C_NC}
-#echo '-----------------------------------------------------'
-#echo ''
-#echo '-- JTSDK Building WSPRD_EXP' 
-#cd "$APP_SRC/lib/wsprd"
-#make -f Makefile > /dev/null 2>&1
-#mkdir -p "$INSTALLD/usr/bin"
-#echo "-- Copy wsprd_exp to: $INSTALLD$CM_PREFIX/bin"
-#cp wsprd_exp "$INSTALLD/$CM_PREFIX"/bin > /dev/null 2>&1
-#echo "-- Cleaning build directory"
-#make clean > /dev/null 2>1
-
-## exit on errors
-#set -e
-
 # start configuring the main build
 echo
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-# Always run the configure step to ensure any changes were made
+# Always run the configure step to ensure any changes made are picked up
 cd "$BUILDD"
 cmake -G "Unix Makefiles" -Wno-dev \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
 -D CMAKE_BUILD_TYPE="$OPTION" \
--D CMAKE_INSTALL_PREFIX="$CM_PREFIX" "$SRCD/$APP_SRC_NAME"
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
 
 # build the target
 echo ''
@@ -383,28 +360,24 @@ echo '-----------------------------------------------------'
 echo ''
 case "$DESC" in
 	Release*|Debug* )
-	cd "$BUILDD"
-	make -j"$JJ" install DESTDIR="$INSTALLD"
-	# cmake --build . --target install -- -j "$JJ"
-	link_kvasd ;;
+		cd "$BUILDD"
+		cmake --build . --target install -- -j "$JJ"
+		link_kvasd
+	;;
 	
 	package )
-	cd "$BUILDD"
-	cmake --build . --target package -- -j "$JJ"
-	if [[ $? = "0" ]] ; then
-		cp -u "$BUILDD"/wsjtx*.deb "$PKGD"/
-	fi ;;
+		cd "$BUILDD"
+		cmake --build . --target package -- -j "$JJ"
+		if [[ $? = "0" ]] ; then
+			cp -u "$BUILDD"/wsjtx*.deb "$PKGD"/
+		fi
+	;;
 
 	*Guide )
-	cd "$BUILDD"
-	cmake --build . --target docs  >/dev/null 2>&1
-	cd $BUILDD/doc
-	make install DESTDIR="$INSTALLD"  >/dev/null 2>&1
-	FILENAME=$(ls -al $INSTALLD$CM_PREFIX/share/doc/wsjtx |grep 'html' |awk '{print $9}')
+		cd $BUILDD/doc
+		make install  1> /dev/null
+		FILENAME=$(ls -al $INSTALLD/share/doc/wsjtx |grep 'html' |awk '{print $9}')
 		echo "Finished Building..: $FILENAME"
-	echo '' ;;
-	
-	*)
 	;;
 esac
 
@@ -416,11 +389,11 @@ echo '-----------------------------------------------------'
 echo ''
 case "$DESC" in
 	Release*|Debug* )
-		echo " App Version ......: $AVER"
-		echo " Build Type .......: $OPTION"
-		echo " Source ...........: $APP_SRC"
-		echo " Build ............: $BUILDD"
-		echo " Install ..........: $INSTALLD$CM_PREFIX"
+		echo " App Version ..: $AVER-r$SVN_VER"
+		echo " Build Type ...: $OPTION"
+		echo " Source .......: $APP_SRC"
+		echo " Build ........: $BUILDD"
+		echo " Install ......: $INSTALLD"
 		if [[ $KVSTATUS = "YES" ]] || [[ $KVSTATUS = "Not Required" ]] ; then
 			echo -e ' KVASD Installed ..: '${C_G}"$KVSTATUS"${C_NC}
 		else
@@ -428,22 +401,22 @@ case "$DESC" in
 		fi
 		echo ''
 		echo " TO RUN $APP_NAME"
-		echo " cd ...............: $INSTALLD$CM_PREFIX/bin"
-		echo " Type, ............: ./$APP_NAME"
+		echo " cd ...........: $INSTALLD/bin"
+		echo " Type, ........: ./$APP_NAME"
 		echo ''
 		read -p "Press [ Enter ] to continue.."
 	;;
 	package )
 		PKG_NAME=$(ls -m1 $PKGD)
-		echo " Type .............: $OPTION"
-		echo " Name .............: $PKG_NAME"
-		echo " Location .........: $PKGD"
+		echo " Type ......: $OPTION"
+		echo " Name ......: $PKG_NAME"
+		echo " Location ..: $PKGD"
 		echo ''
 		read -p "Press [ Enter ] to continue .."
 	;;
 	*Guide )
-		echo "Document Name .....: $FILENAME"
-		echo "Location ..........: $INSTALLD$CM_PREFIX/share/doc/wsjtx"
+		echo "Document Name ..: $FILENAME"
+		echo "Location .......: $INSTALLD/share/doc/wsjtx"
 		echo ''
 		read -p "Press [ Enter ] to continue .." ;;
 	* )

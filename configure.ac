@@ -5,7 +5,7 @@ AC_PREREQ([2.69])
 AC_INIT([JTSDK],[2.0.18],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
-JTSDK_COPYRIGHT="Copyright (C) 2014-2015 Joseph H Taylor, Jr, K1JT"
+JTSDK_COPYRIGHT="Copyright (C) 2014-2015 Greg Beam (KI7MT), Joseph H Taylor, Jr (K1JT)"
 
 # ------------------------------------------------------------------------------
 #  canonical host information
