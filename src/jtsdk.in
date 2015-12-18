@@ -21,12 +21,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------#
 
+# exit on error
 set -e
 
-# set reasonable menu height & width.
-# This is an ANSI sequence, and should
-# work in most Xterm windows
-echo -e "\e[8;35;110t"
+################################################################################
+#
+# VARIABLE SECTION
+#
+################################################################################
 
 # host informaiton and apps
 HOST_OS=@HOST_OS@
@@ -42,11 +44,14 @@ LOGS="$HOMEDIR/logs"
 # enable / disable experimental branch
 ENABLE_EXP=No
 
-# make sure all the home directories are present
-mkdir -p $HOMEDIR/{src,tmp,logs}
+# these branches are not supported by the Superbuild script
+exclude_array=('wsjtx-1.3' 'wsjtx-1.4' 'wsjtx_k1jt_p1' 'wsjtx-superbuild' 'wsjtx_w')
+
 
 ################################################################################
-# Language Section
+#
+# LANGUAGE SECTION
+#
 ################################################################################
 
 # backtitle lang
@@ -79,8 +84,7 @@ EXITWSDTMSG="\n      Performing Shutdown Cleanup Routine"
 
 # main menu lang
 MMTITLE=" @PROGRAM@ MAIN MENU"
-MENUMSG="            Key the letter then hit [ENTER]\n\
-     Arrow Up/Dwn or '+' or '-' Keys to Navigate\n\n"
+MENUMSG="     Arrow Up/Down, then [ Enter] to Select"
 
 # applicaiton menu title's
 WSJTXTITLE=" WSJT-X BUILD MENU"
@@ -105,34 +109,53 @@ BSMSG="\n There Are No Pending RC Builds At This Time"
 IB=" INACTIVE BRANCH"
 IBMSG="\n    Branch Activity Is Currently Dormant"
 
+# superbuild menu items
+SBTITLE="  WSJT-X SUPERBUILD SELECTION"
+
+
 ################################################################################
-# Functions Section
+#
+# FUNCTIONS SECTION
+#
 ################################################################################
 
-#--set options------------------------------------------------------------------
-set_options() {
-set -e                 # exit immediately on any error
-set -o pipefail        # pipeline fail retun exit status
-set -u                 # undefined variables
-} # end set flags
+# MAKE DIRECTORIES -------------------------------------------------------------
+make_dirs() {
 
+mkdir -p $HOMEDIR/{src,tmp,logs}
 
-#--unset options----------------------------------------------------------------
-function unset_options() {
-set +e
-set +o pipefail
-set +u
 }
 
 
-#--under development------------------------------------------------------------
+# SET BASH OPTIONS -------------------------------------------------------------
+set_options() {
+
+set -e                 # exit immediately on any error
+set -o pipefail        # pipeline fail retun exit status
+set -u                 # undefined variables
+
+}
+
+
+# UNSET BASH OPTIONS -----------------------------------------------------------
+function unset_options() {
+
+set +e
+set +o pipefail
+set +u
+
+}
+
+
+# UNDER DEVELOPMENT BOX --------------------------------------------------------
 function under_development() {
 
 dialog --backtitle "$BACKTITLE" --title "$UD" --ok-label "Return" --msgbox "$UDMSG" 7 50
 
 }
 
-#--released message-------------------------------------------------------------
+
+# RELEASED MESSAGE BOX ---------------------------------------------------------
 function build_status() {
 
 dialog --backtitle "$BACKTITLE" --title "$BS" --ok-label "Return" --msgbox "$BSMSG" 7 50
@@ -140,14 +163,15 @@ dialog --backtitle "$BACKTITLE" --title "$BS" --ok-label "Return" --msgbox "$BSM
 }
 
 
-#--inactive branch--------------------------------------------------------------
+# INACTIVE BRANCH --------------------------------------------------------------
 function inactive_branch() {
 
 dialog --backtitle "$BACKTITLE" --title "$IB" --ok-label "Return" --msgbox "$IBMSG" 7 50
 
 }
 
-#--signal catch-----------------------------------------------------------------
+
+# SIGNAL CATCH -----------------------------------------------------------------
 sig_catch_cleanup() {
 EXIT_STATUS="$?"
 
@@ -178,7 +202,8 @@ dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 5
 fi
 }
 
-#--root check-------------------------------------------------------------------
+
+# ROOT CHECK -------------------------------------------------------------------
 root_chk() {
 MSGCLIENT=""
 TESTD=$(dpkg --get-selections dialog | awk '{print $1}')
@@ -203,7 +228,7 @@ unset {TESTVAR,MSGCLIENT}
 }
 
 
-#--dialog check-----------------------------------------------------------------
+# DIALOG CHECK -----------------------------------------------------------------
 dialog_chk() {
 INSTALLED=$(dialog --version |awk '{print $1}')
 
@@ -231,22 +256,22 @@ fi
 }
 
 
-#--normal shutdown--------------------------------------------------------------
+# NORMAL SHUTDOWN --------------------------------------------------------------
 clean_exit() {
 local EXIT_STATUS=$?
 
 dialog --backtitle "$BACKTITLE" --title "$EXITWSDT" --infobox "$EXITWSDTMSG" 5 50
-   sleep 1
+   sleep .5
 
 dialog --backtitle "$BACKTITLE" --title "$CLEANTMP" --infobox "$CLEANTMPMSG" 5 50
    rm -r $TMPD/*
    wait
-   sleep 1
+   sleep .5
 
 dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 50
 	unset_options
 	wait
-	sleep 1
+	sleep .5
 	clear ||:
 
    echo "Exit Status ""[ "$EXIT_STATUS" ]"
@@ -258,7 +283,7 @@ exit
 }
 
 
-#--dialog rc file---------------------------------------------------------------
+# DIALOG RC FILE ---------------------------------------------------------------
 make_dialogrc() {
 
 if [ -f "$TMPD"/.dialogrc ]; then rm -f "$TMPD"/.dialogrc ; fi
@@ -316,8 +341,156 @@ fi
 
 }
 
+
+# MAIN MENU HELP ---------------------------------------------------------------
+main_menu_help() {
+
+	dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" --textbox "$HELP" 20 80
+
+}
+
+
+# WSJT-X MAIN MENU -------------------------------------------------------------
+wsjtx_main_menu() {
+	dialog --ok-label SELECT \
+	--no-cancel \
+	--backtitle "$BACKTITLE" \
+	--title "$WSJTXTITLE" \
+	--menu "$MENUMSG" 0 50 0 \
+	"1" "Development" \
+	"2" "Experimental" \
+	"3" "Superbuilds" \
+	"4" "GA Release" \
+	"5" "Maintainer" \
+	"H" "Help" \
+	"R" "Return to Main Menu" 2> "$TMPD/wsjtx_menu_select"
+	WSJTX_SELECT=$(head -c 1 < $TMPD/wsjtx_menu_select)
+}
+
+
+# WSJT-X DEVELOPMENT MENU ------------------------------------------------------
+wsjtx_dev_options_menu() {
+	dialog --ok-label SELECT \
+	--no-cancel \
+	--backtitle "$BACKTITLE" \
+	--title "$WSJTXTITLE" \
+	--menu "$MENUMSG" 0 50 0 \
+	"1" "Release Target" \
+	"2" "Debug Target" \
+	"3" "User Guide" \
+	"R" "Return to Main Menu" 2> "$TMPD/wsjtx_dev_target_select"
+	WSJTX_DEV_TARGET=$(head -c 1 < $TMPD/wsjtx_dev_target_select)
+	
+		# now execuute the target build selection, calling jtsdk-wsjtx
+		case $WSJTX_DEV_TARGET in
+			1) # build the release target
+			under_development ;;
+
+			2) # build the debug target
+				under_development ;;
+
+			3) # build the user guide
+				under_development ;;
+		esac
+}
+
+
+# WSJT-X EXPERIMENTAL MENU -----------------------------------------------------
+wsjtx_exp_options_menu() {
+	dialog --ok-label SELECT \
+	--no-cancel \
+	--backtitle "$BACKTITLE" \
+	--title "$WSJTXTITLE" \
+	--menu "$MENUMSG" 0 50 0 \
+	"1" "Release Target" \
+	"2" "Debug Target" \
+	"R" "Return to Main Menu" 2> "$TMPD/wsjtx_exp_target_select"
+	WSJTX_EXP_TARGET=$(head -c 1 < $TMPD/wsjtx_exp_target_select)
+
+	# now execuute the target build selection, calling jtsdk-wsjtx
+	case $WSJTX_EXP_TARGET in
+		1) # build the release target
+		under_development ;;
+
+		2) # build the debug target
+		under_development ;;
+
+		3) # build the user guide
+		under_development ;;
+	esac
+}
+
+
+# SUPERBUILD MENU --------------------------------------------------------------
+superbuild_menu() {
+	# display the superbuild main menu
+	dialog --ok-label SELECT \
+	--no-cancel \
+	--backtitle "$BACKTITLE" \
+	--title "$SBTITLE" \
+	--menu "$MENUMSG" 0 50 0 \
+	"1" "Development Branches" \
+	"2" "GA Release Tags" \
+	"R" "Return to Main Menu" 2> "$TMPD/sb_menu_select.txt"
+	SB_MENU_SELECT=$(head -c 1 < $TMPD/sb_menu_select.txt)
+	
+	# setup for either Development Branches or Tagged GA Releases
+	case $SB_MENU_SELECT in
+		1) # Development Branch Selection
+			SBTITLE=" WSJT-X SUPERBUILD DEV BRANCHES"
+			BRANCH_OPTION="branches"
+			svn list http://svn.code.sf.net/p/wsjt/wsjt/"$BRANCH_OPTION" | grep ^wsjtx |sed 's:/*$::' |sort > $TMPD/master.txt
+		;;
+
+		2) # build the debug target
+			SBTITLE="  WSJT-X SUPERBUILD GA RELEASE"
+			BRANCH_OPTION="tags"
+			svn list http://svn.code.sf.net/p/wsjt/wsjt/"$BRANCH_OPTION" | grep ^wsjtx |sed 's:/*$::' |sort > $TMPD/master.txt
+		;;
+
+		*) # build the user guide
+		return 0 ;;
+	esac
+
+	# loop through the exclude array and remove unwanted branches
+	for i in "${exclude_array[@]}"
+	do
+		sed -i '/^'"$i"'/d' $TMPD/master.txt
+	done
+	
+	# change the "wsjtx" branch display name to Development
+	if [[ $BRANCH_OPTION = "branches" ]] ; then
+		sed -i '1s/wsjtx/Development/g' $TMPD/master.txt
+	fi
+	
+	# generate the menu entries from master.txt
+	menu_array=()
+	while read a b ; do
+	    menu_array+=("$a" "$b")
+	done < $TMPD/master.txt
+
+	# display the menu selection dialog box
+	dialog --backtitle "$BACKTITLE" \
+	--title "$SBTITLE" \
+	--ok-label "Select" \
+	--menu "$MENUMSG" 0 55 0 "${menu_array[@]}" 2> $TMPD/sb_select.txt
+	SB_SELECT=$(head -1 < $TMPD/sb_select.txt)
+
+	# for testing only, comment out for release
+	clear ||:
+	echo ''
+	echo "You Selected ..........: $SB_SELECT"
+	echo "Available Selections ..: ${menu_array[@]}"
+	echo ''
+	read -p "Press [ Enter ] to continue ... "
+
+}
+
+
 ################################################################################
-# Start Main Script
+#
+# START MAIN SCRIPT
+#
 ################################################################################
 
 # set traps
@@ -332,6 +505,9 @@ root_chk
 # dialog check
 dialog_chk
 
+# make directories
+make_dirs
+
 # generate dialog rc
 make_dialogrc
 
@@ -341,189 +517,71 @@ WSJTXHELP="$MENU"/wsjtx_menu_help.txt
 WSJTXRCHELP="$MENU"/wsjtxrc_menu_help.txt
 WSJTXEXPHELP="$MENU"/wsjtxexp_menu_help.txt
 
-# MAIN MENU --------------------------------------------------------------------
+# DRAW MAIN MENU ---------------------------------------------------------------
 clear ||:
 while [ 0 ]; do
 
-dialog --ok-label SELECT --nocancel --backtitle "$BACKTITLE" --title \
-"$MMTITLE" --menu "$MENUMSG" 17 60 20 \
-"1" "WSJT ..... v10.0" \
-"2" "WSPR ..... v4.0.0" \
-"3" "WSJT-X ... Experimental" \
-"4" "WSJT-X ... Development" \
-"5" "WSJT-X ... Release Candidate" \
-"6" "Hamlib3 .. v3.0.0" \
+dialog --ok-label SELECT \
+--nocancel \
+--backtitle "$BACKTITLE" \
+--title "$MMTITLE" \
+--menu "$MENUMSG" 0 50 0 \
+"1" "WSJT" \
+"2" "WSPR" \
+"3" "WSJT-X" \
+"4" "HAMLIB-3" \
 "H" "Help" \
 "E" "Exit" 2> "$TMPD/selection"
+MAIN_SELECT=$(head -c 1 < $TMPD/selection)
 
-MMSELECT=$(head -c 1 < $TMPD/selection)
+# run fuction based on the users selection
+case "$MAIN_SELECT" in
+	1) # WSJT ------------------------------------------------------------------
+	under_development	
+	continue ;;
 
-# WSJT Menu
-if [[ $MMSELECT = "1" ]]; then
-	jtsdk-wsjt
-	continue
-
-# WSPR Menu --------------------------------------------------------------------
-elif [[ $MMSELECT = "2" ]]; then
-	jtsdk-wspr
-	continue
-
-# WSJT-X Experimental ----------------------------------------------------------
-	elif [[ $MMSELECT = "3" ]]; then
-
-if [[ $ENABLE_EXP = "Yes" ]]; then
-
-	dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-	"$WSJTXEXPTITLE" --menu "$MENUMSG" 12 60 17 \
-	"1" "Release Target" \
-	"2" "Debug Target" \
-	"H" "Help" \
-	"B" "Back" 2> "$TMPD/buildselect"
-
-		BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
-
-		# Release
-		if [[ $BUILDSELECT = "1" ]]; then
-			jtsdk-wsjtx exp release
-			continue
-
-		# Debug
-		elif [[ $BUILDSELECT = "2" ]]; then
-			jtsdk-wsjtx exp debug
-			continue
-
-		# Help
-		elif [[ $BUILDSELECT = "H" ]]; then
+	2) # WSPR ------------------------------------------------------------------
+	under_development	
+	continue ;;
 	
-	dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXEXPHELPTITLE" \
-	--textbox "$WSJTXEXPHELP" 20 80
+	3) # WSJT-X ----------------------------------------------------------------
+	wsjtx_main_menu
 
-		# Back ( return to main menu )
-		elif [[ $BUILDSELECT = "B" ]]; then
-			rm -f "$TMPD/buildselect"
-			continue
-		fi
-else
-	inactive_branch
-	continue
-fi
+	# present build options based on wsjtx_main_menu selection
+	case $WSJTX_SELECT in
+		1) # Development build options
+		wsjtx_dev_options_menu
+		continue ;;
+	
+		2) # Experimental build options
+		wsjtx_exp_options_menu
+		continue ;;
 
-## End WSJT-X Experimental -----------------------------------------------------
+		3) # Superbuild options
+		superbuild_menu
+		continue ;;
 
+		4) # GA-Release build options
+		under_development
+		continue ;;
 
-#------------------------------------------------------------------------------#
-# WSJT-X Development                                                           #
-#------------------------------------------------------------------------------#
+		5) # Maintainer build options
+		under_development
+		continue ;;
+	esac
+	;;
+	
+	4) # HAMLIB-3 --------------------------------------------------------------
+	under_development
+	continue ;;
 
-	elif [[ $MMSELECT = "4" ]]; then
+	H) # HELP ------------------------------------------------------------------
+	main_menu_help
+	continue ;;
 
-dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXTITLE" --menu "$MENUMSG" 14 60 19 \
-"1" "Release Target" \
-"2" "Debug Target" \
-"3" "Superbuild" \
-"4" "Compile User Guide" \
-"H" "Help" \
-"B" "Back" 2> "$TMPD/buildselect"
+	E) # EXIT JTSDK ------------------------------------------------------------
+	clean_exit ;;
+esac
 
-	BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
-
-	# Release
-	if [[ $BUILDSELECT = "1" ]]; then
-		jtsdk-wsjtx dev release
-		continue
-
-	# Debug
-	elif [[ $BUILDSELECT = "2" ]]; then
-		jtsdk-wsjtx dev debug
-		continue
-
-	# Superbuild
-	elif [[ $BUILDSELECT = "3" ]]; then
-		jtsdk-wsjtx-sb dev
-		continue
-
-	# Documentation Build
-	elif [[ $BUILDSELECT = "4" ]]; then
-		jtsdk-wsjtx dev doc
-		continue
-
-	# Help
-	elif [[ $BUILDSELECT = "H" ]]; then
-dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXHELPTITLE" \
---textbox "$WSJTXHELP" 20 80
-
-	# Back ( return to main menu )
-	elif [[ $BUILDSELECT = "B" ]]; then
-		rm -f "$TMPD/buildselect"
-		continue
-	fi
-# End WSJT-X Development -------------------------------------------------------
-
-
-# WSJT-X Release Candidate -----------------------------------------------------
-	elif [[ $MMSELECT = "5" ]]; then
-
-dialog --ok-label SELECT --no-cancel --backtitle "$BACKTITLE" --title \
-"$WSJTXRCTITLE" --menu "$MENUMSG" 14 60 19 \
- "1" "Release Target" \
- "2" "Debug Target" \
- "3" "Superbuild" \
- "4" "Compile User Guide" \
- "H" "Help" \
- "B" "Back" 2> "$TMPD/buildselect"
-
-BUILDSELECT=$(head -c 1 < $TMPD/buildselect)
-
-	# Release
-	if [[ $BUILDSELECT = "1" ]]; then
-		jtsdk-wsjtx rc release
-		continue
-
-	# Debug
-	elif [[ $BUILDSELECT = "2" ]]; then
-		jtsdk-wsjtx rc debug
-		continue
-
-	# Superbuild
-	elif [[ $BUILDSELECT = "3" ]]; then
-		jtsdk-wsjtx-sb rc
-		continue
-
-	# Documentation
-	elif [[ $BUILDSELECT = "4" ]]; then
-		jtsdk-wsjtx rc doc
-		continue
-
-	# Help
-	elif [[ $BUILDSELECT = "H" ]]; then
-dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$WSJTXRCHELPTITLE" \
---textbox "$WSJTXRCHELP" 20 80
-
-
-	# Back ( return to main menu )
-	elif [[ $BUILDSELECT = "B" ]]; then
-		rm -f "$TMPD/buildselect"
-		continue
-	fi
-# End WSJT-X Release Candidate -------------------------------------------------
-
-
-# Build Hamlib3-----------------------------------------------------------------
-   elif [[ $MMSELECT = "6" ]]; then
-	jtsdk-hamlib3
-	continue
-
-
-# Help File---------------------------------------------------------------------
-   elif [[ $MMSELECT = "H" ]]; then
-dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" --textbox "$HELP" 20 80
-	continue
-
-
-# Exit @PROGRAM@----------------------------------------------------------------
-  elif [[ $MMSELECT = "E" ]]; then
-   clean_exit
-   fi
 done
 
