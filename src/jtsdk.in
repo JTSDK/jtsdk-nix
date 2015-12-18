@@ -44,8 +44,12 @@ LOGS="$HOMEDIR/logs"
 # enable / disable experimental branch
 ENABLE_EXP=No
 
-# these branches are not supported by the Superbuild script
-exclude_array=('wsjtx-1.3' 'wsjtx-1.4' 'wsjtx_k1jt_p1' 'wsjtx-superbuild' 'wsjtx_w')
+# Foreground colours
+C_R='\033[01;31m'		# red
+C_G='\033[01;32m'		# green
+C_Y='\033[01;33m'		# yellow
+C_C='\033[01;36m'		# cyan
+C_NC='\033[01;37m'		# no color
 
 
 ################################################################################
@@ -108,6 +112,9 @@ BSMSG="\n There Are No Pending RC Builds At This Time"
 # Dormant Branch
 IB=" INACTIVE BRANCH"
 IBMSG="\n    Branch Activity Is Currently Dormant"
+
+# rc menu title
+RCTITLE="  WSJT-X RELEASE CANDIDATE SELECTION"
 
 # superbuild menu items
 SBTITLE="  WSJT-X SUPERBUILD SELECTION"
@@ -349,6 +356,85 @@ main_menu_help() {
 
 }
 
+# GENERATE BUILD LISTS FROM SOURCEFORGE SVN ------------------------------------
+generate_build_lists() {
+
+# - Generates (3) list: Development, Release Candidates and Tagged Releases
+# - You must have internet access and Sourceforge must be up and running
+
+# these branches are not supported by the Superbuild script
+dev_exclude_array=('wsjtx-1.3' 'wsjtx-1.4' 'wsjtx_k1jt_p1' 'wsjtx-superbuild' 'wsjtx_w')
+
+clear ||:
+echo '------------------------------------------------'
+echo -e ${C_Y}'Updating Build Menus From Sourceforge'${C_NC}
+echo '------------------------------------------------'
+echo ''
+echo 'Please be patient, this can take a few seconds'
+echo ''
+
+# Generate Superbuild Dev List
+	echo '* Generating SB Dev List'
+	svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
+	| grep ^wsjtx \
+	| sed 's:/*$::' \
+	| sort > $TMPD/sb_dev_list.txt
+	sed -i '1s/wsjtx/Development/g' $TMPD/sb_dev_list.txt
+	echo "Back-To-Main-Menu" >> $TMPD/sb_dev_list.txt
+
+	for i in "${dev_exclude_array[@]}"
+	do
+		sed -i '/^'"$i"'/d' $TMPD/sb_dev_list.txt
+	done
+
+	sb_dev_array=()
+	while read a b ; do
+	    sb_dev_array+=("$a" "$b")
+	done < $TMPD/sb_dev_list.txt
+
+
+# Generate Superbuild RC List
+	echo '* Generating SB GA List'
+	svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
+	| grep ^wsjtx-[1-9]\.[6-9] \
+	| sed 's:/*$::' > $TMPD/sb_rc_list.txt
+	echo "Back-To-Main-Menu" >> $TMPD/sb_rc_list.txt
+
+	sb_ga_array=()
+	while read a b ; do
+	    sb_rc_array+=("$a" "$b")
+	done < $TMPD/sb_rc_list.txt
+
+
+# Generate Superbuild GA List
+	echo '* Generating SB RC List'
+	svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
+	| grep ^wsjtx-[1-9]\.[6-9] \
+	| sed 's:/*$::' > $TMPD/sb_ga_list.txt
+	echo "Back-To-Main-Menu" >> $TMPD/sb_ga_list.txt
+
+	sb_ga_array=()
+	while read a b ; do
+	    sb_ga_array+=("$a" "$b")
+	done < $TMPD/sb_ga_list.txt
+
+# Generate Release Candidate List
+	echo '* Generating Release Candidate List'
+	svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
+	| grep ^wsjtx-[1-9]\.[5-9]\.[0-9]-rc[1-9] \
+	| sed 's:/*$::' \
+	|sort -r > $TMPD/rc_list.txt
+	echo "Back-To-Main-Menu" >> $TMPD/rc_list.txt
+
+	rc_array=()
+	while read a b ; do
+	    rc_array+=("$a" "$b")
+	done < $TMPD/rc_list.txt
+
+	echo ''
+	read -p "Press [ ENTER ] to continue..."
+
+}
 
 # WSJT-X MAIN MENU -------------------------------------------------------------
 wsjtx_main_menu() {
@@ -359,14 +445,14 @@ wsjtx_main_menu() {
 	--menu "$MENUMSG" 0 50 0 \
 	"1" "Development" \
 	"2" "Experimental" \
-	"3" "Superbuilds" \
-	"4" "GA Release" \
-	"5" "Maintainer" \
+	"3" "Release Candidates" \
+	"4" "Superbuilds" \
+	"5" "GA Release" \
+	"6" "Maintainer" \
 	"H" "Help" \
-	"R" "Return to Main Menu" 2> "$TMPD/wsjtx_menu_select"
+	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_menu_select"
 	WSJTX_SELECT=$(head -c 1 < $TMPD/wsjtx_menu_select)
 }
-
 
 # WSJT-X DEVELOPMENT MENU ------------------------------------------------------
 wsjtx_dev_options_menu() {
@@ -378,7 +464,7 @@ wsjtx_dev_options_menu() {
 	"1" "Release Target" \
 	"2" "Debug Target" \
 	"3" "User Guide" \
-	"R" "Return to Main Menu" 2> "$TMPD/wsjtx_dev_target_select"
+	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_dev_target_select"
 	WSJTX_DEV_TARGET=$(head -c 1 < $TMPD/wsjtx_dev_target_select)
 	
 		# now execuute the target build selection, calling jtsdk-wsjtx
@@ -394,7 +480,6 @@ wsjtx_dev_options_menu() {
 		esac
 }
 
-
 # WSJT-X EXPERIMENTAL MENU -----------------------------------------------------
 wsjtx_exp_options_menu() {
 	dialog --ok-label SELECT \
@@ -404,7 +489,7 @@ wsjtx_exp_options_menu() {
 	--menu "$MENUMSG" 0 50 0 \
 	"1" "Release Target" \
 	"2" "Debug Target" \
-	"R" "Return to Main Menu" 2> "$TMPD/wsjtx_exp_target_select"
+	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_exp_target_select"
 	WSJTX_EXP_TARGET=$(head -c 1 < $TMPD/wsjtx_exp_target_select)
 
 	# now execuute the target build selection, calling jtsdk-wsjtx
@@ -420,69 +505,97 @@ wsjtx_exp_options_menu() {
 	esac
 }
 
+# RELEASE CANDIDATES -----------------------------------------------------------
+wsjtx_rc_menu() {
+	
+	# display the menu selection dialog box
+	dialog 	--ok-label "Select" \
+	--no-cancel \
+	--backtitle "$BACKTITLE" \
+	--title "$RCTITLE" \
+	--menu "$MENUMSG" 0 55 0 "${rc_array[@]}" 2> $TMPD/rc_select.txt
+	RC_SELECT=$(head -1 < $TMPD/rc_select.txt)
+
+	case $RC_SELECT in
+		Back*)
+		continue ;;
+		*)
+		# for testing only, comment out for release
+		clear ||:
+		echo ''
+		echo "You Selected ..........: $RC_SELECT"
+		echo ''
+		read -p "Press [ Enter ] to continue ... "
+		;;
+	esac
+}
 
 # SUPERBUILD MENU --------------------------------------------------------------
 superbuild_menu() {
+
+	# remove old sbmaster.txt file first
+	rm -f $TMPD/sbmaster.txt >/dev/null 2>&1
+
 	# display the superbuild main menu
 	dialog --ok-label SELECT \
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
 	--title "$SBTITLE" \
 	--menu "$MENUMSG" 0 50 0 \
-	"1" "Development Branches" \
-	"2" "GA Release Tags" \
-	"R" "Return to Main Menu" 2> "$TMPD/sb_menu_select.txt"
+	"1" "Head of Development" \
+	"2" "Dev Release Candidates" \
+	"3" "Tagged GA Release" \
+	"B" "Back To Main Menu" 2> "$TMPD/sb_menu_select.txt"
 	SB_MENU_SELECT=$(head -c 1 < $TMPD/sb_menu_select.txt)
-	
+
 	# setup for either Development Branches or Tagged GA Releases
 	case $SB_MENU_SELECT in
 		1) # Development Branch Selection
-			SBTITLE=" WSJT-X SUPERBUILD DEV BRANCHES"
-			BRANCH_OPTION="branches"
-			svn list http://svn.code.sf.net/p/wsjt/wsjt/"$BRANCH_OPTION" | grep ^wsjtx |sed 's:/*$::' |sort > $TMPD/master.txt
+			SBTITLE="   WSJT-X SUPERBUILD DEV"
+			dialog 	--ok-label "Select" \
+			--no-cancel \
+			--backtitle "$BACKTITLE" \
+			--title "$SBTITLE" \
+			--menu "$MENUMSG" 0 55 0 "${sb_dev_array[@]}" 2> $TMPD/sb_select.txt
+			SB_SELECT=$(head -1 < $TMPD/sb_select.txt)
+			clear ||:
+			echo "You Selected ..........: $SB_SELECT"
+			echo ''
+			read -p "Press [ Enter ] to continue ... "
 		;;
 
-		2) # build the debug target
-			SBTITLE="  WSJT-X SUPERBUILD GA RELEASE"
-			BRANCH_OPTION="tags"
-			svn list http://svn.code.sf.net/p/wsjt/wsjt/"$BRANCH_OPTION" | grep ^wsjtx |sed 's:/*$::' |sort > $TMPD/master.txt
+		2) # Development Release Candidates
+			SBTITLE="    WSJT-X SUPERBUILD RC"
+			dialog 	--ok-label "Select" \
+			--no-cancel \
+			--backtitle "$BACKTITLE" \
+			--title "$SBTITLE" \
+			--menu "$MENUMSG" 0 55 0 "${sb_rc_array[@]}" 2> $TMPD/sb_select.txt
+			SB_SELECT=$(head -1 < $TMPD/sb_select.txt)
+			clear ||:
+			echo "You Selected ..........: $SB_SELECT"
+			echo ''
+			read -p "Press [ Enter ] to continue ... "
 		;;
 
-		*) # build the user guide
-		return 0 ;;
+		
+		3) # GA Release Selection
+			SBTITLE="    WSJT-X SUPERBUILD GA"
+			dialog 	--ok-label "Select" \
+			--no-cancel \
+			--backtitle "$BACKTITLE" \
+			--title "$SBTITLE" \
+			--menu "$MENUMSG" 0 55 0 "${sb_ga_array[@]}" 2> $TMPD/sb_select.txt
+			SB_SELECT=$(head -1 < $TMPD/sb_select.txt)
+			clear ||:
+			echo "You Selected ..........: $SB_SELECT"
+			echo ''
+			read -p "Press [ Enter ] to continue ... "
+		;;
+
+		B*)
+		continue ;;
 	esac
-
-	# loop through the exclude array and remove unwanted branches
-	for i in "${exclude_array[@]}"
-	do
-		sed -i '/^'"$i"'/d' $TMPD/master.txt
-	done
-	
-	# change the "wsjtx" branch display name to Development
-	if [[ $BRANCH_OPTION = "branches" ]] ; then
-		sed -i '1s/wsjtx/Development/g' $TMPD/master.txt
-	fi
-	
-	# generate the menu entries from master.txt
-	menu_array=()
-	while read a b ; do
-	    menu_array+=("$a" "$b")
-	done < $TMPD/master.txt
-
-	# display the menu selection dialog box
-	dialog --backtitle "$BACKTITLE" \
-	--title "$SBTITLE" \
-	--ok-label "Select" \
-	--menu "$MENUMSG" 0 55 0 "${menu_array[@]}" 2> $TMPD/sb_select.txt
-	SB_SELECT=$(head -1 < $TMPD/sb_select.txt)
-
-	# for testing only, comment out for release
-	clear ||:
-	echo ''
-	echo "You Selected ..........: $SB_SELECT"
-	echo "Available Selections ..: ${menu_array[@]}"
-	echo ''
-	read -p "Press [ Enter ] to continue ... "
 
 }
 
@@ -517,6 +630,9 @@ WSJTXHELP="$MENU"/wsjtx_menu_help.txt
 WSJTXRCHELP="$MENU"/wsjtxrc_menu_help.txt
 WSJTXEXPHELP="$MENU"/wsjtxexp_menu_help.txt
 
+# generate SB Dev, SB GA and RC lists from Sourceforge
+generate_build_lists
+
 # DRAW MAIN MENU ---------------------------------------------------------------
 clear ||:
 while [ 0 ]; do
@@ -550,24 +666,23 @@ case "$MAIN_SELECT" in
 	# present build options based on wsjtx_main_menu selection
 	case $WSJTX_SELECT in
 		1) # Development build options
-		wsjtx_dev_options_menu
-		continue ;;
+		wsjtx_dev_options_menu ;;
 	
 		2) # Experimental build options
-		wsjtx_exp_options_menu
-		continue ;;
+		inactive_branch ;;
 
-		3) # Superbuild options
-		superbuild_menu
-		continue ;;
+		3) # Release Candidates
+		wsjtx_rc_menu ;;
 
-		4) # GA-Release build options
-		under_development
-		continue ;;
+		4) # Superbuild options
+		superbuild_menu ;;
 
-		5) # Maintainer build options
-		under_development
-		continue ;;
+		5) # GA-Release build options
+		under_development ;;
+
+		6) # Maintainer build options
+		under_development ;;
+
 	esac
 	;;
 	
