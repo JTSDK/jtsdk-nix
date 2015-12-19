@@ -40,6 +40,10 @@ CFG="$HOMEDIR/config"
 # dynamic menu generation timer, in minutes -mmin, *cannot be blank !!*
 GENTIME='60'
 
+# subversion urls
+TAGS="http://svn.code.sf.net/p/wsjt/wsjt/tags"
+BRANCHES="http://svn.code.sf.net/p/wsjt/wsjt/branches"
+
 # Foreground colours
 C_R='\033[01;31m'		# red
 C_G='\033[01;32m'		# green
@@ -388,10 +392,7 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	fi
 	echo -e "* $UTYPE Dev Lists - $CHK"
 	
-	svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
-	| grep ^wsjtx \
-	| sed 's:/*$::' \
-	| sort > "$TMPD"/dev_list.txt
+	svn list "$BRANCHES"| grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/dev_list.txt
 	#sed -i '1s/wsjtx/Development/g' $TMPD/dev_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/dev_list.txt
 	
@@ -412,9 +413,7 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	fi
 	echo -e "* $UTYPE GA and RC List - $CHK"
 
-	svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
-	| grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" \
-	| sed 's:/*$::' > "$TMPD"/ga_rc_list.txt
+	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/ga_rc_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/ga_rc_list.txt
 	cp -u "$TMPD"/ga_rc_list.txt $CFG
 
@@ -426,10 +425,7 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	fi
 	echo -e "* $UTYPE Superbuild Dev List - $CHK"
 
-	svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
-	| grep ^wsjtx \
-	| sed 's:/*$::' \
-	| sort > "$TMPD"/sb_dev_list.txt
+	svn list "$BRANCHES" | grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/sb_dev_list.txt
 	sed -i '1s/wsjtx/Development/g' "$TMPD"/sb_dev_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/sb_dev_list.txt
 	
@@ -450,9 +446,7 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	fi
 	echo -e "* $UTYPE Superbuild GA and RC List - $CHK"
 
-	svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
-	| grep "^wsjtx-[1-9]\.[5-9]" \
-	| sed 's:/*$::' > "$TMPD"/sb_ga_rc_list.txt
+	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]" | sed 's:/*$::' > "$TMPD"/sb_ga_rc_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/sb_ga_rc_list.txt
 
 	# copy final menu to the config dir
@@ -573,7 +567,7 @@ wsjtx_ga_rc_menu() {
 			jtsdk-wsjtx garc "$branch" Release ;;
 
 		2) # build the debug target
-			jtsdk-wsjtx garc "$branch" Debug ;;
+			jtsdk-wsjtx garc "$branch" package ;;
 	esac
 
 }
