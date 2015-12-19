@@ -355,9 +355,11 @@ main_menu_help() {
 # GENERATE BUILD LISTS FROM SOURCEFORGE SVN ------------------------------------
 generate_build_lists() {
 
-# - Generates Dynamic Menu Lists
-TSFILE="$CFG/time-stamp"
-if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
+# check that each menu is present, if not, regenerate it
+if [[ ! -f $CFG/time-stamp ]] || [[ ! -f $CFG/dev_list.txt ]] || \
+[[ ! -f $CFG/ga_rc_list.txt ]] || [[ ! -f $CFG/sb_dev_list.txt ]] || \
+[[ ! -f $CFG/sb_ga_rc_list.txt ]] || [[ $(find $CFG/time-stamp -mmin +$GENTIME) != "" ]]
+then
 
 	# these branches are not supported by the Superbuild script
 	dev_exclude_array=('wsjtx-1.3' 'wsjtx-1.4' 'wsjtx_k1jt_p1' 'wsjtx-superbuild' 'wsjtx_w')
@@ -525,6 +527,9 @@ wsjtx_dev_menu() {
 
 		4) # build the distro package
 			jtsdk-wsjtx dev "$branch" package ;;
+			
+		B)
+		return 0 ;;
 	esac
 }
 
@@ -663,7 +668,6 @@ make_dialogrc
 HELP="$MENU"/main_menu_help.txt
 
 # generate SB Dev, SB GA and RC lists from Sourceforge
-# update regeneration interval is set by $GENTIME at the top of the script
 generate_build_lists
 
 # DRAW MAIN MENU ---------------------------------------------------------------
