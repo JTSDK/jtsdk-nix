@@ -376,13 +376,27 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	ga_exclude_array=('wsjtx-1.3' 'wsjtx-1.4')
 
 	clear ||:
-	echo '------------------------------------------------'
-	echo -e ${C_Y}'Updating Dynamic Menus From Sourceforge'${C_NC}
-	echo '------------------------------------------------'
+	echo '-----------------------------------------------------------'
+	echo -e ${C_G}'JTSDK Dynamic Menus From Sourceforge'${C_NC}
+	echo '-----------------------------------------------------------'
 	echo ''
-	echo 'Please be patient, this can take a few seconds'
+	echo 'This function updates several JTSDK menus from the'
+	echo 'Sourceforge WSJT repository ^/tags and ^/branches.'
 	echo ''
-
+	echo 'When the event timer is reached, JTSDK will automatically'
+	echo 'update the menu entries. The default interval is set to'
+	echo '[ 60 ] minutes'
+	echo ''
+	echo 'You can change the update frequency by editing the main'
+	echo 'JTSDK script: /usr/bin/jtsdk or /usr/local/bin/jtsdk'
+	echo 'and adjusting: GENTIME="60" variable. This variable'
+	echo 'must not be blank, and should be stated in minutes.'
+	echo ''
+	echo 'Please be patient, while the update runs, this can'
+	echo 'take a few seconds depending on your internet speed'
+	echo 'and acess to Sourceforge'
+	echo ''
+	echo 'Contacting SourceForge'
 # Generate Dev ists ------------------------------------------------------------
 	if [[ ! -f $CFG/dev_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
 		UTYPE='Generating'
@@ -464,7 +478,7 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	# create a time stamp file
 	touch $CFG/time-stamp
 	echo ''
-	read -p "Press [ ENTER ] to continue..."
+	read -p "Press [ ENTER ] to start the JTSDK Main Menu ...."
 	
 fi
 
@@ -543,7 +557,7 @@ wsjtx_ga_rc_menu() {
 	# remove previous selections each time the function is called
 	unset branch
 	unset target
-	rm -f  $TMPD/ga_rc_list.txt $TMPD/wsjtx_ga_rc_target_select
+	rm -f  $TMPD/ga_rc_list* $TMPD/wsjtx_ga_rc_target_select*
 
 	# generate GA and RC list from ga_rc_lists.txt
 	ga_rc_array=()
@@ -567,8 +581,8 @@ wsjtx_ga_rc_menu() {
 	--menu "$MENUMSG" 0 50 0 \
 	"1" "Release Target" \
 	"2" "Package" \
-	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_ga_rc_target_select"
-	target=$(head -c 1 < $TMPD/wsjtx_ga_rc_target_select)
+	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_ga_rc_target_select.txt"
+	target=$(head -c 1 < $TMPD/wsjtx_ga_rc_target_select.txt)
 
 	# now send the build command to jtsdk-wsjtx build script
 	case $target in
@@ -602,8 +616,8 @@ superbuild_menu() {
 	--backtitle "$BACKTITLE" \
 	--title "$SBTITLE" \
 	--menu "$MENUMSG" 0 50 0 \
-	"1" "Devlopment Branches" \
-	"2" "GA and RC Branches" \
+	"1" "Development Branches" \
+	"2" "GA and RC Candidates" \
 	"B" "Back To Main Menu" 2> "$TMPD/sb_menu_select.txt"
 	SB_MENU_SELECT=$(head -c 1 < $TMPD/sb_menu_select.txt)
 

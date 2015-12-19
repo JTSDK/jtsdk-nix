@@ -368,11 +368,11 @@ echo '-----------------------------------------------------'
 echo ''
 case "$OPTION" in
 	Release*|Debug* )
-		echo " App Version ..: $AVER r$SVN_VER"
-		echo " Build Type ...: $OPTION"
-		echo " Source .......: $APP_SRC"
-		echo " Build ........: $BUILDD"
-		echo " Install ......: $INSTALLD"
+		echo " App Version ...: $AVER r$SVN_VER"
+		echo " Build Type ....: $OPTION"
+		echo " Source ........: $APP_SRC"
+		echo " Build .........: $BUILDD"
+		echo " Install .......: $INSTALLD"
 		if [[ $KVSTATUS = "OK" ]] || [[ $KVSTATUS = "Not Required" ]] ; then
 			echo -e ' KVASD Status ..: '${C_G}"$KVSTATUS"${C_NC}
 		else
