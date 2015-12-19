@@ -489,6 +489,11 @@ wsjtx_main_menu() {
 # WSJT-X DEVELOPMENT MENU ------------------------------------------------------
 wsjtx_dev_menu() {
 
+	# remove previous selections each time the function is called
+	unset branch
+	unset target
+	rm -f  $TMPD/dev_select.txt $TMPD/wsjtx_dev_target_select
+	
 	# generate the list of development branches to select from
 	dev_array=()
 	while read a b ; do
@@ -534,6 +539,11 @@ wsjtx_dev_menu() {
 
 # GA and RELEASE CANDIDATES ----------------------------------------------------
 wsjtx_ga_rc_menu() {
+
+	# remove previous selections each time the function is called
+	unset branch
+	unset target
+	rm -f  $TMPD/ga_rc_list.txt $TMPD/wsjtx_ga_rc_target_select
 
 	# generate GA and RC list from ga_rc_lists.txt
 	ga_rc_array=()
