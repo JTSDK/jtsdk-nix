@@ -22,36 +22,50 @@
 
 set -e
 
+# variables passed from JTSDK Main Script
+OPT1=$1		# dev or garc.........: dev = ^/dev branches, garc = ^/tags branches
+OPT3=$2		# branch name suffix..: ^/branches/... or ^/tags/...
+OPT2=$3		# build type..........: Release, Debug, Package or Doc
+
 # set home and directory paths
 HOMEDIR=~/jtsdk
 SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
+CFG="$HOMEDIR/config"
 MENU=@SHARE@
+JJ=@JJJJ@
+SEPARATE=@SEPARATE@
 
 # hamlib3 directories
 HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
 HL3B="$HOMEDIR/src/build/hamlib"
 HL3I="$HOMEDIR/hamlib3"
 
-# branch names for svn urls
-APP_NAME=wsjtx
-EXP_APP_NAME=wsjtx_exp
-DEV_APP_NAME=wsjtx
-RC_APP_NAME=wsjtx-1.6
-
-# app specific options
-OPT1=$1
-OPT2=$2
-JJ=@JJJJ@
-SEPARATE=@SEPARATE@
-
-# Foreground colours
+# foreground colours
 C_R='\033[01;31m'		# red
 C_G='\033[01;32m'		# green
 C_Y='\033[01;33m'		# yellow
 C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
+
+# create some new directories
+# - Dev is for deveopment builds from ^/branches
+# - GARC is for GA-RC builds from ^/tags
+mkdir -p $HOMEDIR/{dev,garc}
+
+# setup APP_SRC, APP_NAME, BASE_SVN_URL
+APP_SRC="$SRCD/$OPT2"
+APP_NAME="$OPT2"
+BASEURL="https://svn.code.sf.net/p/wsjt/wsjt/"
+
+# now set up the actual SVN URL based on OPT1 + OPT2
+case $OPT1 in
+	dev)
+	URL="$BASEURL/branches/$OPT2" ;;
+	garc)
+	URL="$BASEURL/tags/$OPT2" ;;
+esac
 
 ################################################################################
 # FUNCTOINS
@@ -102,6 +116,10 @@ fi
 }
 
 check_svn() {
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SVN UPDATE"${C_NC}
+echo '-----------------------------------------------------'
 
 if [[ ! -d $APP_SRC/.svn ]]
 then
@@ -139,6 +157,11 @@ fi
 # Note: must be performed "After" SVN checkout
 get_version() {
 
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CHECK APP && SVN VERSIONS"${C_NC}
+echo '-----------------------------------------------------'
+
 # Example Versions.cmake
 # ------------------------------------------------------------------------------
 # set (WSJTX_VERSION_MAJOR 1)
@@ -158,6 +181,7 @@ PA=$(cat $VER_FILE |grep '_PATCH' |awk '{print $3}' |cut -c1)
 # get RC version
 RC=$(cat $VER_FILE |grep '_RC' |awk '{print $3}' |cut -c1)
 # combine into a string
+
 if [ "$RC" == "0" ] ; then 
 	AVER="$MA.$MI.$PA"
 else
@@ -165,7 +189,6 @@ else
 fi
 
 echo "-- Repository Version Is ..: $AVER"
-
 
 }
 
@@ -178,17 +201,19 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 }
 
 function link_kvasd() {
+# Only display KVASD message for RC (v1.6.x series ) as 
+declare -i minv="$MI"
+declare -i maxv="7"
+if (( $minv < $maxv )) ; then KREQ="Yes" ; fi
 
-# Only display KVASD message for RC (v1.6 series ) as 
-# Development version 1.7.0 longer requires it
-case "$OPT1" in
-    rc|RC|-rc|-RC )
-        # Link KVASD Binary to $INSTALLD/bin
-        if [[ -f /usr/bin/kvasd ]] ; then
-	        KVSTATUS=YES
-	        echo "-- Linking KVASD binary to: $INSTALLD/bin"
-	        if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
-        else
+case "$KREQ" in
+	yes )
+	# Link KVASD Binary to $INSTALLD/bin
+	if [[ -f /usr/bin/kvasd ]] ; then
+        KVSTATUS="Yes"
+        echo "-- Linking KVASD binary to: $INSTALLD/bin"
+        if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
+	else
 	        KVSTATUS=NO
 	        echo ''
 	        echo '-------------------------------------------'
@@ -217,113 +242,36 @@ esac
 
 }
 
-################################################################################
-# START MAIN SCRIPT
-################################################################################
+# setup variables based on $3 from jtsdk main
+set_build_type() {
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SETUP BUILD TYPE"${C_NC}
+echo '-----------------------------------------------------'
 
-# Joe's Experimental Branch, Currently Dorment ^\branches\wsjtx_exp
-case "$OPT1" in
-	exp|EXP|-e|-E ) # $1 from jtsdk main
-		APP_SRC_NAME="$EXP_APP_NAME"
-		APP_SRC="$SRCD/$APP_SRC_NAME"
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx_exp"
+case $OPT3 in
+	debug)
+		OPTION="Debug"
+		DESC="Debug Target" ;;
 		
-		# setup variables based on $2 from jtsdk main
-		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
-			OPTION="Debug"
-			DESC="Debug Target"
+	release)
+		OPTION="Release"
+		DESC="Release Target" ;;
+		
+	package)
+		OPTION="Release"
+		DESC="User Guide" ;;
 
-		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
-			OPTION="Release"
-			DESC="Release Target"
-
-		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
-			OPTION="Release"
-			DESC="User Guide"
-		else
-			cli_help
-		fi
-	;;
-	
-# Main WSJT-X Development Branch ^\branches\wsjtx
-	dev|devel|-d|-D ) # $1 from jtsdk main
-		APP_SRC_NAME="$DEV_APP_NAME"
-		APP_SRC="$SRCD/$APP_SRC_NAME"
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx"
-
-		# setup variables based on $2 from jtsdk main
-		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
-			OPTION="Debug"
-			DESC="Debug Target"
-
-		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
-			OPTION="Release"
-			DESC="Release Target"
-
-		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
-			OPTION="package"
-			DESC="Package Target"
-			
-		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
-			OPTION="Release"
-			DESC="User Guide"
-		else
-			cli_help
-		fi
-	;;
-# Release Candidate Branch, Current: ^\branches\wsjtx-1.6
-	rc|RC|-rc|-RC ) # $1 from jtsdk main
-		APP_SRC_NAME="$RC_APP_NAME"
-		APP_SRC="$SRCD/$APP_SRC_NAME"
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-1.6"
-
-		# setup variables based on $2 from jtsdk main
-		if [[ $OPT2 = "Debug" ]] || [[ $OPT2 = "debug" ]] ; then
-			OPTION="Debug"
-			DESC="Debug Target"
-		elif [[ $OPT2 = "Release" ]] || [[ $OPT2 = "release" ]] ; then
-			OPTION="Release"
-			DESC="Release Target"
-		elif [[ $OPT2 = "Package" ]] || [[ $OPT2 = "package" ]] ; then
-			OPTION="package"
-		elif [[ $OPT2 = "Doc" ]] || [[ $OPT2 = "doc" ]] ; then
-			OPTION="Release"
-			DESC="User Guide"
-		else
-			cli_help
-		fi
-	;;
-	--help|help|-h|-H )
-		cli_help ;;
-	* )
-		cli_help
-	;;
+	doc)
+		OPTION="Release"
+		DESC="User Guide"
 esac
 
-# Do not test Hamlib3 for Usergiude Build
-case "$DESC" in
-	*Guide )
-	clear ||:
-	;;
-	* )
-	hamlib_test ;;
-esac
+}
 
-# Ask to update from SVN first
-echo ''
-echo '-----------------------------------------------------'
-echo -e ${C_Y}" SVN UPDATE"${C_NC}
-echo '-----------------------------------------------------'
-check_svn
+# setup folder based on separation selection
+enable_separation() {
 
-echo ''
-echo '-----------------------------------------------------'
-echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
-echo '-----------------------------------------------------'
-get_version
-get_svn_revision
-
-# set build and install locaitons
 if [ $SEPARATE == "Yes" ] ; then 
 	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER//build/$OPTION"
 	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install/$OPTION"
@@ -334,17 +282,32 @@ else
 	PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
 fi
 
+echo ""
+
+}
+
 # make sure the build and install directories exist
+setup_dirs() {
+
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SETUP DIRECTORIES"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
 
-# start configuring the main build
+}
+
+# run cmake configure step
+configure_build() {
 echo
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
+
 # Always run the configure step to ensure any changes made are picked up
 cd "$BUILDD"
 cmake -G "Unix Makefiles" -Wno-dev \
@@ -352,7 +315,12 @@ cmake -G "Unix Makefiles" -Wno-dev \
 -D CMAKE_BUILD_TYPE="$OPTION" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
 
+}
+
+
 # build the target
+build_target() {
+
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" BUILDING ( WSJT-X $AVER $DESC )"${C_NC}
@@ -381,7 +349,10 @@ case "$DESC" in
 	;;
 esac
 
-# Finished
+}
+
+# display the finishe message
+finish_message() {
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_G}" BUILD SUMMARY ( WSJT-X $AVER $DESC )"${C_NC}
@@ -422,5 +393,33 @@ case "$DESC" in
 	* )
 	;;
 esac
+
+}
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
+
+# ask update from svn
+check_svn
+
+# check version data
+get_version
+get_svn_revision
+
+# setup build type
+setup_build_type
+
+# setup directories
+setup_dirs
+
+# configure the build
+configure_build
+
+# build the target
+build_target
+
+# Finished
+finish_message
 
 exit 0
