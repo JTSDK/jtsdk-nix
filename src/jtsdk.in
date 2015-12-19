@@ -1,11 +1,11 @@
 #! /usr/bin/env bash
 #
-# Name			: @PROGRAM@ @VERSION@
-# Execution		: As normal user type: jtsdk
-# Copyright		: @COPYRIGHT@
-# License		: @LICENSE@
-# Contributors	: @AUTHORS@
-# Comment		: Part of the JTSDK Linux Project
+# Name ..........: @PROGRAM@ @VERSION@
+# Execution .....: As normal user type: jtsdk
+# Copyright .....: @COPYRIGHT@
+# License .......: @LICENSE@
+# Contributors ..: @AUTHORS@
+# Comment .......: Part of the JTSDK Linux Project
 #
 # @PROGRAM@ is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,20 +30,12 @@ set -e
 #
 ################################################################################
 
-# host informaiton and apps
-HOST_OS=@HOST_OS@
-HOST_CPU=@HOST_CPU@
-
 # set home and directory paths
 HOMEDIR=~/jtsdk
 MENU=@SHARE@
-SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
 CFG="$HOMEDIR/config"
-
-# enable / disable experimental branch
-ENABLE_EXP=No
 
 # dynamic menu generation timer, in minutes -mmin, *cannot be blank !!*
 GENTIME='60'
@@ -55,7 +47,7 @@ C_Y='\033[01;33m'		# yellow
 C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
 
-# unicode bling
+# unicode bling bling :-)
 CHK=${C_G}✔${C_NC}
 
 ################################################################################
@@ -70,7 +62,7 @@ BACKTITLE="@PROGRAM@ @VERSION@"
 # root chk lang
 RCTITLE="ROOT / SUDO CHECK FAILED"
 RCMSG="    @PROGRAM@ must be run as normal user, not root or sudo.\n\
-          Please run "$0" without "sudo" prefix"
+          Please run $0 without sudo prefix"
 
 # dialog lang
 DITITLE="DIALOG INSTALL"
@@ -85,8 +77,6 @@ CLEANTMP=" CLEANING TMP"
 CLEANTMPMSG="\n         Cleaning Up Temporary Files"
 RESETOPT=" RESET OPTIONS"
 RESETOPTMSG="\n         Resetting Used Bash Options"
-CLEANVAR=" CLEANING VARS"
-CLEANVARMSG="\n             Unset Used Variables"
 
 # exit lang
 EXITWSDT=" EXIT @PROGRAM@"
@@ -98,14 +88,9 @@ MENUMSG="     Arrow Up/Down, then [ Enter] to Select"
 
 # applicaiton menu title's
 WSJTXTITLE=" WSJT-X BUILD MENU"
-WSJTXRCTITLE=" WSJT-X RC BUILD MENU"
-WSJTXEXPTITLE=" WSJT-X EXP BUILD MENU"
 
 # help menu lang
 HTITLE="APPLICATION BUILD HELP DOCUMENT"
-WSJTXHELPTITLE="WSJT-X BUILD HELP"
-WSJTXRCHELPTITLE="WSJT-X RC BUILD HELP"
-WSJTXEXPHELPTITLE="WSJT-X EXP BUILD HELP"
 
 # under development
 UD=" UNDER DEVELOPMENT"
@@ -118,9 +103,6 @@ BSMSG="\n There Are No Pending RC Builds At This Time"
 # Dormant Branch
 IB=" INACTIVE BRANCH"
 IBMSG="\n    Branch Activity Is Currently Dormant"
-
-# ga and rc menu title
-RC_TITLE="  WSJT-X GA and RC SELECTION"
 
 # superbuild menu items
 SBTITLE="  WSJT-X SUPERBUILD MENU"
@@ -186,6 +168,7 @@ dialog --backtitle "$BACKTITLE" --title "$IB" --ok-label "Return" --msgbox "$IBM
 
 # SIGNAL CATCH -----------------------------------------------------------------
 sig_catch_cleanup() {
+
 EXIT_STATUS="$?"
 
 if [[ "$EXIT_STATUS" == "0" ]]
@@ -198,7 +181,7 @@ dialog --backtitle "$BACKTITLE" --title "$SIGCAUGHT" --infobox "$SIGCAUGHTMSG" 5
 	sleep 1
 
 dialog --backtitle "$BACKTITLE" --title "$CLEANTMP" --infobox "$CLEANTMPMSG" 5 50
-	rm -r  $TMPD/*
+	rm -rf  "${TMPD:?}/"*
 	sleep 1
 
 dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 50
@@ -206,7 +189,7 @@ dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 5
 	wait
 	clear ||:
 
-	echo "Exit Status ""[ "$EXIT_STATUS" ]"
+	echo "Exit Status ""[ $EXIT_STATUS ]"
 	echo "@PROGRAM@ Signal Catch Cleanup Complete"
 	echo ''
 	trap - SIGHUP SIGINT SIGQUIT SIGTERM SIGTSTP
@@ -218,6 +201,7 @@ fi
 
 # ROOT CHECK -------------------------------------------------------------------
 root_chk() {
+
 MSGCLIENT=""
 TESTD=$(dpkg --get-selections dialog | awk '{print $1}')
 
@@ -243,6 +227,7 @@ unset {TESTVAR,MSGCLIENT}
 
 # DIALOG CHECK -----------------------------------------------------------------
 dialog_chk() {
+
 INSTALLED=$(dialog --version |awk '{print $1}')
 
 if [[ $INSTALLED == Version: ]]; then
@@ -271,15 +256,16 @@ fi
 
 # NORMAL SHUTDOWN --------------------------------------------------------------
 clean_exit() {
+
 local EXIT_STATUS=$?
 
 dialog --backtitle "$BACKTITLE" --title "$EXITWSDT" --infobox "$EXITWSDTMSG" 5 50
    sleep .5
 
 dialog --backtitle "$BACKTITLE" --title "$CLEANTMP" --infobox "$CLEANTMPMSG" 5 50
-   rm -r $TMPD/*
-   wait
-   sleep .5
+	rm -rf  "${TMPD:?}/"*
+	wait
+	sleep .5
 
 dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 50
 	unset_options
@@ -287,7 +273,7 @@ dialog --backtitle "$BACKTITLE" --title "$RESETOPT" --infobox "$RESETOPTMSG" 5 5
 	sleep .5
 	clear ||:
 
-   echo "Exit Status ""[ "$EXIT_STATUS" ]"
+   echo "Exit Status ""[ $EXIT_STATUS ]"
    echo "@PROGRAM@ Clean Exit Complete."
    echo ''
    trap - SIGHUP SIGINT SIGQUIT SIGTERM SIGTSTP
@@ -299,7 +285,7 @@ exit
 # DIALOG RC FILE ---------------------------------------------------------------
 make_dialogrc() {
 
-if [ -f "$CFG"/.dialogrc ]; then rm -f "$CFG"/.dialogrc ; fi
+if [[ -f $CFG/.dialogrc ]]; then rm -f "$CFG"/.dialogrc ; fi
 touch "$CFG"/.dialogrc
 
 (
@@ -372,12 +358,9 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	# these branches are not supported by the Superbuild script
 	dev_exclude_array=('wsjtx-1.3' 'wsjtx-1.4' 'wsjtx_k1jt_p1' 'wsjtx-superbuild' 'wsjtx_w')
 
-	# these branches are no longer being updated / supported
-	ga_exclude_array=('wsjtx-1.3' 'wsjtx-1.4')
-
 	clear ||:
 	echo '-----------------------------------------------------------'
-	echo -e ${C_G}' JTSDK Dynamic Menus From Sourceforge'${C_NC}
+	echo -e "${C_G}"' JTSDK Dynamic Menus From Sourceforge'"${C_NC}"
 	echo '-----------------------------------------------------------'
 	echo ''
 	echo ' This function updates several JTSDK menus from the'
@@ -408,18 +391,18 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
 	| grep ^wsjtx \
 	| sed 's:/*$::' \
-	| sort > $TMPD/dev_list.txt
+	| sort > "$TMPD"/dev_list.txt
 	#sed -i '1s/wsjtx/Development/g' $TMPD/dev_list.txt
-	echo "Back-To-Main-Menu" >> $TMPD/dev_list.txt
+	echo "Back-To-Main-Menu" >> "$TMPD"/dev_list.txt
 	
 	# exclude some branches
 	for i in "${dev_exclude_array[@]}"
 	do
-		sed -i '/^'"$i"'/d' $TMPD/dev_list.txt
+		sed -i '/^'"$i"'/d' "$TMPD"/dev_list.txt
 	done
 	
 	# copy final menu to the config dir
-	cp -u $TMPD/dev_list.txt $CFG
+	cp -u "$TMPD"/dev_list.txt "$CFG"
 
 # Generate GA and RC List ------------------------------------------------------
 	if [[ ! -f $CFG/ga_rc_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
@@ -430,10 +413,10 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	echo -e "* $UTYPE GA and RC List - $CHK"
 
 	svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
-	| grep ^wsjtx-[1-9]\.[5-9]\.[0-9] \
-	| sed 's:/*$::' > $TMPD/ga_rc_list.txt
-	echo "Back-To-Main-Menu" >> $TMPD/ga_rc_list.txt
-	cp -u $TMPD/ga_rc_list.txt $CFG
+	| grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" \
+	| sed 's:/*$::' > "$TMPD"/ga_rc_list.txt
+	echo "Back-To-Main-Menu" >> "$TMPD"/ga_rc_list.txt
+	cp -u "$TMPD"/ga_rc_list.txt $CFG
 
 # Generate Superbuild Dev List -------------------------------------------------
 	if [[ ! -f $CFG/sb_dev_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
@@ -446,18 +429,18 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
 	| grep ^wsjtx \
 	| sed 's:/*$::' \
-	| sort > $TMPD/sb_dev_list.txt
-	sed -i '1s/wsjtx/Development/g' $TMPD/sb_dev_list.txt
-	echo "Back-To-Main-Menu" >> $TMPD/sb_dev_list.txt
+	| sort > "$TMPD"/sb_dev_list.txt
+	sed -i '1s/wsjtx/Development/g' "$TMPD"/sb_dev_list.txt
+	echo "Back-To-Main-Menu" >> "$TMPD"/sb_dev_list.txt
 	
 	# exclude some branches
 	for i in "${dev_exclude_array[@]}"
 	do
-		sed -i '/^'"$i"'/d' $TMPD/sb_dev_list.txt
+		sed -i '/^'"$i"'/d' "$TMPD"/sb_dev_list.txt
 	done
 	
 	# copy final menu to the config dir
-	cp -u $TMPD/sb_dev_list.txt $CFG
+	cp -u "$TMPD"/sb_dev_list.txt "$CFG"
 	
 # Generate Superbuild GA and RC List -------------------------------------------
 	if [[ ! -f $CFG/sb_ga_rc_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
@@ -468,17 +451,17 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	echo -e "* $UTYPE Superbuild GA and RC List - $CHK"
 
 	svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
-	| grep ^wsjtx-[1-9]\.[5-9] \
-	| sed 's:/*$::' > $TMPD/sb_ga_rc_list.txt
-	echo "Back-To-Main-Menu" >> $TMPD/sb_ga_rc_list.txt
+	| grep "^wsjtx-[1-9]\.[5-9]" \
+	| sed 's:/*$::' > "$TMPD"/sb_ga_rc_list.txt
+	echo "Back-To-Main-Menu" >> "$TMPD"/sb_ga_rc_list.txt
 
 	# copy final menu to the config dir
-	cp -u $TMPD/sb_ga_rc_list.txt $CFG
+	cp -u "$TMPD"/sb_ga_rc_list.txt "$CFG"
 	
 	# create a time stamp file
-	touch $CFG/time-stamp
+	touch "$CFG"/time-stamp
 	echo ''
-	read -p "Press [ ENTER ] to start the JTSDK Main Menu ...."
+	read -rp "Press [ ENTER ] to start the JTSDK Main Menu ...."
 	
 fi
 
@@ -496,7 +479,7 @@ wsjtx_main_menu() {
 	"3" "Superbuilds" \
 	"4" "Maintainer" \
 	"H" "Help" \
-	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_menu_select"
+	"B" "Back To Main Menu" 2> "$TMPD"/wsjtx_menu_select
 	WSJTX_SELECT=$(head -c 1 < $TMPD/wsjtx_menu_select)
 }
 
@@ -506,11 +489,11 @@ wsjtx_dev_menu() {
 	# remove previous selections each time the function is called
 	unset branch
 	unset target
-	rm -f  $TMPD/dev_select.txt $TMPD/wsjtx_dev_target_select
+	rm -f  "$TMPD"/dev_select.txt "$TMPD"/wsjtx_dev_target_select
 	
 	# generate the list of development branches to select from
 	dev_array=()
-	while read a b ; do
+	while read -r a b ; do
 		dev_array+=("$a" "$b")
 	done < $CFG/dev_list.txt
 
@@ -519,7 +502,7 @@ wsjtx_dev_menu() {
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
 	--title "  WSJT-X DEVELOPMENT SELECTION" \
-	--menu "$MENUMSG" 0 55 0 "${dev_array[@]}" 2> $TMPD/dev_select.txt
+	--menu "$MENUMSG" 0 55 0 "${dev_array[@]}" 2> "$TMPD"/dev_select.txt
 	branch=$(head -1 < $TMPD/dev_select.txt)
 
 	# select what target to build
@@ -532,22 +515,22 @@ wsjtx_dev_menu() {
 	"2" "Debug Target" \
 	"3" "User Guide" \
 	"4" "Package" \
-	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_dev_target_select"
+	"B" "Back To Main Menu" 2> "$TMPD"/wsjtx_dev_target_select
 	target=$(head -c 1 < $TMPD/wsjtx_dev_target_select)
 
 	# now send the build command to jtsdk-wsjtx build script
 	case $target in
 		1) # build the release target
-			jtsdk-wsjtx dev $branch Release ;;
+			jtsdk-wsjtx dev "$branch" Release ;;
 
 		2) # build the debug target
-			jtsdk-wsjtx dev $branch Debug ;;
+			jtsdk-wsjtx dev "$branch" Debug ;;
 
 		3) # build the user guide
-			jtsdk-wsjtx dev $branch doc ;;
+			jtsdk-wsjtx dev "$branch" doc ;;
 
 		4) # build the distro package
-			jtsdk-wsjtx dev $branch package ;;
+			jtsdk-wsjtx dev "$branch" package ;;
 	esac
 }
 
@@ -557,11 +540,11 @@ wsjtx_ga_rc_menu() {
 	# remove previous selections each time the function is called
 	unset branch
 	unset target
-	rm -f  $TMPD/ga_rc_list* $TMPD/wsjtx_ga_rc_target_select*
+	rm -f  "$TMPD"/ga_rc_list* "$TMPD"/wsjtx_ga_rc_target_select*
 
 	# generate GA and RC list from ga_rc_lists.txt
 	ga_rc_array=()
-	while read a b ; do
+	while read -r a b ; do
 		ga_rc_array+=("$a" "$b")
 	done < $CFG/ga_rc_list.txt
 
@@ -570,8 +553,8 @@ wsjtx_ga_rc_menu() {
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
 	--title "  WSJT-X GA and RC SELECTION" \
-	--menu "$MENUMSG" 0 55 0 "${ga_rc_array[@]}" 2> $TMPD/ga_rc_list.txt
-	branch=$(head -1 < $TMPD/ga_rc_list.txt)
+	--menu "$MENUMSG" 0 55 0 "${ga_rc_array[@]}" 2> "$TMPD"/ga_rc_list.txt
+	branch=$(head -1 < "$TMPD"/ga_rc_list.txt)
 
 	# select what target to build
 	dialog --ok-label SELECT \
@@ -581,16 +564,16 @@ wsjtx_ga_rc_menu() {
 	--menu "$MENUMSG" 0 50 0 \
 	"1" "Release Target" \
 	"2" "Package" \
-	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_ga_rc_target_select.txt"
-	target=$(head -c 1 < $TMPD/wsjtx_ga_rc_target_select.txt)
+	"B" "Back To Main Menu" 2> "$TMPD"/wsjtx_ga_rc_target_select.txt
+	target=$(head -c 1 < "$TMPD"/wsjtx_ga_rc_target_select.txt)
 
 	# now send the build command to jtsdk-wsjtx build script
 	case $target in
 		1) # build the release target
-			jtsdk-wsjtx garc $branch Release ;;
+			jtsdk-wsjtx garc "$branch" Release ;;
 
 		2) # build the debug target
-			jtsdk-wsjtx garc $branch Debug ;;
+			jtsdk-wsjtx garc "$branch" Debug ;;
 	esac
 
 }
@@ -600,13 +583,13 @@ superbuild_menu() {
 
 	# Superbuild Dev List Array
 	sb_dev_array=()
-	while read a b ; do
+	while read -r a b ; do
 	    sb_dev_array+=("$a" "$b")
 	done < $CFG/sb_dev_list.txt
 
 	# Superbuild GA and RC List Array
 	sb_ga_rc_array=()
-	while read a b ; do
+	while read -r a b ; do
 	    sb_ga_rc_array+=("$a" "$b")
 	done < $CFG/sb_ga_rc_list.txt
 
@@ -618,8 +601,8 @@ superbuild_menu() {
 	--menu "$MENUMSG" 0 50 0 \
 	"1" "Development Branches" \
 	"2" "GA and RC Candidates" \
-	"B" "Back To Main Menu" 2> "$TMPD/sb_menu_select.txt"
-	SB_MENU_SELECT=$(head -c 1 < $TMPD/sb_menu_select.txt)
+	"B" "Back To Main Menu" 2> "$TMPD"/sb_menu_select.txt
+	SB_MENU_SELECT=$(head -c 1 < "$TMPD"/sb_menu_select.txt)
 
 	# setup for either Dev, RC and GA-Release Branches
 	case $SB_MENU_SELECT in
@@ -629,12 +612,12 @@ superbuild_menu() {
 			--no-cancel \
 			--backtitle "$BACKTITLE" \
 			--title "$SBTITLE" \
-			--menu "$MENUMSG" 0 55 0 "${sb_dev_array[@]}" 2> $TMPD/sb_select.txt
-			SB_SELECT=$(head -1 < $TMPD/sb_select.txt)
+			--menu "$MENUMSG" 0 55 0 "${sb_dev_array[@]}" 2> "$TMPD"/sb_select.txt
+			SB_SELECT=$(head -1 < "$TMPD"/sb_select.txt)
 			clear ||:
 			echo "You Selected ..........: $SB_SELECT"
 			echo ''
-			read -p "Press [ Enter ] to continue ... "
+			read -rp "Press [ Enter ] to continue ... "
 		;;
 
 		2) # Development Release Candidates
@@ -643,16 +626,16 @@ superbuild_menu() {
 			--no-cancel \
 			--backtitle "$BACKTITLE" \
 			--title "$SBTITLE" \
-			--menu "$MENUMSG" 0 55 0 "${sb_ga_rc_array[@]}" 2> $TMPD/sb_select.txt
+			--menu "$MENUMSG" 0 55 0 "${sb_ga_rc_array[@]}" 2> "$TMPD"/sb_select.txt
 			SB_SELECT=$(head -1 < $TMPD/sb_select.txt)
 			clear ||:
 			echo "You Selected ..........: $SB_SELECT"
 			echo ''
-			read -p "Press [ Enter ] to continue ... "
+			read -rp "Press [ Enter ] to continue ... "
 		;;
 
 		B*)
-		continue ;;
+		return 0 ;;
 	esac
 
 }
@@ -684,9 +667,6 @@ make_dialogrc
 
 # menu help files
 HELP="$MENU"/main_menu_help.txt
-WSJTXHELP="$MENU"/wsjtx_menu_help.txt
-WSJTXRCHELP="$MENU"/wsjtxrc_menu_help.txt
-WSJTXEXPHELP="$MENU"/wsjtxexp_menu_help.txt
 
 # generate SB Dev, SB GA and RC lists from Sourceforge
 # update regeneration interval is set by $GENTIME at the top of the script
@@ -706,39 +686,39 @@ dialog --ok-label SELECT \
 "3" "WSJT-X" \
 "4" "HAMLIB-3" \
 "H" "Help" \
-"E" "Exit" 2> "$TMPD/selection"
+"E" "Exit" 2> "$TMPD"/selection
 MAIN_SELECT=$(head -c 1 < $TMPD/selection)
 
 # run fuction based on the users selection
 case "$MAIN_SELECT" in
 	1) # WSJT ------------------------------------------------------------------
-	jtsdk-wsjt
-	continue ;;
+		jtsdk-wsjt
+		continue ;;
 
 	2) # WSPR ------------------------------------------------------------------
-	jtsdk-wspr
-	continue ;;
+		jtsdk-wspr
+		continue ;;
 	
 	3) # WSJT-X ----------------------------------------------------------------
-	wsjtx_main_menu
+		wsjtx_main_menu
 
 	# present build options based on wsjtx_main_menu selection
 	case $WSJTX_SELECT in
 		1) # Development Branch Builds
-		wsjtx_dev_menu
-		continue ;;
+			wsjtx_dev_menu
+			continue ;;
 	
 		2) # GA and Release Candidates Builds
-		wsjtx_ga_rc_menu
-		continue ;;
+			wsjtx_ga_rc_menu
+			continue ;;
 
 		3) # Superbuild Menu
-		superbuild_menu
-		continue ;;
+			superbuild_menu
+			continue ;;
 
 		4) # Maintainer Build Options
-		under_development
-		continue ;;
+			under_development
+			continue ;;
 
 	esac
 	;;
