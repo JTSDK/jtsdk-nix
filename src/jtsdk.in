@@ -698,11 +698,11 @@ MAIN_SELECT=$(head -c 1 < $TMPD/selection)
 # run fuction based on the users selection
 case "$MAIN_SELECT" in
 	1) # WSJT ------------------------------------------------------------------
-	under_development	
+	jtsdk-wsjt
 	continue ;;
 
 	2) # WSPR ------------------------------------------------------------------
-	under_development	
+	jtsdk-wspr
 	continue ;;
 	
 	3) # WSJT-X ----------------------------------------------------------------
@@ -724,17 +724,17 @@ case "$MAIN_SELECT" in
 
 	esac
 	;;
-	
+		
 	4) # HAMLIB-3 --------------------------------------------------------------
-	under_development
-	continue ;;
+		jtsdk-hamlib3
+		continue ;;
 
 	H) # HELP ------------------------------------------------------------------
-	main_menu_help
-	continue ;;
+		main_menu_help
+		continue ;;
 
 	E) # EXIT JTSDK ------------------------------------------------------------
-	clean_exit ;;
+		clean_exit ;;
 esac
 
 done
