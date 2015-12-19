@@ -46,7 +46,7 @@ CFG="$HOMEDIR/config"
 ENABLE_EXP=No
 
 # dynamic menu generation timer, in minutes -mmin, *cannot be blank !!*
-GENTIME='2'
+GENTIME='60'
 
 # Foreground colours
 C_R='\033[01;31m'		# red
