@@ -46,7 +46,7 @@ CFG="$HOMEDIR/config"
 ENABLE_EXP=No
 
 # dynamic menu generation timer, in minutes -mmin, *cannot be blank !!*
-GENTIME='60'
+GENTIME='2'
 
 # Foreground colours
 C_R='\033[01;31m'		# red
@@ -377,24 +377,24 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 
 	clear ||:
 	echo '-----------------------------------------------------------'
-	echo -e ${C_G}'JTSDK Dynamic Menus From Sourceforge'${C_NC}
+	echo -e ${C_G}' JTSDK Dynamic Menus From Sourceforge'${C_NC}
 	echo '-----------------------------------------------------------'
 	echo ''
-	echo 'This function updates several JTSDK menus from the'
-	echo 'Sourceforge WSJT repository ^/tags and ^/branches.'
+	echo ' This function updates several JTSDK menus from the'
+	echo ' Sourceforge WSJT repository ^/tags and ^/branches.'
 	echo ''
-	echo 'When the event timer is reached, JTSDK will automatically'
-	echo 'update the menu entries. The default interval is set to'
-	echo '[ 60 ] minutes'
+	echo ' When the event timer is reached, JTSDK will automatically'
+	echo ' update the menu entries the next time it is launched.'
+	echo ' The default update interval is set to [ 60 ] minutes'
 	echo ''
-	echo 'You can change the update frequency by editing the main'
-	echo 'JTSDK script: /usr/bin/jtsdk or /usr/local/bin/jtsdk'
-	echo 'and adjusting: GENTIME="60" variable. This variable'
-	echo 'must not be blank, and should be stated in minutes.'
+	echo ' You can change the update frequency by editing the main'
+	echo ' JTSDK script: /usr/bin/jtsdk or /usr/local/bin/jtsdk'
+	echo ' and adjusting: GENTIME="60" variable. This variable'
+	echo ' must not be blank, and should be stated in minutes.'
 	echo ''
-	echo 'Please be patient, while the update runs, this can'
-	echo 'take a few seconds depending on your internet speed'
-	echo 'and acess to Sourceforge'
+	echo ' Please be patient while the update runs, this can'
+	echo ' take a few seconds depending on your internet speed'
+	echo ' and access to Sourceforge'
 	echo ''
 	echo 'Contacting SourceForge'
 # Generate Dev ists ------------------------------------------------------------
@@ -725,16 +725,20 @@ case "$MAIN_SELECT" in
 	# present build options based on wsjtx_main_menu selection
 	case $WSJTX_SELECT in
 		1) # Development Branch Builds
-		wsjtx_dev_menu ;;
+		wsjtx_dev_menu
+		continue ;;
 	
 		2) # GA and Release Candidates Builds
-		wsjtx_ga_rc_menu ;;
+		wsjtx_ga_rc_menu
+		continue ;;
 
 		3) # Superbuild Menu
-		superbuild_menu ;;
+		superbuild_menu
+		continue ;;
 
 		4) # Maintainer Build Options
-		under_development ;;
+		under_development
+		continue ;;
 
 	esac
 	;;
