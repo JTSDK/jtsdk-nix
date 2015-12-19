@@ -484,11 +484,8 @@ wsjtx_dev_menu() {
 	# now send the build command to jtsdk-wsjtx build script
 	case $target in
 		1) # build the release target
-			clear ||:
-			echo
-			echo "jtsdk-wsjtx dev $branch Release"
-			echo
-			read -p "enter to continue" ;;
+			jtsdk-wsjtx dev $branch Release
+		;;
 
 		2) # build the debug target
 			clear ||:

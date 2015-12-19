@@ -23,9 +23,9 @@
 set -e
 
 # variables passed from JTSDK Main Script
-OPT1=$1		# dev or garc.........: dev = ^/dev branches, garc = ^/tags branches
-OPT3=$2		# branch name suffix..: ^/branches/... or ^/tags/...
-OPT2=$3		# build type..........: Release, Debug, Package or Doc
+OPT1=$1		# dev or garc...: dev = ^/dev branches, garc = ^/tags branches
+OPT2=$2		# branch name ..: ^/branches/wsjtx etc etc
+OPT3=$3		# build type....: Release, Debug, Package or Doc
 
 # set home and directory paths
 HOMEDIR=~/jtsdk
@@ -54,18 +54,36 @@ C_NC='\033[01;37m'		# no color
 # - GARC is for GA-RC builds from ^/tags
 mkdir -p $HOMEDIR/{dev,garc}
 
-# setup APP_SRC, APP_NAME, BASE_SVN_URL
-APP_SRC="$SRCD/$OPT2"
-APP_NAME="$OPT2"
-BASEURL="https://svn.code.sf.net/p/wsjt/wsjt/"
-
 # now set up the actual SVN URL based on OPT1 + OPT2
 case $OPT1 in
 	dev)
-	URL="$BASEURL/branches/$OPT2" ;;
+		APP_SRC="$SRCD/$OPT2"
+		APP_NAME="$OPT2"
+		OPTION=$OPT3
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/$OPT2"
+	;;
 	garc)
-	URL="$BASEURL/tags/$OPT2" ;;
+		APP_SRC="$SRCD/$OPT2"
+		APP_NAME="$OPT2"
+		OPTION=$OPT3
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/tags/$OPT2"
+	;;
 esac
+
+case $OPT3 in
+	debug)
+		DESC="Debug" ;;
+	
+	release)
+		DESC="Release" ;;
+		
+	package)
+		DESC="Package" ;;
+
+	doc)
+		DESC="User Guide"
+esac
+
 
 ################################################################################
 # FUNCTOINS
@@ -207,7 +225,7 @@ declare -i maxv="7"
 if (( $minv < $maxv )) ; then KREQ="Yes" ; fi
 
 case "$KREQ" in
-	yes )
+	Yes )
 	# Link KVASD Binary to $INSTALLD/bin
 	if [[ -f /usr/bin/kvasd ]] ; then
         KVSTATUS="Yes"
@@ -242,38 +260,12 @@ esac
 
 }
 
-# setup variables based on $3 from jtsdk main
-set_build_type() {
-echo ''
-echo '-----------------------------------------------------'
-echo -e ${C_Y}" SETUP BUILD TYPE"${C_NC}
-echo '-----------------------------------------------------'
-
-case $OPT3 in
-	debug)
-		OPTION="Debug"
-		DESC="Debug Target" ;;
-		
-	release)
-		OPTION="Release"
-		DESC="Release Target" ;;
-		
-	package)
-		OPTION="Release"
-		DESC="User Guide" ;;
-
-	doc)
-		OPTION="Release"
-		DESC="User Guide"
-esac
-
-}
 
 # setup folder based on separation selection
-enable_separation() {
+check_separation() {
 
 if [ $SEPARATE == "Yes" ] ; then 
-	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER//build/$OPTION"
+	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/build/$OPTION"
 	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install/$OPTION"
 	PKGD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/package"
 else
@@ -282,13 +274,11 @@ else
 	PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
 fi
 
-echo ""
-
 }
+
 
 # make sure the build and install directories exist
 setup_dirs() {
-
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" SETUP DIRECTORIES"${C_NC}
@@ -297,109 +287,23 @@ echo ''
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
-
-}
-
-# run cmake configure step
-configure_build() {
+echo " App Version ..: $AVER-r$SVN_VER"
+echo " Build Type ...: $OPTION"
+echo " Source .......: $APP_SRC"
+echo " Build ........: $BUILDD"
+echo " Install ......: $INSTALLD"
 echo
-echo '-----------------------------------------------------'
-echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-
-# Always run the configure step to ensure any changes made are picked up
-cd "$BUILDD"
-cmake -G "Unix Makefiles" -Wno-dev \
--D CMAKE_PREFIX_PATH:PATH="$HL3I" \
--D CMAKE_BUILD_TYPE="$OPTION" \
--D CMAKE_INSTALL_PREFIX="$INSTALLD" "$SRCD/$APP_SRC_NAME"
-
+read -p "press enter to continue"
 }
 
-
-# build the target
-build_target() {
-
-echo ''
-echo '-----------------------------------------------------'
-echo -e ${C_Y}" BUILDING ( WSJT-X $AVER $DESC )"${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-case "$DESC" in
-	Release*|Debug* )
-		cd "$BUILDD"
-		cmake --build . --target install -- -j "$JJ"
-		link_kvasd
-	;;
-	
-	package )
-		cd "$BUILDD"
-		cmake --build . --target package -- -j "$JJ"
-		if [[ $? = "0" ]] ; then
-			cp -u "$BUILDD"/wsjtx*.deb "$PKGD"/
-		fi
-	;;
-
-	*Guide )
-		cd $BUILDD/doc
-		make install  1> /dev/null
-		FILENAME=$(ls -al $INSTALLD/share/doc/wsjtx |grep 'html' |awk '{print $9}')
-		echo "Finished Building..: $FILENAME"
-	;;
-esac
-
-}
-
-# display the finishe message
-finish_message() {
-echo ''
-echo '-----------------------------------------------------'
-echo -e ${C_G}" BUILD SUMMARY ( WSJT-X $AVER $DESC )"${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-case "$DESC" in
-	Release*|Debug* )
-		echo " App Version ..: $AVER-r$SVN_VER"
-		echo " Build Type ...: $OPTION"
-		echo " Source .......: $APP_SRC"
-		echo " Build ........: $BUILDD"
-		echo " Install ......: $INSTALLD"
-		if [[ $KVSTATUS = "YES" ]] || [[ $KVSTATUS = "Not Required" ]] ; then
-			echo -e ' KVASD Installed ..: '${C_G}"$KVSTATUS"${C_NC}
-		else
-			echo -e ' KVASD Installed ..: '${C_R}"$KVSTATUS"${C_NC}
-		fi
-		echo ''
-		echo " TO RUN $APP_NAME"
-		echo " cd ...........: $INSTALLD/bin"
-		echo " Type, ........: ./$APP_NAME"
-		echo ''
-		read -p "Press [ Enter ] to continue.."
-	;;
-	package )
-		PKG_NAME=$(ls -m1 $PKGD)
-		echo " Type ......: $OPTION"
-		echo " Name ......: $PKG_NAME"
-		echo " Location ..: $PKGD"
-		echo ''
-		read -p "Press [ Enter ] to continue .."
-	;;
-	*Guide )
-		echo "Document Name ..: $FILENAME"
-		echo "Location .......: $INSTALLD/share/doc/wsjtx"
-		echo ''
-		read -p "Press [ Enter ] to continue .." ;;
-	* )
-	;;
-esac
-
-}
 
 ################################################################################
 # START MAIN SCRIPT
 ################################################################################
+clear ||:
 
+# check hamlib3 is installed and working
+hamlib_test
 # ask update from svn
 check_svn
 
@@ -407,19 +311,74 @@ check_svn
 get_version
 get_svn_revision
 
-# setup build type
-setup_build_type
+# check if seperatoin is enabled
+check_separation
 
 # setup directories
 setup_dirs
-
-# configure the build
-configure_build
+set +x
+# run cmake configure step
+echo
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CONFIGURING ( WSJT-X $AVER $DESC )"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+cd "$BUILDD"
+cmake -G "Unix Makefiles" -Wno-dev \
+-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
+-D CMAKE_BUILD_TYPE="$OPTION" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"
 
 # build the target
-build_target
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" BUILDING ( WSJT-X $AVER $DESC )"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+cd "$BUILDD"
+cmake --build . --target install -- -j "$JJ"
+link_kvasd
 
-# Finished
-finish_message
+# finish message
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_G}" BUILD SUMMARY ( WSJT-X $AVER $DESC )"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+case "$OPTION" in
+	Release*|Debug* )
+		echo " App Version ...: $AVER-r$SVN_VER"
+		echo " Build Type ....: $OPTION"
+		echo " Source ........: $APP_SRC"
+		echo " Build .........: $BUILDD"
+		echo " Install .......: $INSTALLD"
+		if [[ $KVSTATUS = "YES" ]] || [[ $KVSTATUS = "Not Required" ]] ; then
+			echo -e ' KVASD Status ..: '${C_G}"$KVSTATUS"${C_NC}
+		else
+			echo -e ' KVASD Status ..: '${C_R}"$KVSTATUS"${C_NC}
+		fi
+		echo ''
+		echo " TO RUN $APP_NAME"
+		echo " cd ...........: $INSTALLD/bin"
+		echo " Type, ........: ./wsjtx"
+		echo ''
+		read -p "Press [ Enter ] to continue.."
+	;;
+	Package* )
+		PKG_NAME=$(ls -m1 $PKGD)
+		echo " Type ......: $OPTION"
+		echo " Name ......: $PKG_NAME"
+		echo " Location ..: $PKGD"
+		echo ''
+		read -p "Press [ Enter ] to continue .."
+	;;
+	Guide*)
+		echo "Document Name ..: $FILENAME"
+		echo "Location .......: $INSTALLD/share/doc/wsjtx"
+		echo ''
+		read -p "Press [ Enter ] to continue .." ;;
+	* )
+	;;
+esac
 
 exit 0
