@@ -49,11 +49,6 @@ C_Y='\033[01;33m'		# yellow
 C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
 
-# create some new directories
-# - Dev is for deveopment builds from ^/branches
-# - GARC is for GA-RC builds from ^/tags
-mkdir -p $HOMEDIR/{dev,garc}
-
 # now set up the actual SVN URL based on OPT1 + OPT2
 case $OPT1 in
 	dev)
@@ -192,19 +187,26 @@ echo '-----------------------------------------------------'
 VER_FILE="$APP_SRC/Versions.cmake"
 # get Major number
 MA=$(cat $VER_FILE |grep '_MAJOR' |awk '{print $3}' |cut -c1)
+
 # get Minor number 
 MI=$(cat $VER_FILE |grep '_MINOR' |awk '{print $3}' |cut -c1)
+
 # get Patch number
 PA=$(cat $VER_FILE |grep '_PATCH' |awk '{print $3}' |cut -c1)
+
 # get RC version
 RC=$(cat $VER_FILE |grep '_RC' |awk '{print $3}' |cut -c1)
-# combine into a string
 
-if [ "$RC" == "0" ] ; then 
-	AVER="$MA.$MI.$PA"
-else
-	AVER="$MA.$MI.$PA-RC$RC"
-fi
+# get Release Tag
+REL=$(cat $VER_FILE |grep '_RELEASE' |awk '{print $3}' |cut -c1)
+
+# Final Release Combinations
+if [[ $REL == "1" ]] ; then AVER="$MA.$MI.$PA" ; fi
+if [[ $RC != "0" ]] && [[ $REL == "1" ]] ; then AVER="$MA.$MI.$PA" ; fi
+
+# R Release Candidate
+if [[ $RC == "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA" ; fi
+if [[ $RC != "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA-RC$RC" ; fi
 
 echo "-- Repository Version Is ..: $AVER"
 
@@ -226,13 +228,13 @@ if (( $minv < $maxv )) ; then KREQ="Yes" ; fi
 
 case "$KREQ" in
 	Yes )
-	# Link KVASD Binary to $INSTALLD/bin
-	if [[ -f /usr/bin/kvasd ]] ; then
-        KVSTATUS="Yes"
-        echo "-- Linking KVASD binary to: $INSTALLD/bin"
-        if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
-	else
-	        KVSTATUS=NO
+		# Link KVASD Binary to $INSTALLD/bin
+		if [[ -f /usr/bin/kvasd ]] ; then
+			echo "-- Linking KVASD binary to: $INSTALLD/bin"
+    	    if [[ ! -L $INSTALLD/bin/kvasd ]] ; then ln -sf /usr/bin/kvasd "$INSTALLD"/bin/kvasd ; fi
+    	    if [[ $? = "0" ]] ; then KVSTATUS="OK" ; fi
+		else
+			KVSTATUS="Failed"
 	        echo ''
 	        echo '-------------------------------------------'
 	        echo -e ${C_R}' KVASD WARNING'${C_NC}
@@ -251,11 +253,10 @@ case "$KREQ" in
 	        echo '   link for you.'
 	        echo ''
 	        read -p "Press [ Enter ] to continue ..."
-        fi
-        ;;
+		fi ;;
+
     * )
-         KVSTATUS="Not Required"
-    ;;
+         KVSTATUS="Not Required" ;;
 esac
 
 }
@@ -265,13 +266,14 @@ esac
 check_separation() {
 
 if [ $SEPARATE == "Yes" ] ; then 
-	BUILDD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/build/$OPTION"
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install/$OPTION"
-	PKGD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/package"
+	BUILDD="$HOMEDIR/wsjtx/$OPT1/$AVER/$SVN_VER/build/$OPTION"
+	INSTALLD="$HOMEDIR/wsjtx/$OPT1/$AVER/$SVN_VER/install/$OPTION"
+	PKGD="$HOMEDIR/wsjtx/$OPT1/$AVER/$SVN_VER/package"
+
 else
-	BUILDD="$HOMEDIR/$APP_NAME/$AVER/build/$OPTION"
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
-	PKGD="$HOMEDIR/$APP_NAME/$AVER/package"
+	BUILDD="$HOMEDIR/wsjtx/$OPT1/$AVER/build/$OPTION"
+	INSTALLD="$HOMEDIR/wsjtx/$OPT1/$AVER/install/$OPTION"
+	PKGD="$HOMEDIR/wsjtx/$OPT1/$AVER/package"
 fi
 
 }
@@ -287,13 +289,13 @@ echo ''
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
-echo " App Version ..: $AVER-r$SVN_VER"
+echo " App Version ..: $AVER r$SVN_VER"
 echo " Build Type ...: $OPTION"
 echo " Source .......: $APP_SRC"
 echo " Build ........: $BUILDD"
 echo " Install ......: $INSTALLD"
-echo
-read -p "press enter to continue"
+echo ''
+
 }
 
 
@@ -316,7 +318,7 @@ check_separation
 
 # setup directories
 setup_dirs
-set +x
+
 # run cmake configure step
 echo
 echo '-----------------------------------------------------'
@@ -336,8 +338,27 @@ echo -e ${C_Y}" BUILDING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
-cmake --build . --target install -- -j "$JJ"
-link_kvasd
+case "$OPTION" in
+	Release*|Debug* )
+	cmake --build . --target install -- -j "$JJ"
+	link_kvasd ;;
+	
+	package )
+	cmake --build . --target package -- -j "$JJ"
+	cp -u "$BUILDD"/wsjtx*.deb "$PKGD"/ ;;
+
+	*Guide )
+	cmake --build . --target docs  >/dev/null 2>&1
+	cd $BUILDD/doc
+	make install DESTDIR="$INSTALLD"  >/dev/null 2>&1
+	FILENAME=$(ls -al $INSTALLD/share/doc/wsjtx |grep 'html' |awk '{print $9}')
+	echo "Finished Building..: $FILENAME"
+	echo '' ;;
+	
+	*)
+	;;
+esac
+
 
 # finish message
 echo ''
@@ -347,12 +368,12 @@ echo '-----------------------------------------------------'
 echo ''
 case "$OPTION" in
 	Release*|Debug* )
-		echo " App Version ...: $AVER-r$SVN_VER"
-		echo " Build Type ....: $OPTION"
-		echo " Source ........: $APP_SRC"
-		echo " Build .........: $BUILDD"
-		echo " Install .......: $INSTALLD"
-		if [[ $KVSTATUS = "YES" ]] || [[ $KVSTATUS = "Not Required" ]] ; then
+		echo " App Version ..: $AVER r$SVN_VER"
+		echo " Build Type ...: $OPTION"
+		echo " Source .......: $APP_SRC"
+		echo " Build ........: $BUILDD"
+		echo " Install ......: $INSTALLD"
+		if [[ $KVSTATUS = "OK" ]] || [[ $KVSTATUS = "Not Required" ]] ; then
 			echo -e ' KVASD Status ..: '${C_G}"$KVSTATUS"${C_NC}
 		else
 			echo -e ' KVASD Status ..: '${C_R}"$KVSTATUS"${C_NC}
@@ -364,7 +385,7 @@ case "$OPTION" in
 		echo ''
 		read -p "Press [ Enter ] to continue.."
 	;;
-	Package* )
+	package* )
 		PKG_NAME=$(ls -m1 $PKGD)
 		echo " Type ......: $OPTION"
 		echo " Name ......: $PKG_NAME"

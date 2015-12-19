@@ -461,7 +461,7 @@ wsjtx_dev_menu() {
 		dev_array+=("$a" "$b")
 	done < $CFG/dev_list.txt
 
-	# select which development branch to build
+	# select which ^/branches branch to build
 	dialog 	--ok-label "Select" \
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
@@ -478,29 +478,24 @@ wsjtx_dev_menu() {
 	"1" "Release Target" \
 	"2" "Debug Target" \
 	"3" "User Guide" \
+	"4" "Package" \
 	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_dev_target_select"
 	target=$(head -c 1 < $TMPD/wsjtx_dev_target_select)
 
 	# now send the build command to jtsdk-wsjtx build script
 	case $target in
 		1) # build the release target
-			jtsdk-wsjtx dev $branch Release
-		;;
+			jtsdk-wsjtx dev $branch Release ;;
 
 		2) # build the debug target
-			clear ||:
-			echo
-			echo "jtsdk-wsjtx dev $branch Debug"
-			echo
-			read -p "enter to continue" ;;
+			jtsdk-wsjtx dev $branch Debug ;;
 
 		3) # build the user guide
-			clear ||:
-			echo
-			echo "jtsdk-wsjtx dev $branch doc"
-			echo
-			read -p "enter to continue" ;;
-		esac
+			jtsdk-wsjtx dev $branch doc ;;
+
+		4) # build the distro package
+			jtsdk-wsjtx dev $branch package ;;
+	esac
 }
 
 # GA and RELEASE CANDIDATES ----------------------------------------------------
@@ -512,26 +507,34 @@ wsjtx_ga_rc_menu() {
 		ga_rc_array+=("$a" "$b")
 	done < $CFG/ga_rc_list.txt
 
-	# display the menu selection dialog box
+	# select which ^/tags branch to build
 	dialog 	--ok-label "Select" \
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
-	--title "$RC_TITLE" \
-	--menu "$MENUMSG" 0 55 0 "${ga_rc_array[@]}" 2> $TMPD/ga_rc_select.txt
-	GA_RC_SELECT=$(head -1 < $TMPD/ga_rc_select.txt)
+	--title "  WSJT-X GA and RC SELECTION" \
+	--menu "$MENUMSG" 0 55 0 "${ga_rc_array[@]}" 2> $TMPD/ga_rc_list.txt
+	branch=$(head -1 < $TMPD/ga_rc_list.txt)
 
-	case $GA_RC_SELECT in
-		Back*)
-		continue ;;
-		*)
-		# for testing only, comment out for release
-		clear ||:
-		echo ''
-		echo "You Selected ..........: $GA_RC_SELECT"
-		echo ''
-		read -p "Press [ Enter ] to continue ... "
-		;;
+	# select what target to build
+	dialog --ok-label SELECT \
+	--no-cancel \
+	--backtitle "$BACKTITLE" \
+	--title "$WSJTXTITLE" \
+	--menu "$MENUMSG" 0 50 0 \
+	"1" "Release Target" \
+	"2" "Package" \
+	"B" "Back To Main Menu" 2> "$TMPD/wsjtx_ga_rc_target_select"
+	target=$(head -c 1 < $TMPD/wsjtx_ga_rc_target_select)
+
+	# now send the build command to jtsdk-wsjtx build script
+	case $target in
+		1) # build the release target
+			jtsdk-wsjtx garc $branch Release ;;
+
+		2) # build the debug target
+			jtsdk-wsjtx garc $branch Debug ;;
 	esac
+
 }
 
 # SUPERBUILD MENU --------------------------------------------------------------
