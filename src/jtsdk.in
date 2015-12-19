@@ -45,7 +45,7 @@ CFG="$HOMEDIR/config"
 # enable / disable experimental branch
 ENABLE_EXP=No
 
-# dynamic menu generation time
+# dynamic menu generation timer, in minutes -mmin, *cannot be blank !!*
 GENTIME='60'
 
 # Foreground colours
@@ -55,6 +55,8 @@ C_Y='\033[01;33m'		# yellow
 C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
 
+# unicode bling
+CHK=${C_G}✔${C_NC}
 
 ################################################################################
 #
@@ -381,50 +383,82 @@ if [[ ! -f $TSFILE ]] || [[ $(find $TSFILE -mmin +$GENTIME) != "" ]] ; then
 	echo 'Please be patient, this can take a few seconds'
 	echo ''
 
-	# Generate Dev ists
-		echo '* Generating Dev Lists'
-		svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
-		| grep ^wsjtx \
-		| sed 's:/*$::' \
-		| sort > $TMPD/dev_list.txt
-		#sed -i '1s/wsjtx/Development/g' $TMPD/dev_list.txt
-		echo "Back-To-Main-Menu" >> $TMPD/dev_list.txt
+# Generate Dev ists ------------------------------------------------------------
+	if [[ ! -f $CFG/dev_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
+		UTYPE='Generating'
+	else 
+		UTYPE='Updating'
+	fi
+	echo -e "* $UTYPE Dev Lists - $CHK"
 	
-		for i in "${dev_exclude_array[@]}"
-		do
-			sed -i '/^'"$i"'/d' $TMPD/dev_list.txt
-		done
-		cp -u $TMPD/dev_list.txt $CFG
+	svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
+	| grep ^wsjtx \
+	| sed 's:/*$::' \
+	| sort > $TMPD/dev_list.txt
+	#sed -i '1s/wsjtx/Development/g' $TMPD/dev_list.txt
+	echo "Back-To-Main-Menu" >> $TMPD/dev_list.txt
+	
+	# exclude some branches
+	for i in "${dev_exclude_array[@]}"
+	do
+		sed -i '/^'"$i"'/d' $TMPD/dev_list.txt
+	done
+	
+	# copy final menu to the config dir
+	cp -u $TMPD/dev_list.txt $CFG
 
-	# Generate GA and RC List
-		echo '* Generating GA and RC List'
-		svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
-		| grep ^wsjtx-[1-9]\.[5-9]\.[0-9] \
-		| sed 's:/*$::' > $TMPD/ga_rc_list.txt
-		echo "Back-To-Main-Menu" >> $TMPD/ga_rc_list.txt
-		cp -u $TMPD/ga_rc_list.txt $CFG
+# Generate GA and RC List ------------------------------------------------------
+	if [[ ! -f $CFG/ga_rc_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
+		UTYPE='Generating'
+	else 
+		UTYPE='Updating'
+	fi
+	echo -e "* $UTYPE GA and RC List - $CHK"
 
-	# Generate Superbuild Dev List
-		echo '* Generating Superbuild Dev List'
-		svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
-		| grep ^wsjtx \
-		| sed 's:/*$::' \
-		| sort > $TMPD/sb_dev_list.txt
-		sed -i '1s/wsjtx/Development/g' $TMPD/sb_dev_list.txt
-		echo "Back-To-Main-Menu" >> $TMPD/sb_dev_list.txt
+	svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
+	| grep ^wsjtx-[1-9]\.[5-9]\.[0-9] \
+	| sed 's:/*$::' > $TMPD/ga_rc_list.txt
+	echo "Back-To-Main-Menu" >> $TMPD/ga_rc_list.txt
+	cp -u $TMPD/ga_rc_list.txt $CFG
+
+# Generate Superbuild Dev List -------------------------------------------------
+	if [[ ! -f $CFG/sb_dev_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
+		UTYPE='Generating'
+	else 
+		UTYPE='Updating'
+	fi
+	echo -e "* $UTYPE Superbuild Dev List - $CHK"
+
+	svn list http://svn.code.sf.net/p/wsjt/wsjt/branches \
+	| grep ^wsjtx \
+	| sed 's:/*$::' \
+	| sort > $TMPD/sb_dev_list.txt
+	sed -i '1s/wsjtx/Development/g' $TMPD/sb_dev_list.txt
+	echo "Back-To-Main-Menu" >> $TMPD/sb_dev_list.txt
 	
-		for i in "${dev_exclude_array[@]}"
-		do
-			sed -i '/^'"$i"'/d' $TMPD/sb_dev_list.txt
-		done
-		cp -u $TMPD/sb_dev_list.txt $CFG
+	# exclude some branches
+	for i in "${dev_exclude_array[@]}"
+	do
+		sed -i '/^'"$i"'/d' $TMPD/sb_dev_list.txt
+	done
 	
-	# Generate Superbuild GA and RC List
-	echo '* Generating Superbuild GA and RC List'
+	# copy final menu to the config dir
+	cp -u $TMPD/sb_dev_list.txt $CFG
+	
+# Generate Superbuild GA and RC List -------------------------------------------
+	if [[ ! -f $CFG/sb_ga_rc_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
+		UTYPE='Generating'
+	else 
+		UTYPE='Updating'
+	fi
+	echo -e "* $UTYPE Superbuild GA and RC List - $CHK"
+
 	svn list http://svn.code.sf.net/p/wsjt/wsjt/tags \
 	| grep ^wsjtx-[1-9]\.[5-9] \
 	| sed 's:/*$::' > $TMPD/sb_ga_rc_list.txt
 	echo "Back-To-Main-Menu" >> $TMPD/sb_ga_rc_list.txt
+
+	# copy final menu to the config dir
 	cp -u $TMPD/sb_ga_rc_list.txt $CFG
 	
 	# create a time stamp file

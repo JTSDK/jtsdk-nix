@@ -206,7 +206,7 @@ if [[ $RC != "0" ]] && [[ $REL == "1" ]] ; then AVER="$MA.$MI.$PA" ; fi
 
 # R Release Candidate
 if [[ $RC == "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA" ; fi
-if [[ $RC != "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA-RC$RC" ; fi
+if [[ $RC != "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA-rc$RC" ; fi
 
 echo "-- Repository Version Is ..: $AVER"
 
