@@ -355,7 +355,7 @@ case "$OPT3" in
 	doc)
 	cmake --build . --target docs  >/dev/null 2>&1
 	cd $BUILDD/doc
-	make install DESTDIR="$INSTALLD"  >/dev/null 2>&1
+	make install >/dev/null 2>&1
 	FILENAME=$(ls -al $INSTALLD/share/doc/wsjtx |grep 'html' |awk '{print $9}')
 	echo "Finished Building..: $FILENAME"
 	echo '' ;;
