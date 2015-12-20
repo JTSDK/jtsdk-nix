@@ -24,9 +24,9 @@
 set -e
 
 # passed from JTSDK main script
-OPT1=$1		# dev = ^/branches, garc = ^/tags
-OPT2=$2		# is the actual branch folder name, wsjtx, wsjtx-1.6, etc
-OPT3="$3"
+OPT1="$1"	# dev = ^/branches, garc = ^/tags
+OPT2="$2"	# is the actual branch folder name, wsjtx, wsjtx-1.6, etc
+OPT3="$3"	# Sets Build or Source tar.gz
 OPT4="0"	# Set to 1 for verbose builds
 
 # system locations
@@ -79,23 +79,37 @@ esac
 build_message() {
 
 clear ||:
-echo "-------------------------------------------"
-echo -e ${C_G} "WSJT-X SUPERBUILD"${C_NC}
-echo "-------------------------------------------"
-echo ''
-echo 'This script will perform the following:'
-echo ''
-echo ' * Checkout or Update WSJT-X Superbuild Scripts'
-echo ' * Get the application SVN version'
-echo ' * Download the latest Hamlib3 sources'
-echo ' * Download the latest WSJT-X sources'
-echo ' * Create a single tar.gz file ready for compiling'
-echo ' * Configure and Build WSJT-X'
-echo ' * Install WSJT-X to the user space for testing'
-sleep 2
+case $OPT3 in
+	build)	
+		echo "-------------------------------------------"
+		echo -e ${C_G} "WSJT-X SUPERBUILD"${C_NC}
+		echo "-------------------------------------------"
+		echo ''
+		echo ' This selection will perform the following:'
+		echo ''
+		echo ' * Checkout or Update WSJT-X Superbuild Scripts'
+		echo ' * Download Hamlib3 sources'
+		echo ' * Download WSJT-X sources'
+		echo ' * Create a single tar.gz file'
+		echo ' * Configure and Build WSJT-X'
+		echo ' * Install WSJT-X to the user space for testing'
+	;;
+
+	maintainer)
+		echo "-------------------------------------------"
+		echo -e ${C_G} "WSJT-X MAINTAINER BUILD"${C_NC}
+		echo "-------------------------------------------"
+		echo ''
+		echo ' This selection will perform the following:'
+		echo ''
+		echo ' * Checkout or Update WSJT-X Superbuild Scripts'
+		echo ' * Download the Hamlib3 sources'
+		echo ' * Download the WSJT-X sources'
+		echo ' * Create a single tar.gz file'
+	;;
+esac
 
 }
-
 
 # update or checkout wsjtx-superbuild from svn ---------------------------------
 check_svn() {
@@ -155,10 +169,12 @@ if [ $SEPARATE == "Yes" ] ; then
 	BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/build/$OPTION"
 	INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/install/$OPTION"
 	PKGD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/package"
+	MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2/$SVN_VER/"
 else
 	BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/build/$OPTION"
 	INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/install/$OPTION"
 	PKGD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/package"
+	MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2"
 fi
 
 }
@@ -179,11 +195,20 @@ mkdir -p "$BASED" >/dev/null 2>&1
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
+mkdir -p "$MAINT" >/dev/null 2>&1
 echo " Superbuild ...: $APP_NAME r$SB_SVN_VER"
 echo " App Version ..: $OPT2 r$SVN_VER"
 echo " Build ........: $BUILDD"
 echo " Install ......: $INSTALLD"
-echo " Package ......: $PKGD"
+case $OPT3 in
+	maintainer)
+		echo " Location .....: $MAINT"
+	;;
+
+	*)
+		echo " Location .....: $PKGD"
+	;;
+esac
 echo ''
 
 }
@@ -228,25 +253,37 @@ case "$OPT4" in
 esac
 
 # copy the source file to the package directory
-cp wsjtx*.tgz $PKGD/$OPT2-$SVN_VER.orig.tar.gz
+case $OPT3 in
+	maintainer)
+		cp wsjtx*.tgz $MAINT/$OPT2-$SVN_VER.orig.tar.gz	
+	;;
+
+	*)
+		cp wsjtx*.tgz $PKGD/$OPT2-$SVN_VER.orig.tar.gz
+esac
 
 }
-
 
 # Finished building source package ---------------------------------------------
 source_finish_message() {
 
 echo ''
 echo "-------------------------------------------"
-echo -e ${C_G} "SOURCE PACKAGE COMPLETE"${C_NC}
+echo -e ${C_G} "SOURCE PACKAGE BUILD COMPLETE"${C_NC}
 echo "-------------------------------------------"
 echo ''
-echo " Branch Name ......: $OPT2"
-echo " Branch Type ......: ^/$TYPE"
-echo " Branch URL .......: $CHECK_URL"
-echo " Build Directory ..: $BUILDD"
-echo " Source Package ...: $OPT2-$SVN_VER.orig.tar.gz"
-echo " Location .........: $PKGD"
+echo " Branch ....: ^/$TYPE/$OPT2"
+echo " Package ...: $OPT2-$SVN_VER.orig.tar.gz"
+echo " SVN URL ...: $CHECK_URL"
+case $OPT3 in
+	maintainer)
+		echo " Location ..: $MAINT"
+	;;
+
+	*)
+		echo " Location ..: $PKGD"
+	;;
+esac
 echo ''
 read -rp " Press [ Enter ] to continue .."
 	
@@ -263,26 +300,30 @@ case $OPT3 in
 		echo -e "${C_Y}"' Under Construction'"${C_NC}"
 		echo '-----------------------------------------------------------'
 		echo ''
-		echo ' Building both Source Package and The Application'
+		echo ' Building both the Source Package and the Application'
 		echo ' is currently disabled.'
 		echo ''
 		echo ' When the scripts are finished, this feature will'
-		echo ' perform both actions, resulting in a useable application'
-		echo ' and the Source package it was built from' 
+		echo ' perform both actions, resulting in a usable application'
+		echo ' and the Source package it was built from.'
+		echo ''
+		echo ' If you need the source package, use the maintainer option'
+		echo ' from the WSJT-X Main Menu, noting, the maintainer builds'
+		echo ' only pull from the GA and RC ^/tags location, no devel'
+		echo ' builds are supported.'
+		
 		echo ''
 		read -rp "Press [ Enter ] to continue ..."
-		;;
+	;;
 
-	source-pkg )
+	maintainer)
 		source_pkg_array=('build_message' 'check_svn' 'get_svn_revision' \
 		'check_separation' 'setup_dirs' 'configure_build' 'build_source_package' \
 		'source_finish_message')
 
-		# run the array
+		# run the build
 		for i in "${!source_pkg_array[@]}" ; do ${source_pkg_array[$i]} ; done	
-
 	;;
-
 esac
 
 exit 0

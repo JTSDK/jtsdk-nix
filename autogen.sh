@@ -72,7 +72,7 @@ svn --version > /dev/null 2>&1 || {
 	clear ||:
 	echo 'PACKAGE DEPENDENCY ERROR'
 	echo ''
-	echo 'You must have the package Subvesion installed to'
+	echo 'You must have the package Subversion installed to'
 	echo "checkout and compile $PROGRAM. Please install the"
 	echo 'appropriate package for your distribution.'	
 	echo ''
