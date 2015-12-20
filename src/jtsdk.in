@@ -378,7 +378,7 @@ then
 	echo '-----------------------------------------------------------'
 	echo ''
 	echo ' This function updates several JTSDK menus from the'
-	echo ' Sourceforge WSJT repository ^/tags and ^/branches.'
+	echo ' SourceForge WSJT repository ^/tags and ^/branches.'
 	echo ''
 	echo ' When the event timer is reached, JTSDK will automatically'
 	echo ' update the menu entries the next time it is launched.'
@@ -393,7 +393,7 @@ then
 	echo ' take a few seconds depending on your internet speed'
 	echo ' and access to Sourceforge'
 	echo ''
-	echo 'Contacting SourceForge'
+	echo ' Contacting SourceForge'
 
 # Generate Dev ists ------------------------------------------------------------
 	if [[ ! -f $CFG/dev_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
@@ -401,7 +401,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e "* $UTYPE Dev Lists - $CHK"
+	echo -e " * $UTYPE Dev Lists - $CHK"
 	
 	svn list "$BRANCHES"| grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/dev_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/dev_list.txt
@@ -421,7 +421,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e "* $UTYPE GA and RC List - $CHK"
+	echo -e " * $UTYPE GA and RC List - $CHK"
 	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/ga_rc_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/ga_rc_list.txt
 	cp -u "$TMPD"/ga_rc_list.txt $CFG
@@ -432,7 +432,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e "* $UTYPE Maintainer List - $CHK"
+	echo -e " * $UTYPE Maintainer List - $CHK"
 	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/maint_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/maint_list.txt
 	cp -u "$TMPD"/maint_list.txt $CFG
@@ -443,7 +443,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e "* $UTYPE Superbuild Dev List - $CHK"
+	echo -e " * $UTYPE Superbuild Dev List - $CHK"
 
 	svn list "$BRANCHES" | grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/sb_dev_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/sb_dev_list.txt
@@ -463,7 +463,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e "* $UTYPE Superbuild GA and RC List - $CHK"
+	echo -e " * $UTYPE Superbuild GA and RC List - $CHK"
 
 	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]" | sed 's:/*$::' > "$TMPD"/sb_ga_rc_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/sb_ga_rc_list.txt

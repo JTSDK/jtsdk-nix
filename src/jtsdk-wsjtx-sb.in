@@ -168,13 +168,13 @@ check_separation() {
 
 # separation is enabled / disabled from the configure script, default = Yes
 if [ $SEPARATE == "Yes" ] ; then 
-	BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/build/$OPTION"
-	INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/install/$OPTION"
+	BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/build"
+	INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/install"
 	PKGD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/package"
-	MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2/$SVN_VER/"
+	MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2/$SVN_VER"
 else
-	BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/build/$OPTION"
-	INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/install/$OPTION"
+	BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/build"
+	INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/install"
 	PKGD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/package"
 	MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2"
 fi
@@ -311,8 +311,7 @@ echo "-------------------------------------------"
 echo -e ${C_Y} "CONFIGURING [ $OPT2 ]"${C_NC}
 echo "-------------------------------------------"
 cd "$BASED/tmp/build"
-cmake -G "Unix Makefiles" -Wno-dev \
--D CMAKE_INSTALL_PREFIX="$INSTALLD" "$BASED/tmp/$OPT2"
+cmake -Wno-dev -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$BASED/tmp/$OPT2"
 echo ''
 
 }
