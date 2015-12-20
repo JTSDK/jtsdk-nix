@@ -72,7 +72,9 @@ case $OPT1 in
 esac
 
 ################################################################################
+#
 # FUNCTIONS
+#
 ################################################################################
 
 # display build message --------------------------------------------------------
@@ -82,7 +84,7 @@ clear ||:
 case $OPT3 in
 	build)	
 		echo "-------------------------------------------"
-		echo -e ${C_G} "WSJT-X SUPERBUILD"${C_NC}
+		echo -e ${C_G} "WSJT-X SUPERBUILD for [ $OPT2 ]"${C_NC}
 		echo "-------------------------------------------"
 		echo ''
 		echo ' This selection will perform the following:'
@@ -255,11 +257,11 @@ esac
 # copy the source file to the package directory
 case $OPT3 in
 	maintainer)
-		cp wsjtx*.tgz $MAINT/$OPT2-$SVN_VER.orig.tar.gz	
+		cp -u wsjtx*.tgz $MAINT/$OPT2-$SVN_VER.orig.tar.gz	
 	;;
 
 	*)
-		cp wsjtx*.tgz $PKGD/$OPT2-$SVN_VER.orig.tar.gz
+		cp -u wsjtx*.tgz $PKGD/$OPT2-$SVN_VER.orig.tar.gz
 esac
 
 }
@@ -285,8 +287,81 @@ case $OPT3 in
 	;;
 esac
 echo ''
-read -rp " Press [ Enter ] to continue .."
 	
+}
+
+# extract source package -------------------------------------------------------
+extract_source_pkg() {
+
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "EXTRACTING SOURCE PACKAGE"${C_NC}
+echo "-------------------------------------------"
+rm -rf "$BASED"/tmp >/dev/null 2>&1
+mkdir -p "$BASED"/tmp/build
+cd "$PKGD"
+tar -xvf $OPT2-$SVN_VER.orig.tar.gz -C "$BASED/tmp"
+
+}
+
+# configure the build ----------------------------------------------------------
+run_cmake() {
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "CONFIGURING [ $OPT2 ]"${C_NC}
+echo "-------------------------------------------"
+cd "$BASED/tmp/build"
+cmake -G "Unix Makefiles" -Wno-dev \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$BASED/tmp/$OPT2"
+echo ''
+
+}
+
+# build the target -------------------------------------------------------------
+run_build() {
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "COMPILING [ $OPT2 ]"${C_NC}
+echo "-------------------------------------------"
+echo ''
+cd "$BASED/tmp/build"
+cmake --build . -- -j "$JJ"
+echo ''
+
+
+}
+
+# install the target -----------------------------------------------------------
+run_install_build() {
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_Y} "INSTALLING [ $OPT2 ]"${C_NC}
+echo "-------------------------------------------"
+echo ''
+cd "$BASED/tmp/build"
+cmake --build . --target install -- -j "$JJ"
+echo ''
+
+}
+
+# install summary --------------------------------------------------------------
+run_build_summary() {
+
+echo ''
+echo "-------------------------------------------"
+echo -e ${C_G} "SUPERBUILD SUMMARY"${C_NC}
+echo "-------------------------------------------"
+echo ''
+echo " Branch ....: ^/$TYPE/$OPT2"
+echo " Package ...: $OPT2-$SVN_VER.orig.tar.gz"
+echo " SVN URL ...: $CHECK_URL"
+echo " Build .....: $BASED/tmp/build"
+echo " Install ...: $INSTALLD"
+echo ''
+echo " TO RUN [ $OPT2 r$SVN_VER ]"
+echo " cd ........: $INSTALLD/bin"
+echo " Type, .....: ./wsjtx"
+
 }
 
 ################################################################################
@@ -295,34 +370,50 @@ read -rp " Press [ Enter ] to continue .."
 
 case $OPT3 in
 	build )
-		clear ||:
-		echo '-----------------------------------------------------------'
-		echo -e "${C_Y}"' Under Construction'"${C_NC}"
-		echo '-----------------------------------------------------------'
-		echo ''
-		echo ' Building both the Source Package and the Application'
-		echo ' is currently disabled.'
-		echo ''
-		echo ' When the scripts are finished, this feature will'
-		echo ' perform both actions, resulting in a usable application'
-		echo ' and the Source package it was built from.'
-		echo ''
-		echo ' If you need the source package, use the maintainer option'
-		echo ' from the WSJT-X Main Menu, noting, the maintainer builds'
-		echo ' only pull from the GA and RC ^/tags location, no devel'
-		echo ' builds are supported.'
+		# set which functions should be run
+		build_array=('build_message' 'check_svn' 'get_svn_revision' \
+		'check_separation' 'setup_dirs' 'configure_build' 'build_source_package' \
+		'extract_source_pkg' 'run_cmake' 'run_build' 'run_install_build' \
+		'run_build_summary')
 		
-		echo ''
-		read -rp "Press [ Enter ] to continue ..."
+		# run the build
+		for i in "${!build_array[@]}" ; do ${build_array[$i]} ; done	
+		echo ''		
+		read -p " Press [ Enter ] to continue..."
+
+# Use during Debugging
+#		clear ||:
+#		echo '-----------------------------------------------------------'
+#		echo -e "${C_Y}"' Under Construction'"${C_NC}"
+#		echo '-----------------------------------------------------------'
+#		echo ''
+#		echo ' Building both the Source Package and the Application'
+#		echo ' is currently disabled.'
+#		echo ''
+#		echo ' When the scripts are finished, this feature will'
+#		echo ' perform both actions, resulting in a usable application'
+#		echo ' and the Source package it was built from.'
+#		echo ''
+#		echo ' If you need the source package, use the maintainer option'
+#		echo ' from the WSJT-X Main Menu, noting, the maintainer builds'
+#		echo ' only pull from the GA and RC ^/tags location, no devel'
+#		echo ' builds are supported.'
+#		
+#		echo ''
+#		read -rp "Press [ Enter ] to continue ..."
 	;;
 
 	maintainer)
+		# set which functions should be run
 		source_pkg_array=('build_message' 'check_svn' 'get_svn_revision' \
 		'check_separation' 'setup_dirs' 'configure_build' 'build_source_package' \
 		'source_finish_message')
 
 		# run the build
 		for i in "${!source_pkg_array[@]}" ; do ${source_pkg_array[$i]} ; done	
+		echo ''
+		read -p "Press [ Enter ] to continue..."
+
 	;;
 esac
 

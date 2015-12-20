@@ -426,9 +426,16 @@ then
 	echo "Back-To-Main-Menu" >> "$TMPD"/ga_rc_list.txt
 	cp -u "$TMPD"/ga_rc_list.txt $CFG
 
-	# copy GA and RC list to Maintainer list
-	cp -u "$TMPD"/ga_rc_list.txt $CFG/maint_list.txt
+# Generate Maintainer List -----------------------------------------------------
+	if [[ ! -f $CFG/maint_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
+		UTYPE='Generating'
+	else 
+		UTYPE='Updating'
+	fi
 	echo -e "* $UTYPE Maintainer List - $CHK"
+	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/maint_list.txt
+	echo "Back-To-Main-Menu" >> "$TMPD"/maint_list.txt
+	cp -u "$TMPD"/maint_list.txt $CFG
 
 # Generate Superbuild Dev List -------------------------------------------------
 	if [[ ! -f $CFG/sb_dev_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
