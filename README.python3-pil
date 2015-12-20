@@ -1,14 +1,14 @@
 Last Update: 15-JUN-2015
 For Debian 8.x (Jessie) / Ubuntu 14.04 (Utopic) Only!
 
-Due to a repository package incompatability in python3-pil, the following
+Due to a repository package incompatibility in python3-pil, the following
 update is required in order to build WSJT and WSPR. This is not a JTSDK issue,
-it's a problen  wityh the Pillow package itself.
+it's a problem  wityh the Pillow package itself.
 
-After isntalling JTSDK, either by source or the Launchpad package,
+After installing JTSDK, either by source or the Launchpad package,
 the user must build Python3 PIL ( Python Imaging Library ) from source. 
 
-* Open a termainl, Ctrl+Alt+T
+* Open a terminal, Ctrl+Alt+T
 * sudo apt-get update
 * sudo apt-get install libfreetype6-dev libjpeg-dev liblcms2-dev libtiff5-dev \
 libwebp-dev libwebpmux1 mime-support tcl8.6-dev tk8.6-dev zlib1g-dev

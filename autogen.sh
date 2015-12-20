@@ -45,7 +45,7 @@ Distribution  Supported Versions
 
 Several options exist for pre-processing the configure script: 
 --with-python3		# Alternate location for python3
---with-f2py3		# alternalte locaiton for f2py3
+--with-f2py3		# alternate location for f2py3
 --disable-docs		# Disable building HTML documentation
 --disable-parallel	# Disable Multi-Core builds
 --disable-separate	# Disable separation by svn version (not recommended)

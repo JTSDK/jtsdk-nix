@@ -81,7 +81,7 @@ esac
 
 
 ################################################################################
-# FUNCTOINS
+# FUNCTIONS
 ################################################################################
 
 # simple hamlib test
@@ -221,6 +221,7 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 }
 
 function link_kvasd() {
+
 # Only display KVASD message for RC (v1.6.x series ) as 
 declare -i minv="$MI"
 declare -i maxv="7"

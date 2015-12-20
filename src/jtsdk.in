@@ -428,7 +428,7 @@ then
 	echo -e "* $UTYPE Superbuild Dev List - $CHK"
 
 	svn list "$BRANCHES" | grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/sb_dev_list.txt
-	sed -i '1s/wsjtx/Development/g' "$TMPD"/sb_dev_list.txt
+	# sed -i '1s/wsjtx/Development/g' "$TMPD"/sb_dev_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/sb_dev_list.txt
 	
 	# exclude some branches
@@ -607,30 +607,43 @@ superbuild_menu() {
 	case $SB_MENU_SELECT in
 		1) # Development Branch Selection
 			SBTITLE="  WSJT-X SUPERBUILD DEV"
+			
 			dialog 	--ok-label "Select" \
 			--no-cancel \
 			--backtitle "$BACKTITLE" \
 			--title "$SBTITLE" \
 			--menu "$MENUMSG" 0 55 0 "${sb_dev_array[@]}" 2> "$TMPD"/sb_select.txt
-			SB_SELECT=$(head -1 < "$TMPD"/sb_select.txt)
-			clear ||:
-			echo "You Selected ..........: $SB_SELECT"
-			echo ''
-			read -rp "Press [ Enter ] to continue ... "
+			branch=$(head -1 < "$TMPD"/sb_select.txt)
+			
+			# now send the command to jtsdk-wsjtxsb sctipt
+			case "$branch" in 
+				B*)
+				return 0 ;;
+				
+				*) 
+					jtsdk-wsjtx-sb dev "$branch" source-pkg ;;
+
+			esac
 		;;
 
-		2) # Development Release Candidates
+		2) # GA and RC Candidates
 			SBTITLE="  WSJT-X SUPERBUILD GA and RC"
 			dialog 	--ok-label "Select" \
 			--no-cancel \
 			--backtitle "$BACKTITLE" \
 			--title "$SBTITLE" \
 			--menu "$MENUMSG" 0 55 0 "${sb_ga_rc_array[@]}" 2> "$TMPD"/sb_select.txt
-			SB_SELECT=$(head -1 < $TMPD/sb_select.txt)
-			clear ||:
-			echo "You Selected ..........: $SB_SELECT"
-			echo ''
-			read -rp "Press [ Enter ] to continue ... "
+			branch=$(head -1 < $TMPD/sb_select.txt)
+
+			# now send the command to jtsdk-wsjtxsb sctipt
+			case "$branch" in 
+				B*)
+				return 0 ;;
+				
+				*)
+					jtsdk-wsjtx-sb garc "$branch" source-pkg ;;
+			esac
+		
 		;;
 
 		B*)
