@@ -67,15 +67,19 @@ esac
 
 case $OPT3 in
 	debug)
+		OPTION="Debug"
 		DESC="Debug" ;;
 	
 	release)
+		OPTION="Release"
 		DESC="Release" ;;
 		
 	package)
+		OPTION="package"
 		DESC="Package" ;;
 
 	doc)
+		OPTION="Release"
 		DESC="User Guide"
 esac
 
@@ -339,16 +343,16 @@ echo -e ${C_Y}" BUILDING ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
-case "$OPTION" in
-	Release*|Debug* )
+case "$OPT3" in
+	Release|Debug)
 	cmake --build . --target install -- -j "$JJ"
 	link_kvasd ;;
 	
-	package )
+	package)
 	cmake --build . --target package -- -j "$JJ"
 	cp -u "$BUILDD"/wsjtx*.deb "$PKGD"/ ;;
 
-	*Guide )
+	doc)
 	cmake --build . --target docs  >/dev/null 2>&1
 	cd $BUILDD/doc
 	make install DESTDIR="$INSTALLD"  >/dev/null 2>&1
@@ -367,10 +371,10 @@ echo '-----------------------------------------------------'
 echo -e ${C_G}" BUILD SUMMARY ( WSJT-X $AVER $DESC )"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-case "$OPTION" in
+case "$OPT3" in
 	Release*|Debug* )
 		echo " App Version ...: $AVER r$SVN_VER"
-		echo " Build Type ....: $OPTION"
+		echo " Build Type ....: $OPT3"
 		echo " Source ........: $APP_SRC"
 		echo " Build .........: $BUILDD"
 		echo " Install .......: $INSTALLD"
@@ -388,13 +392,13 @@ case "$OPTION" in
 	;;
 	package* )
 		PKG_NAME=$(ls -m1 $PKGD)
-		echo " Type ......: $OPTION"
+		echo " Type ......: $OPT3"
 		echo " Name ......: $PKG_NAME"
 		echo " Location ..: $PKGD"
 		echo ''
 		read -p "Press [ Enter ] to continue .."
 	;;
-	Guide*)
+	doc*)
 		echo "Document Name ..: $FILENAME"
 		echo "Location .......: $INSTALLD/share/doc/wsjtx"
 		echo ''
