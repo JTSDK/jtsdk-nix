@@ -36,11 +36,12 @@ MENU=@SHARE@
 TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
 CFG="$HOMEDIR/config"
+DOCS="$HOMEDIR/docs"
 
 # dynamic menu generation timer, in minutes -mmin, *cannot be blank !!*
 GENTIME='60'
 
-# subversion urls
+# subversion base urls
 TAGS="http://svn.code.sf.net/p/wsjt/wsjt/tags"
 BRANCHES="http://svn.code.sf.net/p/wsjt/wsjt/branches"
 
@@ -122,7 +123,7 @@ SBTITLE="  WSJT-X SUPERBUILD MENU"
 # MAKE DIRECTORIES -------------------------------------------------------------
 make_dirs() {
 
-mkdir -p $HOMEDIR/{src,tmp,logs,config}
+mkdir -p $HOMEDIR/{src,tmp,logs,config,docs}
 
 }
 
@@ -352,6 +353,84 @@ fi
 
 }
 
+# JTSDK ALIAS COMMANDS ---------------------------------------------------------
+jtsdk_alias_commands() {
+
+if [[ ! -f $DOCS/.jtsdk_aliases ]]; then touch "$DOCS/.jtsdk_aliases" ; fi
+
+(
+cat <<'EOF_JTSDK_ALIAS'
+# JTSDK EXAMPLE ALIAS COMMANDS
+# ============================
+
+# The following alias commands (shorcuts) can be sourced, then used to provide
+# shortcuts to build various application targets. This file is only generated
+# one time, so you are safe to update it as you see fit.
+
+# To have the commands available when you open a terminal, add the following
+# lines to your ~/.bashrc file. Be sure to remove the "#" sign for all
+# three lines.
+
+# Alias Command For JTSDK BUild Scripts
+# if [[ -f ~/jtsdk/docs/.jtsdk_aliases ]] ; then
+#	source ~/jtsdk/docs/.jtsdk_aliases
+# fi
+
+# If you want to use the commands without editing the .bashrc file, 
+# source the command after opening the terminal with:
+
+# source ~/jtsdk/docs/.jtsdk_aliases
+
+
+# WSJT-X EXAMPLE COMMANDS
+# ========================
+
+# There are virtually thousands of possible combinations that can be used.
+# The following is but a small sample of what is possible.
+
+# EXMAPLE-1
+# WSJT-X Devel Branch, auto update from SVN = YES
+# Run Command: wsjtx-build
+alias wsjtx-build='yes |jtsdk-wsjtx dev wsjtx Release'
+
+
+# EXAMPLE-2
+# WSJT-X Devel User Guide, auto update from SVN = NO
+# Run command: wsjtx-docs
+alias wsjtx-docs='yes n |jtsdk-wsjtx dev wsjtx docs'
+
+
+# EXAMPLE-3
+# WSJT-X Development Manpages, auto update from SVN = NO
+# Run Command: wsjtx-manpages
+alias wsjtx-manpages='yes n |jtsdk-wsjtx dev wsjtx manpages'
+
+
+# EXAMPLE-4
+# WSJT-X User Specified Target, auto update from SVN == NO
+#
+# With this command, the user must specify the target, if not, the jtsdk-wsjtx
+# will assume you want the "Release" target and build the full package
+# 
+# Some legal targets to consider:
+# jt65 jt65code jt65sim jt9 jt9code jt9sim jt4 jt4code jt4sim wsprd wsprd
+#
+# The run command becomes: wsjtx-custom $1
+# Where $1 = the target you specify
+# Example: wsjtx-custom jt65sim
+alias wsjtx-custom="yes n |jtsdk-wsjtx dev wsjtx $1"
+
+
+# EXAMPLE-5
+# This example will list what alias commands you have set and are available
+alias jtsdk-alias="grep "^alias" ~/jtsdk/docs/.jtsdk_aliases"
+
+
+EOF_JTSDK_ALIAS
+) > "$DOCS"/.jtsdk_aliases
+
+}
+
 
 # MAIN MENU HELP ---------------------------------------------------------------
 main_menu_help() {
@@ -560,7 +639,6 @@ wsjtx_dev_menu() {
 			4 "Package" \
 			B "Back-To-Main-Menu"
 			)
-
 
 			TARGET=$(
 			dialog --ok-label SELECT \
@@ -777,6 +855,10 @@ HELP="$MENU"/main_menu_help.txt
 
 # generate SB Dev, SB GA and RC lists from Sourceforge
 generate_build_lists
+
+# generate example aliases file $DOCS/.jtsdk_aliases
+jtsdk_alias_commands
+
 
 # DRAW MAIN MENU ---------------------------------------------------------------
 clear ||:
