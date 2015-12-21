@@ -91,7 +91,7 @@ EXITWSDTMSG="\n      Performing Shutdown Cleanup Routine"
 MMTITLE=" @PROGRAM@ MAIN MENU"
 MENUMSG="     Arrow Up/Down, then [ Enter] to Select"
 
-# applicaiton menu title's
+# application menu title's
 WSJTXTITLE=" WSJT-X BUILD MENU"
 
 # help menu lang
@@ -131,7 +131,7 @@ mkdir -p $HOMEDIR/{src,tmp,logs,config}
 set_options() {
 
 set -e                 # exit immediately on any error
-set -o pipefail        # pipeline fail retun exit status
+set -o pipefail        # pipeline fail return exit status
 set -u                 # undefined variables
 
 }
@@ -288,8 +288,8 @@ exit
 
 # CLEAN TMP FOLDER -------------------------------------------------------------
 clean_tmp() {
-# used to ~/jtsdk/tmp flder safely
 
+	# used to clean ~/jtsdk/tmp folder safely
 	rm -rf  "${TMPD:?}/"*
 
 }
@@ -728,44 +728,6 @@ superbuild_menu() {
 
 	esac
 
-}
-
-# GA and RELEASE CANDIDATES ----------------------------------------------------
-maintainer_menu() {
-
-# The maintainer selections are only from the GA and RC lists, e.g. ^/tags
-
-	# remove previous selections each time the function is called
-	unset branch
-	unset target
-	clean_tmp
-	
-	# generate GA and RC list from ga_rc_lists.txt
-	maint_array=()
-	while read -r a b ; do
-		maint_array+=("$a" "$b")
-	done < $CFG/maint_list.txt
-
-	# select which ^/tags branch to build
-	dialog 	--ok-label "Select" \
-	--no-cancel \
-	--backtitle "$BACKTITLE" \
-	--title "  WSJT-X MAINTAINER SELECTION" \
-	--menu "$MENUMSG" 0 55 0 "${maint_array[@]}" 2> "$TMPD"/maint_select.txt
-	branch=$(head -1 < "$TMPD"/maint_select.txt)
-
-	# send command to the build script
-	case $branch in
-		Back*) # do nothing, back to main menu
-			clean_tmp
-			return 0
-		;;
-
-		*) # build the release target
-			jtsdk-wsjtx-sb garc "$branch" maintainer
-		;;
-
-	esac
 }
 
 
