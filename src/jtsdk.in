@@ -53,6 +53,7 @@ C_NC='\033[01;37m'		# no color
 
 # unicode bling bling :-)
 CHK=${C_G}✔${C_NC}
+FAILED=' ✘ '
 
 ################################################################################
 #
@@ -365,10 +366,8 @@ generate_build_lists() {
 # check that each menu is present, if not, regenerate it
 if [[ ! -f $CFG/time-stamp ]] || [[ ! -f $CFG/dev_list.txt ]] || \
 [[ ! -f $CFG/ga_rc_list.txt ]] || [[ ! -f $CFG/sb_dev_list.txt ]] || \
-[[ ! -f $CFG/sb_ga_rc_list.txt ]] || [[ ! -f $CFG/maint_list.txt ]] || \
-[[ $(find $CFG/time-stamp -mmin +$GENTIME) != "" ]]
+[[ ! -f $CFG/sb_ga_rc_list.txt ]] || [[ $(find $CFG/time-stamp -mmin +$GENTIME) != "" ]]
 then
-
 	# these branches are not supported by the Superbuild script
 	dev_exclude_array=('wsjtx-1.3' 'wsjtx-1.4' 'wsjtx_k1jt_p1' 'wsjtx-superbuild' 'wsjtx_w')
 
@@ -390,10 +389,40 @@ then
 	echo ' must not be blank, and should be stated in minutes.'
 	echo ''
 	echo ' Please be patient while the update runs, this can'
-	echo ' take a few seconds depending on your internet speed'
+	echo ' take a few seconds depending on your Internet speed'
 	echo ' and access to Sourceforge'
 	echo ''
-	echo ' Contacting SourceForge'
+	# test Internet connection first
+	wget -q --tries=5 --timeout=10 -O - http://google.com > /dev/null 2>&1
+	if [[ $? -eq 0 ]]; then
+		echo -e " * Internet Connection - $CHK"
+	else
+		echo -e " * Internet Connection - $FAILED"
+		echo ''
+		echo ' You must have access to the Internet to update'
+		echo ' the WSJT-X menus. The script will continue, but'
+		echo ' you *will not* be able to update from Sourceforge'
+		echo ''
+		echo ' If you have not had a successful JTSDK update at least'
+		echo ' one time before, you may not have menu entries available'
+		echo ' for WSJT-X builds'
+		echo ''
+		read -rp "Press [ Enter ] to continue ..."
+	fi
+
+	# test access to Sourceforge WSJT SVN repository
+	svn list http://svn.code.sf.net/p/wsjt/wsjt > /dev/null 2>&1
+	if [[ $? -eq 0 ]]; then
+		echo -e " * Sourceforge Access - $CHK"
+	else
+		echo -e " * Sourceforge Access - $FAILED"
+		echo ''
+		echo ' You must have access to SF SVN repositories to update'
+		echo ' the WSJT-X menus. The script will continue, but'
+		echo ' you *will not* be able to perform updates'
+		echo ''
+		read -rp "Press [ Enter ] to continue ..."
+	fi
 
 # Generate Dev ists ------------------------------------------------------------
 	if [[ ! -f $CFG/dev_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
@@ -425,17 +454,6 @@ then
 	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/ga_rc_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/ga_rc_list.txt
 	cp -u "$TMPD"/ga_rc_list.txt $CFG
-
-# Generate Maintainer List -----------------------------------------------------
-	if [[ ! -f $CFG/maint_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
-		UTYPE='Generating'
-	else 
-		UTYPE='Updating'
-	fi
-	echo -e " * $UTYPE Maintainer List - $CHK"
-	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/maint_list.txt
-	echo "Back-To-Main-Menu" >> "$TMPD"/maint_list.txt
-	cp -u "$TMPD"/maint_list.txt $CFG
 
 # Generate Superbuild Dev List -------------------------------------------------
 	if [[ ! -f $CFG/sb_dev_list.txt ]] || [[ ! -f $CFG/time-stamp ]] ; then
@@ -490,7 +508,6 @@ wsjtx_main_menu() {
 	"1" "Development Branches" \
 	"2" "GA and RC Candidates" \
 	"3" "Superbuilds" \
-	"4" "Maintainer" \
 	"H" "Help" \
 	"B" "Back-To-Main-Menu" 2> "$TMPD"/wsjtx_menu_select
 	WSJTX_SELECT=$(head -c 1 < $TMPD/wsjtx_menu_select)
@@ -551,7 +568,7 @@ wsjtx_dev_menu() {
 		;;
 
 		3) # build the user guide
-			jtsdk-wsjtx dev "$branch" doc
+			jtsdk-wsjtx dev "$branch" docs
 		;;
 
 		4) # build the distro package
@@ -826,9 +843,6 @@ case "$MAIN_SELECT" in
 			superbuild_menu
 			continue ;;
 
-		4) # Maintainer Build Options
-			maintainer_menu
-			continue ;;
 		Back*) # do nothing, back to main menu
 			clean_tmp
 			continue ;;

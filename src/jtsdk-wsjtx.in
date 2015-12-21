@@ -25,7 +25,7 @@ set -e
 # variables passed from JTSDK Main Script
 OPT1=$1		# dev or garc...: dev = ^/dev branches, garc = ^/tags branches
 OPT2=$2		# branch name ..: ^/branches/wsjtx etc etc
-OPT3=$3		# build type....: Release, Debug, Package or Doc
+OPT3=$3		# build type ...: Release, Debug, Package, Docs, or User-Defined $VAR
 
 # set home and directory paths
 HOMEDIR=~/jtsdk
@@ -57,27 +57,64 @@ case $OPT1 in
 		OPTION=$OPT3
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/$OPT2"
 	;;
+
 	garc)
 		APP_SRC="$SRCD/$OPT2"
 		APP_NAME="$OPT2"
 		OPTION=$OPT3
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/tags/$OPT2"
 	;;
+	
+	*)
+		clear ||:
+		echo "-------------------------------------------"
+		echo -e ${C_R} "CONFIGURATION ERROR [ $OPT1 ]"${C_NC}
+		echo "-------------------------------------------"
+		echo ''
+		echo ' COMMAND LINE USAGE'
+		echo ''
+		echo ' jtsdk-wsjtx [ $1 ] [ $2 ] [ $3 ]'
+		echo ''
+		echo ' [ $1 ] only accepts one of two arguments:'
+		echo ''
+		echo ' dev ...: designates devel branches ^/branches'
+		echo ' garc ..: designates GA and RC branches ^/tags'
+		echo ''
+		echo ' Please correct the entry, then reissue the command.'
+		echo ''
+		exit 1
+	;;
 esac
 
+# minimal arg validation
 case $OPT3 in
-	Debug)
-		DESC="Debug" ;;
-	
 	Release)
-		DESC="Release" ;;
-		
+		DESC="Release"
+	;;
+	
+	Debug)
+		DESC="Debug"
+	;;
+	
 	package)
-		DESC="Package" ;;
+		DESC="Package"
+	;;
 
-	doc)
-		OPTION="Release"
+	docs)
 		DESC="User Guide"
+	;;
+
+	*) # if $3 is NULL, set Release as default
+		if [[ -z $OPT3 ]] ; then
+			OPT3="Release"
+			DESC="Release"
+		else
+			# this has the potential to cause build failures if the target is
+			# not valid.
+			OPTION="Release"
+			DESC="$OPT3"
+		fi
+	;;
 esac
 
 
@@ -126,6 +163,19 @@ case $OPT3 in
 		echo ' * Checkout or Update WSJT-X from SVN'
 		echo ' * Configure the build'
 		echo ' * Generate the HTML document' 
+	;;
+	
+	*)
+		echo "-------------------------------------------"
+		echo -e ${C_R} "USER DEFINED TARGET [ $OPT3 ]"${C_NC}
+		echo "-------------------------------------------"
+		echo ''
+		echo ' This selection will perform the following:'
+		echo ''
+		echo ' * Checkout or Update WSJT-X from SVN'
+		echo ' * Configure the build'
+		echo " * Run the build for a single target: $OPT3"
+		echo ' * It will *NOT* install the custom target'
 	;;
 esac
 
@@ -360,6 +410,11 @@ case "$OPT3" in
 		cmake --build . --target docs  >/dev/null 2>&1
 		echo " Finnished building ..."
 	 ;;
+
+	*) # used for custom target building
+	cmake --build . --target $OPT3 -- -j "$JJ"
+	;;
+
 esac
 
 }
@@ -439,16 +494,15 @@ esac
 
 }
 
-
 # finish message ---------------------------------------------------------------
 finish_message() {
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_G}" BUILD SUMMARY [ WSJT-X $AVER ]"${C_NC}
+echo -e ${C_G}" BUILD SUMMARY [ WSJT-X $AVER $OPT3 ]"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 case "$OPT3" in
-	Release*|Debug* )
+	Release*|Debug)
 		echo " Version ..: $AVER r$SVN_VER $BTYPE"
 		echo " SVN URL ..: $URL"
 		echo " Source ...: $APP_SRC"
@@ -466,7 +520,7 @@ case "$OPT3" in
 		echo ''
 	;;
 
-	package* )
+	package)
 		PKG_NAME=$(ls -m1 $PKGD)
 		echo " Version ...: $AVER r$SVN_VER $BTYPE"
 		echo " Name ......: $PKG_NAME"
@@ -477,10 +531,16 @@ case "$OPT3" in
 		echo ''
 	;;
 
-	doc*)
+	docs)
 		echo " Version ...: $AVER r$SVN_VER $BTYPE"
 		echo " Name ......: $FILENAME"
 		echo " Location ..: $INSTALLD/share/doc/wsjtx"
+		echo ''
+	;;
+
+	*)
+		echo " Target ..: $OPT3"
+		echo " Build ...: $BUILDD"
 		echo ''
 	;;
 esac
@@ -502,14 +562,22 @@ ug_array=('build_message' 'check_svn' 'get_app_version' 'get_svn_revision' \
 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' 'run_install_build' \
 'finish_message')
 
+ud_target=('build_message' 'check_svn' 'get_app_version' \
+'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
+'finish_message')
 
 case $OPT3 in
 	Release|Debug|package)
-		for i in "${!build_array[@]}" ; do ${build_array[$i]} ; done					
+		for i in "${!build_array[@]}" ; do ${build_array[$i]} ; done
 	;;
+
 	doc)
-		for i in "${!ug_array[@]}" ; do ${ug_array[$i]} ; done					
+		for i in "${!ug_array[@]}" ; do ${ug_array[$i]} ; done
 	;;
+	*)
+		for i in "${!ud_target[@]}" ; do ${ud_target[$i]} ; done
+	;;
+
 esac
 
 echo ''		

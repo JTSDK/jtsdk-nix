@@ -351,15 +351,15 @@ echo "-------------------------------------------"
 echo -e ${C_G} "SUPERBUILD SUMMARY"${C_NC}
 echo "-------------------------------------------"
 echo ''
-echo " Branch ....: ^/$TYPE/$OPT2"
-echo " Package ...: $OPT2-$SVN_VER.orig.tar.gz"
-echo " SVN URL ...: $CHECK_URL"
-echo " Build .....: $BASED/tmp/build"
-echo " Install ...: $INSTALLD"
+echo " Branch ...: ^/$TYPE/$OPT2"
+echo " Package ..: $OPT2-$SVN_VER.orig.tar.gz"
+echo " SVN URL ..: $CHECK_URL"
+echo " Build ....: $BASED/tmp/build"
+echo " Install ..: $INSTALLD"
 echo ''
 echo " TO RUN [ $OPT2 r$SVN_VER ]"
-echo " cd ........: $INSTALLD/bin"
-echo " Type, .....: ./wsjtx"
+echo " cd .......: $INSTALLD/bin"
+echo " Type, ....: ./wsjtx"
 
 }
 
