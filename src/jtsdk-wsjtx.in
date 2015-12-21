@@ -1,17 +1,18 @@
 #! /usr/bin/env bash
 #
-# Name			: jtsdk-wsjtx.sh
-# Execution		: As normal user type: jtsdk-wsjtx.sh
-# Copyright		: @COPYRIGHT@
-# Contributors	: @AUTHORS@
-# Comment		: Part of the JTSDK Linux Project
+# Name ..........: jtsdk-wsjtx
+# Execution .....: Called from JTSDK Main Script
+# Copyright .....: @COPYRIGHT@
+# License .......: @LICENSE@
+# Contributors ..: @AUTHORS@
+# Comment .......: Part of the JTSDK Linux Project
 #
-# @PROGRAM@ is free software: you can redistribute it and/or modify
+# jtsdk-wsjtx is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation either version 3 of the License, or
 # (at your option) any later version. 
 #
-# @PROGRAM@ is distributed in the hope that it will be useful,
+# jtsdk-wsjtx is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -183,6 +184,7 @@ esac
 
 # simple hamlib test -----------------------------------------------------------
 hamlib_test() {
+echo ''
 echo '-------------------------------------------'
 echo -e ${C_Y}' Testing Hamlib3'${C_NC}
 echo '-------------------------------------------'
@@ -198,7 +200,7 @@ if [[ -f $HL3I/bin/rigctl ]] ; then
 		echo ' Expected Result ..: 145000000'
 		echo " Returned Result ..: $TEST"
 	else
-		echo "Rig Controll Test .. FAILED"
+		echo "Rig Control Test .. FAILED"
 		echo
 		echo "If you have not built hamlib3 yet:"
 		echo ''
@@ -302,7 +304,7 @@ REL=$(cat $VER_FILE |grep '_RELEASE' |awk '{print $3}' |cut -c1)
 if [[ $REL == "1" ]] ; then AVER="$MA.$MI.$PA" ; fi
 if [[ $RC != "0" ]] && [[ $REL == "1" ]] ; then AVER="$MA.$MI.$PA" ; fi
 
-# R Release Candidate
+# Release Candidate
 if [[ $RC == "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA" ; fi
 if [[ $RC != "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA-rc$RC" ; fi
 
@@ -315,7 +317,7 @@ case $REL in
 				BTYPE="Development"
 			;;
 			*)
-				BTYPE="Release Candicate"
+				BTYPE="Release Candidate"
 			;;
 		esac
 	;;
@@ -498,7 +500,7 @@ esac
 finish_message() {
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_G}" BUILD SUMMARY [ WSJT-X $AVER $OPT3 ]"${C_NC}
+echo -e ${C_G}" BUILD SUMMARY [ WSJT-X $AVER $BTYPE ]"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 case "$OPT3" in
@@ -562,6 +564,7 @@ ug_array=('build_message' 'check_svn' 'get_app_version' 'get_svn_revision' \
 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' 'run_install_build' \
 'finish_message')
 
+# user defined target
 ud_target=('build_message' 'check_svn' 'get_app_version' \
 'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
 'finish_message')
@@ -574,7 +577,8 @@ case $OPT3 in
 	docs)
 		for i in "${!ug_array[@]}" ; do ${ug_array[$i]} ; done
 	;;
-	*)
+
+	*) # user defined targets
 		for i in "${!ud_target[@]}" ; do ${ud_target[$i]} ; done
 	;;
 

@@ -500,83 +500,99 @@ fi
 
 # WSJT-X MAIN MENU -------------------------------------------------------------
 wsjtx_main_menu() {
+	
+	# remove previous selections each time the function is called
+	unset MM_WSJTX
+	unset WSJTX_SELECT
+	
+	MM_WSJTX=(
+	1 "Development Branches" \
+	2 "GA and RC Candidates" \
+	3 "Superbuilds" \
+	H "Help" \
+	B "Back-To-Main-Menu"
+	)
+	
+	WSJTX_SELECT=$(
 	dialog --ok-label SELECT \
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
 	--title "$WSJTXTITLE" \
 	--menu "$MENUMSG" 0 50 0 \
-	"1" "Development Branches" \
-	"2" "GA and RC Candidates" \
-	"3" "Superbuilds" \
-	"H" "Help" \
-	"B" "Back-To-Main-Menu" 2> "$TMPD"/wsjtx_menu_select
-	WSJTX_SELECT=$(head -c 1 < $TMPD/wsjtx_menu_select)
+	"${MM_WSJTX[@]}" 2>&1 > /dev/tty
+	)
+
 }
 
 # WSJT-X DEVELOPMENT MENU ------------------------------------------------------
 wsjtx_dev_menu() {
 
 	# remove previous selections each time the function is called
-	unset branch
-	unset target
-	clean_tmp
+	unset BRANCH
+	unset TARGET
+	unset TARGET_MENU
+	unset dev_array
 	
-	# generate the list of development branches to select from
+	# generate dev_list array
 	dev_array=()
-	while read -r a b ; do
-		dev_array+=("$a" "$b")
-	done < $CFG/dev_list.txt
+	while read -r a b ; do dev_array+=("$a" "$b") ; done < $CFG/dev_list.txt
 
-	# select which ^/branches branch to build
+	# select which ^/branches/$BRANCH to build
+	BRANCH=$(
 	dialog 	--ok-label "Select" \
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
 	--title "  WSJT-X DEVELOPMENT SELECTION" \
-	--menu "$MENUMSG" 0 55 0 "${dev_array[@]}" 2> "$TMPD"/dev_select.txt
-	branch=$(head -1 < $TMPD/dev_select.txt)
+	--menu "$MENUMSG" 0 55 0 \
+	"${dev_array[@]}" 2>&1 > /dev/tty
+	)
 
-	case "$branch" in
-		Back*) # do nothing, back to main menu
-			clean_tmp
+	case "$BRANCH" in
+		Back-To-Main-Menu)
 			return 0
 		;;
 		
-		*)
-			# select what target to build
+		*) # select what target to build
+			TARGET_MENU=(
+			1 "Release Target" \
+			2 "Debug Target" \
+			3 "User Guide" \
+			4 "Package" \
+			B "Back-To-Main-Menu"
+			)
+
+
+			TARGET=$(
 			dialog --ok-label SELECT \
 			--no-cancel \
 			--backtitle "$BACKTITLE" \
 			--title "$WSJTXTITLE" \
 			--menu "$MENUMSG" 0 50 0 \
-			"1" "Release Target" \
-			"2" "Debug Target" \
-			"3" "User Guide" \
-			"4" "Package" \
-			"B" "Back-To-Main-Menu" 2> "$TMPD"/wsjtx_dev_target_select
-			target=$(head -c 1 < $TMPD/wsjtx_dev_target_select)
+			"${TARGET_MENU[@]}" 2>&1 > /dev/tty
+			)
+
 		;;
 	esac
 	
-	# now send the build command to jtsdk-wsjtx build script
-	case $target in
-		1) # build the release target
-			jtsdk-wsjtx dev "$branch" Release
+	# send the build command to jtsdk-wsjtx script
+	case $TARGET in
+		1)
+			jtsdk-wsjtx dev "$BRANCH" Release
 		;;
 
-		2) # build the debug target
-			jtsdk-wsjtx dev "$branch" Debug
+		2)
+			jtsdk-wsjtx dev "$BRANCH" Debug
 		;;
 
-		3) # build the user guide
-			jtsdk-wsjtx dev "$branch" docs
+		3)
+			jtsdk-wsjtx dev "$BRANCH" docs
 		;;
 
-		4) # build the distro package
-			jtsdk-wsjtx dev "$branch" package
+		4)
+			jtsdk-wsjtx dev "$BRANCH" package
 		;;
 			
-		Back*) # do nothing, back to main menu
-			clean_tmp
+		Back-To-Main-Menu)
 			return 0
 		;;
 	esac
@@ -586,57 +602,56 @@ wsjtx_dev_menu() {
 wsjtx_ga_rc_menu() {
 
 	# remove previous selections each time the function is called
-	unset branch
-	unset target
-	clean_tmp
-
-	# generate GA and RC list from ga_rc_lists.txt
+	unset BRANCH
+	unset TARGET
+	unset TARGET_MENU
+	unset ga_rc_array
+	
+	# generate GA and RC list array
 	ga_rc_array=()
-	while read -r a b ; do
-		ga_rc_array+=("$a" "$b")
-	done < $CFG/ga_rc_list.txt
+	while read -r a b ; do ga_rc_array+=("$a" "$b") ; done < $CFG/ga_rc_list.txt
 
-	# select which ^/tags branch to build
+	# select which ^/tags/$BRANCH to build
+	BRANCH=$(
 	dialog 	--ok-label "Select" \
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
 	--title "  WSJT-X GA and RC SELECTION" \
-	--menu "$MENUMSG" 0 55 0 "${ga_rc_array[@]}" 2> "$TMPD"/ga_rc_list.txt
-	branch=$(head -1 < "$TMPD"/ga_rc_list.txt)
+	--menu "$MENUMSG" 0 55 0 \
+	"${ga_rc_array[@]}"  2>&1 > /dev/tty
+	)
 
-	case "$branch" in
-		Back*) # do nothing, back to main menu
-			clean_tmp
+	# select the target to build
+	case "$BRANCH" in
+		Back-To-Main-Menu)
 			return 0
 		;;
 		
 		*)
-			# select what target to build
+			TARGET_MENU=(1 "Release Target" 2 "Package" B "Back-To-Main-Menu")
+			TARGET=$(
 			dialog --ok-label SELECT \
 			--no-cancel \
 			--backtitle "$BACKTITLE" \
 			--title "$WSJTXTITLE" \
 			--menu "$MENUMSG" 0 50 0 \
-			"1" "Release Target" \
-			"2" "Package" \
-			"B" "Back-To-Main-Menu" 2> "$TMPD"/wsjtx_ga_rc_target_select.txt
-			target=$(head -c 1 < "$TMPD"/wsjtx_ga_rc_target_select.txt)
+			"${TARGET_MENU[@]}" 2>&1 > /dev/tty
+			)
 		;;
 	esac
 
-	# if not back to main menu, send command to the build script
-	case $target in
-		Back*) # do nothing, back to main menu
-			clean_tmp
+	# send command to the build script
+	case $TARGET in
+		Back-To-Main-Menu)
 			return 0
 		;;
 		
-		1) # build the release target
-			jtsdk-wsjtx garc "$branch" Release
+		1)
+			jtsdk-wsjtx garc "$BRANCH" Release
 		;;
 
-		2) # build the debug target
-			jtsdk-wsjtx garc "$branch" package
+		2)
+			jtsdk-wsjtx garc "$BRANCH" package
 		;;
 	esac
 
@@ -646,81 +661,83 @@ wsjtx_ga_rc_menu() {
 superbuild_menu() {
 
 	# remove previous selections each time the function is called
-	unset branch
-	unset target
-	clean_tmp
+	unset BRANCH
+	unset TARGET
+	unset SB_MENU
+	unset SB_MEN_SELECT
+	unset sb_dev_array
+	unset sb_ga_rc_array
 
-	# Superbuild Dev List Array
+	# Dev List Array
 	sb_dev_array=()
-	while read -r a b ; do
-	    sb_dev_array+=("$a" "$b")
-	done < $CFG/sb_dev_list.txt
+	while read -r a b ; do sb_dev_array+=("$a" "$b") ; done < $CFG/sb_dev_list.txt
 
-	# Superbuild GA and RC List Array
+	# GA and RC List Array
 	sb_ga_rc_array=()
-	while read -r a b ; do
-	    sb_ga_rc_array+=("$a" "$b")
-	done < $CFG/sb_ga_rc_list.txt
+	while read -r a b ; do sb_ga_rc_array+=("$a" "$b") ; done < $CFG/sb_ga_rc_list.txt
 
-	# display the superbuild main menu
+	# display the menu
+	SB_MENU=(1 "Development Branches" 2 "GA and RC Candidates" B "Back-To-Main-Menu")
+	
+	SB_MENU_SELECT=$(
 	dialog --ok-label SELECT \
 	--no-cancel \
 	--backtitle "$BACKTITLE" \
 	--title "$SBTITLE" \
 	--menu "$MENUMSG" 0 50 0 \
-	"1" "Development Branches" \
-	"2" "GA and RC Candidates" \
-	"B" "Back-To-Main-Menu" 2> "$TMPD"/sb_menu_select.txt
-	SB_MENU_SELECT=$(head -c 1 < "$TMPD"/sb_menu_select.txt)
-
+	"${SB_MENU[@]}" 2>&1 > /dev/tty
+	)
+	
 	# setup for either Dev, RC and GA-Release Branches
 	case $SB_MENU_SELECT in
-		Back*) # do nothing, back to main menu
-			clean_tmp
+		Back-To-Main-Menu)
 			return 0
 		;;
 
 		1) # Development Branch Selection
 			SBTITLE="  WSJT-X SUPERBUILD DEV"
 			
+			BRANCH=$(
 			dialog 	--ok-label "Select" \
 			--no-cancel \
 			--backtitle "$BACKTITLE" \
 			--title "$SBTITLE" \
-			--menu "$MENUMSG" 0 55 0 "${sb_dev_array[@]}" 2> "$TMPD"/sb_select.txt
-			branch=$(head -1 < "$TMPD"/sb_select.txt)
-			
+			--menu "$MENUMSG" 0 55 0 \
+			"${sb_dev_array[@]}"  2>&1 > /dev/tty
+			)
+
 			# send command to the build sctipt
-			case "$branch" in 
-				B*) # do noting, back to main menu
-					clean_tmp
+			case "$BRANCH" in 
+				Back-To-Main-Menu)
 					return 0
 				;;
 				
 				*) 
-					jtsdk-wsjtx-sb dev "$branch" build
+					jtsdk-wsjtx-sb dev "$BRANCH" build
 				;;
 			esac
 		;;
 
-		2) # GA and RC Candidates
+		2) # GA and RC Candidates Selection
 			SBTITLE="  WSJT-X SUPERBUILD GA and RC"
+
+			BRANCH=$(
 			dialog 	--ok-label "Select" \
 			--no-cancel \
 			--backtitle "$BACKTITLE" \
 			--title "$SBTITLE" \
-			--menu "$MENUMSG" 0 55 0 "${sb_ga_rc_array[@]}" 2> "$TMPD"/sb_select.txt
-			branch=$(head -1 < $TMPD/sb_select.txt)
-
+			--menu "$MENUMSG" 0 55 0 \
+			"${sb_ga_rc_array[@]}" 2>&1 > /dev/tty
+			)
+			
 			# send command to the build script
-			case "$branch" in 
-				Back*) # do nothing, back to main menu
-					clean_tmp
+			case "$BRANCH" in 
+				Back-To-Main-Menu)
 					return 0
 				;;
 				
 				*)
-					jtsdk-wsjtx-sb garc "$branch" build
+					jtsdk-wsjtx-sb garc "$BRANCH" build
 				;;
 			esac
 		
@@ -765,50 +782,53 @@ generate_build_lists
 clear ||:
 while [ 0 ]; do
 
+MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" H "Help" E "Exit")
+
+MM_SELECT=$(
 dialog --ok-label SELECT \
 --nocancel \
 --backtitle "$BACKTITLE" \
 --title "$MMTITLE" \
 --menu "$MENUMSG" 0 50 0 \
-"1" "WSJT" \
-"2" "WSPR" \
-"3" "WSJT-X" \
-"4" "HAMLIB-3" \
-"H" "Help" \
-"E" "Exit" 2> "$TMPD"/selection
-MAIN_SELECT=$(head -c 1 < $TMPD/selection)
+"${MM_OPTIONS[@]}" 2>&1 > /dev/tty
+)
 
-# run fuction based on the users selection
-case "$MAIN_SELECT" in
+# run function based on the users selection
+case "$MM_SELECT" in
 	1) # WSJT ------------------------------------------------------------------
 		jtsdk-wsjt
-		continue ;;
+		continue
+	;;
 
 	2) # WSPR ------------------------------------------------------------------
 		jtsdk-wspr
-		continue ;;
+		continue
+	;;
 	
 	3) # WSJT-X ----------------------------------------------------------------
 		wsjtx_main_menu
 
-	# present build options based on wsjtx_main_menu selection
-	case $WSJTX_SELECT in
-		1) # Development Branch Builds
-			wsjtx_dev_menu
-			continue ;;
+		# present build options based on wsjtx_main_menu selection
+		case $WSJTX_SELECT in
+			1) # Development Branch Builds
+				wsjtx_dev_menu
+				continue
+			;;
+		
+			2) # GA and Release Candidates Builds
+				wsjtx_ga_rc_menu
+				continue
+			;;
 	
-		2) # GA and Release Candidates Builds
-			wsjtx_ga_rc_menu
-			continue ;;
-
-		3) # Superbuild Menu
-			superbuild_menu
-			continue ;;
-
-		Back*) # do nothing, back to main menu
-			clean_tmp
-			continue ;;
-	esac
+			3) # Superbuild Menu
+				superbuild_menu
+				continue
+			;;
+	
+			Back-To-Main-Menu)
+				continue
+			;;
+		esac
 	;;
 		
 	4) # HAMLIB-3 --------------------------------------------------------------
