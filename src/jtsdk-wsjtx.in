@@ -153,7 +153,7 @@ case $OPT3 in
 		echo ' * Generate a package suitable for installation'		
 	;;
 
-	doc)
+	docs)
 		echo "-------------------------------------------"
 		echo -e ${C_G} "WSJT-X USER GUIDE for [ $OPT2 ]"${C_NC}
 		echo "-------------------------------------------"
@@ -406,7 +406,7 @@ case "$OPT3" in
 	cmake --build . --target package -- -j "$JJ"
 	cp -u "$BUILDD"/wsjtx*.deb "$PKGD"/ ;;
 
-	doc)
+	docs)
 		cmake --build . --target docs  >/dev/null 2>&1
 		echo " Finnished building ..."
 	 ;;
@@ -439,7 +439,7 @@ case "$OPT3" in
 		echo " Copied package to ..: $PKGD"
 	;;
 
-	doc)
+	docs)
 		cd $BUILDD/doc
 		make install >/dev/null 2>&1
 		FILENAME=$(ls -al $INSTALLD/share/doc/wsjtx |grep 'html' |awk '{print $9}')
@@ -571,7 +571,7 @@ case $OPT3 in
 		for i in "${!build_array[@]}" ; do ${build_array[$i]} ; done
 	;;
 
-	doc)
+	docs)
 		for i in "${!ug_array[@]}" ; do ${ug_array[$i]} ; done
 	;;
 	*)
