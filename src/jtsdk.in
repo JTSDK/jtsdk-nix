@@ -430,6 +430,17 @@ alias wsjtx-custom="yes n |jtsdk-wsjtx -b dev -n wsjtx -c Release -t $1"
 # This example will list what alias commands you have set and are available
 alias jtsdk-alias="grep "^alias" ~/jtsdk/docs/.jtsdk_aliases"
 
+# WSJT-S Development Rellated
+# Uncomment ( remove # ) then re-source this file
+
+# SVN RELATED
+#alias ss='svn.exe status'
+#alias sv='svn status |grep "?"'
+#alias sa="svn status |grep "A"
+#alias sd="svn status |grep "D"
+#alias sm="svn status |grep "M"
+#alias slog='svn log -l1'
+#alias slogr="svn log -r$1"
 
 EOF_JTSDK_ALIAS
 ) > "$DOCS"/.jtsdk_aliases
@@ -874,6 +885,19 @@ generate_build_lists
 # generate example aliases file $DOCS/.jtsdk_aliases
 jtsdk_alias_commands
 
+options=':u'
+while getopts "$options" FLAG
+do
+	case $FLAG in
+		u)
+			rm -f "$CFG/time-stamp" > /dev/null 2>&1
+			generate_build_lists
+			echo ''
+			exit 0
+		;;
+	esac
+done
+shift "$((OPTIND-1))" # shift off the options
 
 # DRAW MAIN MENU ---------------------------------------------------------------
 clear ||:
