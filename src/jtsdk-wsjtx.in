@@ -85,15 +85,16 @@ cat <<EOF
 	-t	install package docs | user-defined
 
 EOF
+
+exit 0
+
 }
 
 # shortcut to cut down on repeated code ----------------------------------------
 readp_help_message() {
-
 	echo ''
 	read -rp "Press [ Enter ] to view the help message"
-	cli_help
-	
+	readp_help_message
 }
 
 # check the number of arguments are > [ 0 ]
@@ -110,31 +111,42 @@ fi
 # GETOPT FUNCTIONS
 ################################################################################
 
-
 # getopts branch validation ----------------------------------------------------
 getopts_branch_check() {
 
 # -b [ BRANCH ]
 
-if [[ $OPTARG = 'dev' ]] || [[ $OPTARG = 'gar' ]] ; then
-	case $OPTARG in
-		dev)
-			branch_status="0"			
-			BDESC='^/branches'
-			B_OPT="$OPTARG"
-		;;
-		gar)
-			branch_status="0"			
-			BDESC='^/tags'
-			B_OPT="$OPTARG"
+case $OPTARG in
+	dev)
+		branch_status="0"			
+		BDESC='^/branches'
+		B_OPT="$OPTARG"
+	;;
 
-		;;
-	esac
-else
-	echo ''
-	echo "Invalid option: -b $OPTARG" >&2
-	readp_help_message
-fi
+	gar)
+		branch_status="0"			
+		BDESC='^/tags'
+		B_OPT="$OPTARG"
+	;;
+
+	*)
+		clear ||:
+		echo "-------------------------------------------"
+		echo -e ${C_R} "COMMAND LINE ERROR"${C_NC}
+		echo "-------------------------------------------"
+		echo ''					
+		echo " Invalid Branch: [-n $OPTARG ]" >&2
+		echo ''
+		echo ' Available -d [ OPTIONS ] are:'
+		echo ''
+		echo ' -b dev  For Development Branches ^/branches'
+		echo ' -b gar  For GA and RC Branches ^/tags'
+		echo ''
+		echo ' Please correct the entry and try again.'
+		echo ''
+		exit 1
+	;;
+esac
 
 }
 
@@ -143,9 +155,17 @@ getopts_name_check() {
 
 # -n [ BRANCH NAME ]
 
-CLIST="$CFG/combined_list.txt"
 DEV_FILE="$CFG/dev_list.txt"
 GAR_FILE="$CFG/ga_rc_list.txt"
+
+case $B_OPT in
+	dev)
+		CLIST="$CFG/dev_list.txt"
+	;;
+	gar)
+		CLIST="$CFG/ga_rc_list.txt"
+	;;
+esac
 
 if (grep -Fx "$OPTARG" "$CLIST" > /dev/null) ; [[ "$?" = "0" ]]
 then
@@ -166,20 +186,19 @@ else
 			echo 'WSJT-X Development Branches'
 			echo '---------------------------'
 			cat "$DEV_FILE" |sort |uniq |sed '/Back-To-Main-Menu/d'
+			echo ''
+			exit 1
 		;;
-
 		gar)
 			echo 'Please use one of the following branch names'
 			echo ''
 			echo 'WSJT-X GA and RC Branches'
 			echo '-------------------------'
 			cat "$GAR_FILE" |sort |uniq |sed '/Back-To-Main-Menu/d'
+			echo ''
+			exit 1
 		;;
 	esac
-
-	readp_help_message
-	exit 1
-
 fi
 
 }
