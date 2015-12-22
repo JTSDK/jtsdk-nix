@@ -396,7 +396,7 @@ alias wsjtx-build='yes |jtsdk-wsjtx -b dev -n wsjtx -c Release -t install'
 # EXAMPLE-2
 # WSJT-X 1.6.0 GA Release Package, auto update from SVN = YES
 # Run command: wsjtx-docs
-alias wsjtx-docs='yes |jtsdk-wsjtx -b gar -n wsjtx-1.6.0 -c Release -t package'
+alias wsjtx-package='yes |jtsdk-wsjtx -b gar -n wsjtx-1.6.0 -c Release -t package'
 
 
 # EXAMPLE-3
