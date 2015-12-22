@@ -533,6 +533,7 @@ if [[ $RC != "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA-rc$RC" ; fi
 
 echo "-- Branch Version ..: $AVER"
 
+# this is used for on screen displays only
 case $REL in
 	0)
 		case $RC in
@@ -736,7 +737,7 @@ esac
 finish_message() {
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_G}" BUILD SUMMARY [ WSJT-X $AVER $BTYPE ]"${C_NC}
+echo -e ${C_G}" BUILD SUMMARY"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 case "$T_OPT" in
@@ -761,8 +762,8 @@ case "$T_OPT" in
 
 	package)
 		PKG_NAME=$(ls -m1 $PKGD)
-		echo " Version ...: $N_OPT $AVER r$SVN_VER"
 		echo " PKG Name ..: $PKG_NAME"
+		echo " Version ...: $N_OPT $AVER r$SVN_VER"
 		echo " SVN URL ...: $URL"
 		echo " Source ....: $APP_SRC"
 		echo " Build .....: $BUILDD"
@@ -771,15 +772,30 @@ case "$T_OPT" in
 	;;
 
 	docs)
-		echo " Name .....: $N_OPT $AVER r$SVN_VER"
+		echo ' At the time of the writing, the user-guide'
+		echo ' is installed the same as performing a normal'
+		echo ' build. Future updates to JTSDK-Nix may change'
+		echo ' this behavior, leaving the document in the'
+		echo ' build tree.' 	
+		echo ''
 		echo " Name ......: $FILENAME"
+		echo " Version....: $N_OPT $AVER r$SVN_VER"
 		echo " Location ..: $INSTALLD/share/doc/wsjtx"
 		echo ''
 	;;
 
-	*)
-		echo " Target ..: $T_OPT"
-		echo " Build ...: $BUILDD"
+	*) # user defined targets
+		echo ' User-Defined target builds remain in the'
+		echo ' build tree folder, they do not get installed.'
+		echo ''
+		echo ' Not all targets are available across all versions.'
+		echo ' If you get a build error stating the target is unknown,'
+		echo ' it may be due to the fact it did not exist in previous'
+		echo ' versions of WSJT-X or earlier SVN revisions.'
+		echo ''
+		echo " Target ....: $T_OPT"
+		echo " Version....: $N_OPT $AVER r$SVN_VER"
+		echo " Location ..: $BUILDD"
 		echo ''
 	;;
 esac
@@ -847,7 +863,7 @@ case "$T_OPT" in
 		for i in "${!ug_array[@]}" ; do ${ug_array[$i]} ; done
 	;;
 
-	*)  user defined targets
+	*) # user defined targets
 		for i in "${!ud_target[@]}" ; do ${ud_target[$i]} ; done
 	;;
 

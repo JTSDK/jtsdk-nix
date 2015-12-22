@@ -391,22 +391,27 @@ cat <<'EOF_JTSDK_ALIAS'
 # EXMAPLE-1
 # WSJT-X Devel Branch, auto update from SVN = YES
 # Run Command: wsjtx-build
-alias wsjtx-build='yes |jtsdk-wsjtx dev wsjtx Release'
-
+alias wsjtx-build='yes |jtsdk-wsjtx -b dev -n wsjtx -c Release -t install'
 
 # EXAMPLE-2
-# WSJT-X Devel User Guide, auto update from SVN = NO
+# WSJT-X 1.6.0 GA Release Package, auto update from SVN = YES
 # Run command: wsjtx-docs
-alias wsjtx-docs='yes n |jtsdk-wsjtx dev wsjtx docs'
+alias wsjtx-docs='yes |jtsdk-wsjtx -b gar -n wsjtx-1.6.0 -c Release -t package'
 
 
 # EXAMPLE-3
-# WSJT-X Development Manpages, auto update from SVN = NO
-# Run Command: wsjtx-manpages
-alias wsjtx-manpages='yes n |jtsdk-wsjtx dev wsjtx manpages'
+# WSJT-X Devel User Guide, auto update from SVN = NO
+# Run command: wsjtx-docs
+alias wsjtx-docs='yes n |jtsdk-wsjtx -b dev -n wsjtx -c Release -t docs'
 
 
 # EXAMPLE-4
+# WSJT-X Development Manpages, auto update from SVN = NO
+# Run Command: wsjtx-manpages
+alias wsjtx-manpages='yes n |jtsdk-wsjtx -b dev -n wsjtx -c Release -t manpages'
+
+
+# EXAMPLE-5
 # WSJT-X User Specified Target, auto update from SVN == NO
 #
 # With this command, the user must specify the target, if not, the jtsdk-wsjtx
@@ -418,10 +423,10 @@ alias wsjtx-manpages='yes n |jtsdk-wsjtx dev wsjtx manpages'
 # The run command becomes: wsjtx-custom $1
 # Where $1 = the target you specify
 # Example: wsjtx-custom jt65sim
-alias wsjtx-custom="yes n |jtsdk-wsjtx dev wsjtx $1"
+alias wsjtx-custom="yes n |jtsdk-wsjtx -b dev -n wsjtx -c Release -t $1"
 
 
-# EXAMPLE-5
+# EXAMPLE-6
 # This example will list what alias commands you have set and are available
 alias jtsdk-alias="grep "^alias" ~/jtsdk/docs/.jtsdk_aliases"
 
