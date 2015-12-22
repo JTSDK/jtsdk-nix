@@ -445,7 +445,8 @@ generate_build_lists() {
 # check that each menu is present, if not, regenerate it
 if [[ ! -f $CFG/time-stamp ]] || [[ ! -f $CFG/dev_list.txt ]] || \
 [[ ! -f $CFG/ga_rc_list.txt ]] || [[ ! -f $CFG/sb_dev_list.txt ]] || \
-[[ ! -f $CFG/sb_ga_rc_list.txt ]] || [[ $(find $CFG/time-stamp -mmin +$GENTIME) != "" ]]
+[[ ! -f $CFG/sb_ga_rc_list.txt ]] || [[ ! -f $CFG/combined_list.txt ]] || 
+[[ $(find $CFG/time-stamp -mmin +$GENTIME) != "" ]]
 then
 	# these branches are not supported by the Superbuild script
 	dev_exclude_array=('wsjtx-1.3' 'wsjtx-1.4' 'wsjtx_k1jt_p1' 'wsjtx-superbuild' 'wsjtx_w')
@@ -573,6 +574,15 @@ then
 	echo ''
 	read -rp "Press [ ENTER ] to start the JTSDK Main Menu ...."
 	
+# getopts combined list --------------------------------------------------------
+	if [[ -f $CFG/combined_list.txt ]] ; then 
+		rm -f $CFG/combined_list.txt
+	fi
+
+	# combine the lists
+	cat "$CFG/ga_rc_list.txt" "$CFG/dev_list.txt" \
+	|sort |uniq |sed '/Back-To-Main-Menu/d' > "$CFG/combined_list.txt"
+
 fi
 
 }
@@ -655,19 +665,19 @@ wsjtx_dev_menu() {
 	# send the build command to jtsdk-wsjtx script
 	case $TARGET in
 		1)
-			jtsdk-wsjtx dev "$BRANCH" Release
+			jtsdk-wsjtx -b dev -n "$BRANCH" -c Release -t install
 		;;
 
 		2)
-			jtsdk-wsjtx dev "$BRANCH" Debug
+			jtsdk-wsjtx -b dev -n "$BRANCH" -c Debug -t install
 		;;
 
 		3)
-			jtsdk-wsjtx dev "$BRANCH" docs
+			jtsdk-wsjtx -b dev -n "$BRANCH" -c Release -t docs
 		;;
 
 		4)
-			jtsdk-wsjtx dev "$BRANCH" package
+			jtsdk-wsjtx -b dev -n "$BRANCH" -c Release -t package
 		;;
 			
 		Back-To-Main-Menu)
@@ -725,11 +735,11 @@ wsjtx_ga_rc_menu() {
 		;;
 		
 		1)
-			jtsdk-wsjtx garc "$BRANCH" Release
+			jtsdk-wsjtx -b gar -n "$BRANCH" -c Release -t install
 		;;
 
 		2)
-			jtsdk-wsjtx garc "$BRANCH" package
+			jtsdk-wsjtx -b gar -n "$BRANCH" -c Release -t package
 		;;
 	esac
 

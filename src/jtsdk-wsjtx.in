@@ -23,10 +23,8 @@
 
 set -e
 
-# variables passed from JTSDK Main Script
-OPT1=$1		# dev or garc...: dev = ^/dev branches, garc = ^/tags branches
-OPT2=$2		# branch name ..: ^/branches/wsjtx etc etc
-OPT3=$3		# build type ...: Release, Debug, Package, Docs, or User-Defined $VAR
+# grab the number of command line arguments
+NARGS=$#
 
 # set home and directory paths
 HOMEDIR=~/jtsdk
@@ -50,133 +48,339 @@ C_Y='\033[01;33m'		# yellow
 C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
 
-# now set up the actual SVN URL based on OPT1 + OPT2
-case $OPT1 in
-	dev)
-		APP_SRC="$SRCD/$OPT2"
-		APP_NAME="$OPT2"
-		OPTION=$OPT3
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/$OPT2"
-	;;
+# unicode bling bling :-)
+CHK=${C_G}✔${C_NC}
+FAILED=${C_R}✘${C_NC}
 
-	garc)
-		APP_SRC="$SRCD/$OPT2"
-		APP_NAME="$OPT2"
-		OPTION=$OPT3
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/tags/$OPT2"
+# enable / disable select functions for debugging
+GDB="1"
+
+################################################################################
+# PROCESS COMMAND-LINE OPTIONS
+################################################################################
+
+# command line options help message --------------------------------------------
+cli_help() {
+
+clear ||:
+echo '----------------------'
+echo -e ${C_G}" COMMAND LINE OPTIONS"${C_NC}
+echo '----------------------'
+echo ''
+cat <<EOF
+ Usage .....: jtsdk-wsjtx [-h] [-b] [-n] [-c] [-t]  
+ Example....: jtsdk-wsjtx -b dev -n wsjtx -c release -t install
+
+ OPTIONS:
+	-h	displays this message
+
+	-b	( dev | gar )
+		dev = development branches ^/branches
+		gar = GA and RC branches ^/tags
+
+	-n	Branch Name: wsjtx, wsjtx-1.6, wsjtx-1.6.0-rc1, etc
+
+	-c	Cmake Build Type: ( release | debug )
+
+	-t	install package docs | user-defined
+
+EOF
+}
+
+# shortcut to cut down on repeated code ----------------------------------------
+readp_help_message() {
+
+	echo ''
+	read -rp "Press [ Enter ] to view the help message"
+	cli_help
+	
+}
+
+# check the number of arguments are > [ 0 ]
+# check must happen *after* declaring the cli_help function
+if (( "$NARGS" == "0" )) ; then
+	clear ||:
+	echo ''
+	echo "Invalid number of arguments: [ $NARGS ]"
+	readp_help_message
+fi
+
+
+################################################################################
+# GETOPT FUNCTIONS
+################################################################################
+
+
+# getopts branch validation ----------------------------------------------------
+getopts_branch_check() {
+
+# -b [ BRANCH ]
+
+if [[ $OPTARG = 'dev' ]] || [[ $OPTARG = 'gar' ]] ; then
+	case $OPTARG in
+		dev)
+			branch_status="0"			
+			BDESC='^/branches'
+			B_OPT="$OPTARG"
+		;;
+		gar)
+			branch_status="0"			
+			BDESC='^/tags'
+			B_OPT="$OPTARG"
+
+		;;
+	esac
+else
+	echo ''
+	echo "Invalid option: -b $OPTARG" >&2
+	readp_help_message
+fi
+
+}
+
+# getopts name validation ------------------------------------------------------
+getopts_name_check() {
+
+# -n [ BRANCH NAME ]
+
+CLIST="$CFG/combined_list.txt"
+DEV_FILE="$CFG/dev_list.txt"
+GAR_FILE="$CFG/ga_rc_list.txt"
+
+if (grep -Fx "$OPTARG" "$CLIST" > /dev/null) ; [[ "$?" = "0" ]]
+then
+	N_OPT="$OPTARG"
+	name_status="0"
+else
+	clear ||:
+	echo "-------------------------------------------"
+	echo -e ${C_R} "COMMAND LINE ERROR"${C_NC}
+	echo "-------------------------------------------"
+	echo ''
+	echo "Invalid Branch: [-n $OPTARG ]" >&2
+	echo ''
+	case "$B_OPT" in
+		dev)
+			echo 'Please use one of the following branch names'
+			echo ''
+			echo 'WSJT-X Development Branches'
+			echo '---------------------------'
+			cat "$DEV_FILE" |sort |uniq |sed '/Back-To-Main-Menu/d'
+		;;
+
+		gar)
+			echo 'Please use one of the following branch names'
+			echo ''
+			echo 'WSJT-X GA and RC Branches'
+			echo '-------------------------'
+			cat "$GAR_FILE" |sort |uniq |sed '/Back-To-Main-Menu/d'
+		;;
+	esac
+
+	readp_help_message
+	exit 1
+
+fi
+
+}
+
+
+# getopts config validation ----------------------------------------------------
+getopts_config_check() {
+
+# -c [ Debug | Release ]
+
+# process option
+case $OPTARG in
+	Release|release)
+		C_OPT="Release"
+		config_status="0"
+	;;
+	
+	Debug|debug)
+		C_OPT="Debug"
+		config_status="0"
+	;;
+	*) 
+	config_status="1"
+esac
+
+}
+
+# getopts target validation ----------------------------------------------------
+getopts_target_check() {
+
+# -t [ TARGET NAME ]
+
+# process option
+case $OPTARG in
+	install|package|docs)
+		T_OPT="$OPTARG"
+		target_status="0"
 	;;
 	
 	*)
-		clear ||:
-		echo "-------------------------------------------"
-		echo -e ${C_R} "CONFIGURATION ERROR [ $OPT1 ]"${C_NC}
-		echo "-------------------------------------------"
-		echo ''
-		echo ' COMMAND LINE USAGE'
-		echo ''
-		echo ' jtsdk-wsjtx [ $1 ] [ $2 ] [ $3 ]'
-		echo ''
-		echo ' [ $1 ] only accepts one of two arguments:'
-		echo ''
-		echo ' dev ...: designates devel branches ^/branches'
-		echo ' garc ..: designates GA and RC branches ^/tags'
-		echo ''
-		echo ' Please correct the entry, then reissue the command.'
-		echo ''
-		exit 1
+		T_OPT="$OPTARG"
+		target_status="0"
 	;;
+	*)
+	T_OPT="Unknown"
+	target_status="1"
 esac
 
-# minimal arg validation
-case $OPT3 in
-	Release)
-		DESC="Release"
-	;;
-	
-	Debug)
-		DESC="Debug"
-	;;
-	
-	package)
-		DESC="Package"
-	;;
+}
 
-	docs)
-		DESC="User Guide"
-	;;
 
-	*) # if $3 is NULL, set Release as default
-		if [[ -z $OPT3 ]] ; then
-			OPT3="Release"
-			DESC="Release"
-		else
-			# this has the potential to cause build failures if the target is
-			# not valid.
-			OPTION="Release"
-			DESC="$OPT3"
+# options status, used during debugging 
+getopts_options_status() {
+
+case $GDB in
+	1)
+		# check the status of each option
+		clear ||:
+		echo "-------------------------------------------"
+		echo -e ${C_G} "COMMAND LINE INPUT"${C_NC}
+		echo "-------------------------------------------"
+
+		# -b option
+		if [[ $branch_status = "1" ]] ; then
+			echo -e "$FAILED  -b Branch ..: $BDESC"
+			readp_help_message
+		else 
+			echo -e "$CHK  -b Branch ..: $BDESC"
+		fi
+
+		# -n option
+		if [[ $name_status = "1" ]] ; then
+			echo -e "$FAILED  -n Name ....: $N_OPT"
+			readp_help_message
+		else 
+			echo -e "$CHK  -n Name ....: $N_OPT"
+		fi
+
+		# -c option
+		if [[ $config_status = "1" ]] ; then
+			echo -e "$FAILED -c Type .....: $C_OPT"
+			readp_help_message
+		else 
+			echo -e "$CHK  -c Type ....: $C_OPT"
+		fi
+
+		# -t option
+		if [[ $target_status = "1" ]] ; then
+			echo -e "$FAILED -t Target ...: $T_OPT"
+			readp_help_message
+		else 
+			echo -e "$CHK  -t Target ..: $T_OPT"
+		fi
+		echo ''
+
+		# display the help somethign fails, 
+		if [[ $branch_status = "1" ]] || [[ $name_status = "1" ]] || \
+		[[ $config_status = "1" ]] || [[ $target_status = "1" ]]
+		then
+			readp_help_message
 		fi
 	;;
 esac
 
+}
+
+# configre variable based on user input ----------------------------------------
+configure_options() {
+
+# variables processed by the getopts functions
+# B_OPT	-b Branch ( dev | gar )
+# OPT2	-n Name, wsjtx, wsjtx-1.6.0 etc
+# OPT3  -c Cmake Build Type  ( debug | release )
+# OPT4	-t install package docs | user-defined
+
+# setup folders and urls
+case $B_OPT in
+	dev)
+		APP_SRC="$SRCD/$N_OPT"
+		APP_NAME="$N_OPT"
+		OPTION=$C_OPT
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/$N_OPT"
+	;;
+
+	gar)
+		APP_SRC="$SRCD/$N_OPT"
+		APP_NAME="$N_OPT"
+		OPTION=$C_OPT
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/tags/$N_OPT"
+	;;
+esac
+
+}
 
 ################################################################################
-# FUNCTIONS
+# MAIN SCRIPT FUNCTIONS
 ################################################################################
 
 # display build message --------------------------------------------------------
 build_message() {
 
 clear ||:
-case $OPT3 in
-	Release|Debug)	
+case $T_OPT in
+	install)	
 		echo "-------------------------------------------"
-		echo -e ${C_G} "WSJT-X BUILD for [ $OPT2 $DESC ]"${C_NC}
+		echo -e ${C_G} "WSJT-X [ INSTALL ] TARGET"${C_NC}
 		echo "-------------------------------------------"
 		echo ''
-		echo ' This selection will perform the following:'
+		echo ' The following build will be run:'
 		echo ''
-		echo ' * Checkout or Update WSJT-X from SVN'
-		echo " * Configure the $DESC Target"
-		echo ' * Compile the application'
-		echo " * Install $OPT2 $DESC to your home directory"
+		echo " * Branch ..: $BDESC"
+		echo " * Name ....: $N_OPT"
+		echo " * Type ....: $C_OPT"
+		echo " * Target ..: $T_OPT"
 		echo ''
 	;;
 
 	package)
 		echo "-------------------------------------------"
-		echo -e ${C_G} "WSJT-X PACKAGE for [ $OPT2 ]"${C_NC}
+		echo -e ${C_G} "WSJT-X [ PACKAGE ] TARGET"${C_NC}
 		echo "-------------------------------------------"
 		echo ''
-		echo ' This selection will perform the following:'
+		echo ' The following build will be run:'
 		echo ''
-		echo ' * Checkout or Update WSJT-X from SVN'
-		echo " * Configure and Build the $OPT2 Release Target"
-		echo ' * Generate a package suitable for installation'		
+		echo " * Branch ..: $BDESC"
+		echo " * Name ....: $N_OPT"
+		echo " * Type ....: $C_OPT"
+		echo " * Target ..: $T_OPT"
+		echo ''
 	;;
 
 	docs)
 		echo "-------------------------------------------"
-		echo -e ${C_G} "WSJT-X USER GUIDE for [ $OPT2 ]"${C_NC}
+		echo -e ${C_G} "WSJT-X [ USER GUIDE ] TARGET"${C_NC}
 		echo "-------------------------------------------"
 		echo ''
-		echo ' This selection will perform the following:'
+		echo ' The following build will be run:'
 		echo ''
-		echo ' * Checkout or Update WSJT-X from SVN'
-		echo ' * Configure the build'
-		echo ' * Generate the HTML document' 
+		echo " * Branch ..: $BDESC"
+		echo " * Name ....: $N_OPT"
+		echo " * Type ....: $C_OPT"
+		echo " * Target ..: $T_OPT"
+		echo ''
 	;;
 	
 	*)
 		echo "-------------------------------------------"
-		echo -e ${C_R} "USER DEFINED TARGET [ $OPT3 ]"${C_NC}
+		echo -e ${C_F} "WSJT-X [ USER-DEFINED ] TARGET"${C_NC}
 		echo "-------------------------------------------"
 		echo ''
-		echo ' This selection will perform the following:'
+		echo ' The following build will be run:'
 		echo ''
-		echo ' * Checkout or Update WSJT-X from SVN'
-		echo ' * Configure the build'
-		echo " * Run the build for a single target: $OPT3"
-		echo ' * It will *NOT* install the custom target'
+		echo " * Branch ..: $BDESC"
+		echo " * Name ....: $N_OPT"
+		echo " * Type ....: $C_OPT"
+		echo " * Target ..: $T_OPT"
+		echo ''
+		echo ' NOTE: User Defined targets are *not* installed'
+		echo '       by default, they are left in the Build'
+		echo '       tree, and should run correctly from'
+		echo '       location'
 	;;
 esac
 
@@ -272,7 +476,7 @@ get_app_version() {
 
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" GET APPLICATION VERSION"${C_NC}
+echo -e ${C_Y}" BRANCH INFORMATION for [ $N_OPT ]"${C_NC}
 echo '-----------------------------------------------------'
 
 # Example Versions.cmake
@@ -308,7 +512,7 @@ if [[ $RC != "0" ]] && [[ $REL == "1" ]] ; then AVER="$MA.$MI.$PA" ; fi
 if [[ $RC == "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA" ; fi
 if [[ $RC != "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA-rc$RC" ; fi
 
-echo "-- Repository Version Is ..: $AVER"
+echo "-- Branch Version ..: $AVER"
 
 case $REL in
 	0)
@@ -334,7 +538,7 @@ esac
 get_svn_revision() {
 
 SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
-echo "-- SVN Revision Is ........: $SVN_VER"
+echo "-- SVN Revision ....: $SVN_VER"
 
 }
 
@@ -342,14 +546,14 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 check_separation() {
 
 if [ $SEPARATE == "Yes" ] ; then 
-	BUILDD="$HOMEDIR/wsjtx/$OPT1/$AVER/$SVN_VER/build/$OPT3"
-	INSTALLD="$HOMEDIR/wsjtx/$OPT1/$AVER/$SVN_VER/install/$OPT3"
-	PKGD="$HOMEDIR/wsjtx/$OPT1/$AVER/$SVN_VER/package"
+	BUILDD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/build/$C_OPT"
+	INSTALLD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/install/$C_OPT"
+	PKGD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/package"
 
 else
-	BUILDD="$HOMEDIR/wsjtx/$OPT1/$OPT2/build/$OPT3"
-	INSTALLD="$HOMEDIR/wsjtx/$OPT1/$OPT2/install/$OPT3"
-	PKGD="$HOMEDIR/wsjtx/$OPT1/$OPT2/package"
+	BUILDD="$HOMEDIR/wsjtx/$B_OPT/$N_OPT/build/$C_OPT"
+	INSTALLD="$HOMEDIR/wsjtx/$B_OPT1/$N_OPT/install/$C_OPT"
+	PKGD="$HOMEDIR/wsjtx/$BOPT/$N_OPT/package"
 fi
 
 }
@@ -365,8 +569,10 @@ echo ''
 mkdir -p "$BUILDD" >/dev/null 2>&1
 mkdir -p "$INSTALLD" >/dev/null 2>&1
 mkdir -p "$PKGD" >/dev/null 2>&1
-echo " App Version ..: $AVER r$SVN_VER $BTYPE"
-echo " Build Type ...: $OPTION"
+echo " Status .......: $BTYPE"
+echo " Name .........: $N_OPT" 
+echo " App Version ..: $AVER r$SVN_VER"
+echo " Build Type ...: $C_OPT"
 echo " Source .......: $APP_SRC"
 echo " Build ........: $BUILDD"
 echo " Install ......: $INSTALLD"
@@ -393,28 +599,31 @@ cmake -G "Unix Makefiles" -Wno-dev \
 
 # build the target -------------------------------------------------------------
 run_build() {
+
+# this only builds the target, and *does not* install it
+
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" BUILDING  [ WSJT-X $AVER $DESC ]"${C_NC}
+echo -e ${C_Y}" BUILDING TARGET [ $T_OPT ]"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
-case "$OPT3" in
-	Release|Debug)
+case "$T_OPT" in
+	install) 
 	cmake --build . -- -j "$JJ"
 	link_kvasd ;;
 	
-	package)
+	package) # default package build
 	cmake --build . --target package -- -j "$JJ"
 	cp -u "$BUILDD"/wsjtx*.deb "$PKGD"/ ;;
 
-	docs)
+	docs) # default user-guide build
 		cmake --build . --target docs  >/dev/null 2>&1
 		echo " Finnished building ..."
 	 ;;
 
 	*) # used for custom target building
-	cmake --build . --target $OPT3 -- -j "$JJ"
+	cmake --build . --target $T_OPT -- -j "$JJ"
 	;;
 
 esac
@@ -424,14 +633,17 @@ esac
 
 # build the target -------------------------------------------------------------
 run_install_build() {
+
+# this install the build target.
+
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" INSTALLING [ WSJT-X $AVER $DESC ]"${C_NC}
+echo -e ${C_Y}" INSTALLING TARGET [ $T_OPT ]"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
-case "$OPT3" in
-	Release|Debug)
+case "$T_OPT" in
+	install)
 		cmake --build . --target install -- -j "$JJ"
 		link_kvasd
 	;;
@@ -503,9 +715,10 @@ echo '-----------------------------------------------------'
 echo -e ${C_G}" BUILD SUMMARY [ WSJT-X $AVER $BTYPE ]"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-case "$OPT3" in
-	Release*|Debug)
-		echo " Version ..: $AVER r$SVN_VER $BTYPE"
+case "$T_OPT" in
+	install)
+		echo " Status ...: $BTYPE"
+		echo " Name .....: $N_OPT $AVER r$SVN_VER"		
 		echo " SVN URL ..: $URL"
 		echo " Source ...: $APP_SRC"
 		echo " Build ....: $BUILDD"
@@ -516,7 +729,7 @@ case "$OPT3" in
 			echo -e ' KVASD ....: '${C_R}"$KVSTATUS"${C_NC}
 		fi
 		echo ''
-		echo " TO RUN [ $OPT2 $AVER r$SVN_VER ]"
+		echo " TO RUN WSJT-X"
 		echo " cd .......: $INSTALLD/bin"
 		echo " Type, ....: ./wsjtx"
 		echo ''
@@ -524,8 +737,8 @@ case "$OPT3" in
 
 	package)
 		PKG_NAME=$(ls -m1 $PKGD)
-		echo " Version ...: $AVER r$SVN_VER $BTYPE"
-		echo " Name ......: $PKG_NAME"
+		echo " Version ...: $N_OPT $AVER r$SVN_VER"
+		echo " PKG Name ..: $PKG_NAME"
 		echo " SVN URL ...: $URL"
 		echo " Source ....: $APP_SRC"
 		echo " Build .....: $BUILDD"
@@ -534,14 +747,14 @@ case "$OPT3" in
 	;;
 
 	docs)
-		echo " Version ...: $AVER r$SVN_VER $BTYPE"
+		echo " Name .....: $N_OPT $AVER r$SVN_VER"
 		echo " Name ......: $FILENAME"
 		echo " Location ..: $INSTALLD/share/doc/wsjtx"
 		echo ''
 	;;
 
 	*)
-		echo " Target ..: $OPT3"
+		echo " Target ..: $T_OPT"
 		echo " Build ...: $BUILDD"
 		echo ''
 	;;
@@ -554,23 +767,55 @@ esac
 # START MAIN SCRIPT
 ################################################################################
 
-# for Release, Debug and package targets
-build_array=('build_message' 'hamlib_test' 'check_svn' 'get_app_version' \
+# start getopts processing -----------------------------------------------------
+
+# set these to "1" initially
+branch_status="1"
+name_status="1"
+config_status="1"
+target_status="1"
+
+options=':hb:n:c:t:'
+while getopts "$options" FLAG
+do
+	case $FLAG in
+		h) cli_help ;;		
+		b) getopts_branch_check ;;
+		n) getopts_name_check ;;
+		c) getopts_config_check ;;
+		t) getopts_target_check ;;
+		\? )
+			clear ||:
+			echo " Unknown option: -$OPTARG" >&2
+			echo ''
+			read -rp " Press [ Enter ] to view the help message"
+			cli_help
+			exit 1
+		;;
+	esac
+done
+shift "$((OPTIND-1))" # shift off the options
+
+# getopts status message, for debugging only GDB="1"
+getopts_options_status
+
+# for -t (install | package ) targets ( -c Release | Debug )
+build_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
 'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
 'run_install_build' 'link_kvasd' 'finish_message')
 
-# for user guide
-ug_array=('build_message' 'check_svn' 'get_app_version' 'get_svn_revision' \
-'check_separation' 'setup_dirs' 'run_cmake' 'run_build' 'run_install_build' \
-'finish_message')
+# for user guide ( -t docs )
+ug_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
+'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
+'run_install_build' 'finish_message')
 
 # user defined target
-ud_target=('build_message' 'check_svn' 'get_app_version' \
+ud_target=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
 'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
 'finish_message')
 
-case $OPT3 in
-	Release|Debug|package)
+case "$T_OPT" in
+	install|package)
 		for i in "${!build_array[@]}" ; do ${build_array[$i]} ; done
 	;;
 
@@ -578,7 +823,7 @@ case $OPT3 in
 		for i in "${!ug_array[@]}" ; do ${ug_array[$i]} ; done
 	;;
 
-	*) # user defined targets
+	*)  user defined targets
 		for i in "${!ud_target[@]}" ; do ${ud_target[$i]} ; done
 	;;
 
