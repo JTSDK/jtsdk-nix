@@ -571,7 +571,7 @@ if [ $SEPARATE == "Yes" ] ; then
 
 else
 	BUILDD="$HOMEDIR/wsjtx/$B_OPT/$N_OPT/build/$C_OPT"
-	INSTALLD="$HOMEDIR/wsjtx/$B_OPT1/$N_OPT/install/$C_OPT"
+	INSTALLD="$HOMEDIR/wsjtx/$B_OPT/$N_OPT/install/$C_OPT"
 	PKGD="$HOMEDIR/wsjtx/$BOPT/$N_OPT/package"
 fi
 
@@ -608,13 +608,18 @@ echo -e ${C_Y}" CONFIGURING [ WSJT-X $AVER $DESC ]"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
+
+# $HL3I is the hamlib3 local install directory
+# $C_OPT is the debug | release 
+# $INSTALLD is the installation directory
+# $APP_SRC source directory 
+
 cmake -G "Unix Makefiles" -Wno-dev \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" \
--D CMAKE_BUILD_TYPE="$OPTION" \
+-D CMAKE_BUILD_TYPE="$C_OPT" \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"
 
 }
-
 
 # build the target -------------------------------------------------------------
 run_build() {
