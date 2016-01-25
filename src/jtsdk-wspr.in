@@ -105,6 +105,55 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 }
 
 
+# generate a simple wsjt.sh run script -----------------------------------------
+generate_shell_script() {
+(
+cat <<EOF_WSJT
+#!/usr/bin/env bash
+#-------------------------------------------------------------------------------
+# File Name:    wspr.sh
+# Description:  Shell script wrapper to run wsjt
+#				JTSDK auto generated file
+#-------------------------------------------------------------------------------
+
+set -e
+
+# python3 path is updated from configure script
+cd $INSTALLD
+env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wspy.py
+
+EOF_WSJT
+) > "$INSTALLD"/wspr.sh
+
+}
+
+# generate hamlib lis ----------------------------------------------------------
+rigctl_error() {
+echo ''
+echo '--------------------------------------------'
+echo -e ${C_Y}"RIG CONTROL ERROR"${C_NC}
+echo '--------------------------------------------'
+echo ''
+cat <<EOF
+ There was an error when trying to access the
+ application rigctl (from libhamlib-utils) to
+ generate the latest rig list.
+ 
+ Ensure you have Hamlib Utils installed and it
+ is reachable from the the command line.
+ 
+ For most distributions, the package is called:
+ 
+ libhamlib-utils
+ 
+EOF
+
+read -p "Press [ Enter ] to return to the main menu .."
+exit 0
+
+}
+
+
 ################################################################################
 # START MAIN SCRIPT
 ################################################################################
@@ -112,7 +161,7 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 # Make sure directories are present, in case they were deleted
 clear ||:
 echo '-----------------------------------------------------'
-echo -e ${C_Y}"STARTING BUILD for ( WSPR )"${C_NC}
+echo -e ${C_Y}"STARTING BUILD for ( $APP_NAME )"${C_NC}
 echo '-----------------------------------------------------'
 check_svn
 
@@ -125,52 +174,42 @@ get_svn_revision
 
 # set install locaiton
 if [ $SEPARATE == "Yes" ] ; then 
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install"
 else
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install/$OPTION"
+	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install"
 fi
 
-
-# run autoreconf to generate new Makefile & configure script
+if [[ -f "$APP_SRC/Makefile" ]] ; then
+echo
+echo '-----------------------------------------------------'
+echo -e ${C_Y}'RUN MAKE DISTCLEAN FIRST'${C_NC}
+echo '-----------------------------------------------------'
 echo ''
+cd "$APP_SRC" ; make distclean
+echo ''
+fi
+
+# run autoreconf to generate new Makefile & configure scripts
+echo
 echo '-----------------------------------------------------'
-echo -e ${C_Y}' RUN AUTORECONF'${C_NC}
+echo -e ${C_Y}'RUN AUTORECONF and CONFIGURE'${C_NC}
 echo '-----------------------------------------------------'
+echo ''
 cd "$APP_SRC"
-echo 'Generating Makefile and Configure scripts'
 autoreconf -f -i
+./configure --prefix=$INSTALLD
 
-echo ''
+# compile WSJT application
+echo
 echo '-----------------------------------------------------'
-echo -e ${C_Y}'RUN CONFIGURE'${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-./configure --prefix="$INSTALLD" --with-python3=@PYTHON3@ --with-f2py=@F2PY3@
-
-echo ''
-echo '-----------------------------------------------------'
-echo -e ${C_Y}'COMPILE and INSTALL TARGETS'${C_NC}
+echo -e ${C_Y}'RUNNING MAKE'${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-# get the targets from Makefile all: line into an array
-targets=$(grep '^all\:' Makefile |awk 'FNR==1' |cut -f2-)
-
-# loop through the targets
-for i in "${targets[@]}"
-do
-	make $i
-done
+make
 
 # now install the targets
-mkdir -p "$INSTALLD"/{doc/examples,save/Samples,WsprMod}
-install -m 644 save/Samples/* "$INSTALLD"/save/Samples/
-install -m 755 gocal Pmw*.py wspr.py wsprrc "$INSTALLD"
-install -m 644 AUTHORS	README NEWS COPYING COPYRIGHT "$INSTALLD"
-install -m 644 hamlib_rig* "$INSTALLD"
-install -m 755 WsprMod/* "$INSTALLD"/WsprMod
-install -m 644 doc/examples/* "$INSTALLD"/doc/examples/
-chmod -R 644 "$INSTALLD"/doc/examples/*
-
+mkdir -p "$INSTALLD"/{doc/examples,save/Samples,WsprMod,manpages}
+echo "..Installing Binaries"
 # loop through binaries && install strip
 binaries=(fmtest fcal fmeasure fmtave wspr0 wsprcode)
 for i in "${binaries[@]}"
@@ -178,28 +217,38 @@ do
 	install -m 755 -s $i "$INSTALLD" 
 done
 
+echo "..Installing Python3 Files"
+install -m 755 gocal Pmw*.py wspr.py wsprrc "$INSTALLD"
+install -m 755 WsprMod/{*.py,*.so} "$INSTALLD"/WsprMod
+
+echo "..Installing Sample Wav Files"
+install -m 644 save/Samples/* "$INSTALLD"/save/Samples/
+
+echo "..Installing Misc Text Files"
+install -m 644 AUTHORS	README NEWS COPYING COPYRIGHT "$INSTALLD"
+install -m 644 doc/examples/* "$INSTALLD"/doc/examples/
+
+echo "..Installing Runtime Script"
 if [[ -f $INSTALLD/$APP_NAME.sh ]] ; then rm -f "$INSTALLD/$APP_NAME.sh" ; fi
 touch "$INSTALLD/$APP_NAME.sh" && chmod +x "$INSTALLD/$APP_NAME.sh"
+generate_shell_script
 
-# Generate a simple wsspr.sh run script
-(
-cat <<'EOF_WSPRSH'
-#!/usr/bin/env bash
-#-------------------------------------------------------------------------------
-# File Name:    wspr.sh
-# Description:  Shell script wrapper to run wspr
-#				JTSDK auto generated file
-#-------------------------------------------------------------------------------
-set -e
+echo "..Generating Hamlib Rig List"
+rigctl -l >> "$INSTALLD/r.l" || {
+rigctl_error
+}
+if [[ -f $INSTALLD/hamlib_rig_numbers ]] ; then rm -f "$INSTALLD/hamlib_rig_numbers" ; fi
+awk 'NR > 3 { print }' < "$INSTALLD/r.l" > "$INSTALLD/hamlib_rig_numbers"
+sed  -i 's .\{2\}  ' "$INSTALLD/hamlib_rig_numbers"
+rm -f "$INSTALLD/r.l"
 
-# python3 path is updated form @PROGRAM@
-@PYTHON3@ -O wspr.py
-
-EOF_WSPRSH
-) > "$INSTALLD"/wspr.sh
-
-# ensure ownership is for the current user
-chown -R "$USER":"$USER" "$INSTALLD" 
+# Manpages and User Guide
+for f in ./manpages/*.1 ; do
+	echo "..Installing $f"
+	install -m 644 "$f" "$INSTALLD"/manpages/
+done
+echo "..Installing $(ls -al ./doc/wspr-main* |awk '{print $9}')"
+install -m 644 doc/wspr-main*.html "$INSTALLD/doc/"
 
 # Finished
 echo

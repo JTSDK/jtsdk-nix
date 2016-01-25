@@ -135,7 +135,7 @@ case $OPTARG in
 		echo -e ${C_R} "COMMAND LINE ERROR"${C_NC}
 		echo "-------------------------------------------"
 		echo ''					
-		echo " Invalid Branch: [-n $OPTARG ]" >&2
+		echo " Invalid Branch: [ -n $OPTARG ]" >&2
 		echo ''
 		echo ' Available -d [ OPTIONS ] are:'
 		echo ''
@@ -177,7 +177,7 @@ else
 	echo -e ${C_R} "COMMAND LINE ERROR"${C_NC}
 	echo "-------------------------------------------"
 	echo ''
-	echo "Invalid Branch: [-n $OPTARG ]" >&2
+	echo "Invalid Branch: [ -n $OPTARG ]" >&2
 	echo ''
 	case "$B_OPT" in
 		dev)
@@ -305,33 +305,29 @@ esac
 
 }
 
-# configre variable based on user input ----------------------------------------
+# configure variable based on user input ----------------------------------------
 configure_options() {
 
 # variables processed by the getopts functions
-# B_OPT	-b Branch ( dev | gar )
-# OPT2	-n Name, wsjtx, wsjtx-1.6.0 etc
-# OPT3  -c Cmake Build Type  ( debug | release )
-# OPT4	-t install package docs | user-defined
+# N_OPT	-n Name, wsjtx, wsjtx-1.6.0 etc
 
 # setup folders and urls
 case $B_OPT in
 	dev)
 		APP_SRC="$SRCD/$N_OPT"
 		APP_NAME="$N_OPT"
-		OPTION=$C_OPT
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/$N_OPT"
 	;;
 
 	gar)
 		APP_SRC="$SRCD/$N_OPT"
 		APP_NAME="$N_OPT"
-		OPTION=$C_OPT
 		URL="https://svn.code.sf.net/p/wsjt/wsjt/tags/$N_OPT"
 	;;
 esac
 
 }
+
 
 ################################################################################
 # MAIN SCRIPT FUNCTIONS
@@ -495,7 +491,7 @@ get_app_version() {
 
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" BRANCH INFORMATION for [ $N_OPT ]"${C_NC}
+echo -e ${C_Y}" BRANCH INFORMATION"${C_NC}
 echo '-----------------------------------------------------'
 
 # Example Versions.cmake
@@ -849,7 +845,7 @@ ug_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
 'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
 'run_install_build' 'finish_message')
 
-# user defined target
+# user defined target ( -t ?? )
 ud_target=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
 'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
 'finish_message')
@@ -868,8 +864,5 @@ case "$T_OPT" in
 	;;
 
 esac
-
-echo ''		
-read -p " Press [ Enter ] to continue..."
 
 exit 0

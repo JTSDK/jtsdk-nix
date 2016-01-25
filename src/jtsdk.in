@@ -682,18 +682,26 @@ wsjtx_dev_menu() {
 	case $TARGET in
 		1)
 			jtsdk-wsjtx -b dev -n "$BRANCH" -c Release -t install
+			echo ''		
+			read -p " Press [ Enter ] to continue..."
 		;;
 
 		2)
 			jtsdk-wsjtx -b dev -n "$BRANCH" -c Debug -t install
+			echo ''		
+			read -p " Press [ Enter ] to continue..."
 		;;
 
 		3)
 			jtsdk-wsjtx -b dev -n "$BRANCH" -c Release -t docs
+			echo ''		
+			read -p " Press [ Enter ] to continue..."
 		;;
 
 		4)
 			jtsdk-wsjtx -b dev -n "$BRANCH" -c Release -t package
+			echo ''		
+			read -p " Press [ Enter ] to continue..."
 		;;
 			
 		Back-To-Main-Menu)
@@ -752,10 +760,14 @@ wsjtx_ga_rc_menu() {
 		
 		1)
 			jtsdk-wsjtx -b gar -n "$BRANCH" -c Release -t install
+			echo ''		
+			read -p " Press [ Enter ] to continue..."
 		;;
 
 		2)
 			jtsdk-wsjtx -b gar -n "$BRANCH" -c Release -t package
+			echo ''		
+			read -p " Press [ Enter ] to continue..."
 		;;
 	esac
 
