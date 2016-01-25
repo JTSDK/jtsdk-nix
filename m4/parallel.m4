@@ -3,11 +3,11 @@ AC_DEFUN([AC_BUILD_PARALLEL], [
 		AC_HELP_STRING([--disable-parallel], [Disable Multi-Core Builds]),
 		[], [ac_cv_parallel=yes])
 
+num1=`grep -c proc /proc/cpuinfo`
 if test "x$ac_cv_parallel" = "xyes"; then
 	case "$HOST_CPU" in
 		armv6*|armv7*)
 			AC_MSG_WARN([ARM Device detected, reducing cores by (1)])
-			num1=`grep -c proc /proc/cpuinfo`
 			JJJJ=`expr $num1 - 1`
 			AC_MSG_NOTICE([Multi-Core builds *enabled*. Using ( $JJJJ ) cores])
 		;;
