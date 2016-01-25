@@ -310,9 +310,6 @@ echo " Source ...: $HL3SRC"
 echo " Build ....: $HL3B"
 echo " Install ..: $HL3I"
 echo " Pkg-Cfg ..: $HL3I/lib/pkgconfig/hamlib3.pc"
-echo ''
-echo ''
-read -p "Press [Enter] to continue .."
 
 exit 0
 

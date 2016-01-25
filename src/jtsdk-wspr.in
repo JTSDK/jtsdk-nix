@@ -268,8 +268,6 @@ echo ''
 echo " TO RUN $APP_NAME"
 echo " cd ...........: $INSTALLD"
 echo " Type, ........: ./$APP_NAME.sh"
-echo ''
-read -p "Press [ Enter ] to return to the main menu .."
 
 exit 0
 

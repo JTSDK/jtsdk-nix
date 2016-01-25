@@ -930,11 +930,15 @@ dialog --ok-label SELECT \
 case "$MM_SELECT" in
 	1) # WSJT ------------------------------------------------------------------
 		jtsdk-wsjt
+		echo ''		
+		read -p " Press [ Enter ] to continue..."
 		continue
 	;;
 
 	2) # WSPR ------------------------------------------------------------------
 		jtsdk-wspr
+		echo ''		
+		read -p " Press [ Enter ] to continue..."
 		continue
 	;;
 	
@@ -966,6 +970,8 @@ case "$MM_SELECT" in
 		
 	4) # HAMLIB-3 --------------------------------------------------------------
 		jtsdk-hamlib3
+		echo ''		
+		read -p " Press [ Enter ] to continue..."
 		continue ;;
 
 	H) # HELP ------------------------------------------------------------------
