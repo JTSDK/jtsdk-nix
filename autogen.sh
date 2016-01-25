@@ -144,13 +144,15 @@ if test -f ./Makefile -a ./configure ; then
 	echo '---------------------------------------------------'
 	echo ${C_Y}"Running ( autoconf ) to process configure.ac"${C_NC}
 	echo '---------------------------------------------------'
-	autoconf -f -i
+	echo ''
+	autoreconf -f -i
 else
 	clear ||:
 	echo '---------------------------------------------------'
 	echo ${C_Y}"Running ( autoconf ) to process configure.ac"${C_NC}
 	echo '---------------------------------------------------'
-	autoconf -f -i
+	echo ''
+	autoreconf -f -i
 fi
 
 # simple test for the configure script, after running autogen.sh
@@ -167,10 +169,17 @@ fi
 
 # message if no arguments were presented
 if test -z "$*"; then
-	echo "Using ./configure With Default Options"
+	echo "Using  ./configure using <defaults>"
+	echo
+	echo "If you wish  change parameters, add the arguments"
+	echo "to use $0 command"
+	echo ''
+	sleep 2
 else
 # List user input arguments
 	echo "Using ./configure $@"
+	echo ''
+	sleep 1
 fi
 
 $BASED/configure "$@"

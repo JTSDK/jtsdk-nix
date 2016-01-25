@@ -5,7 +5,14 @@ AC_PREREQ([2.69])
 AC_INIT([JTSDK],[2.0.19],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
-JTSDK_COPYRIGHT="Copyright (C) 2014-2015 Greg Beam (KI7MT), Joseph H Taylor, Jr (K1JT)"
+JTSDK_COPYRIGHT="Copyright (C) Greg Beam (KI7MT), Joseph H Taylor, Jr (K1JT)"
+
+AC_SUBST([PROGRAM], ["$PACKAGE_NAME"])
+AC_SUBST([WEB], ["$PACKAGE_URL"])
+AC_SUBST([VERSION], ["$PACKAGE_VERSION"])
+AC_SUBST([AUTHORS], ["$JTSDK_AUTHORS"])
+AC_SUBST([BUGS], ["$PACKAGE_BUGREPORT"])
+AC_SUBST([COPYRIGHT], ["$JTSDK_COPYRIGHT"])
 
 # ------------------------------------------------------------------------------
 #  canonical host information
@@ -30,51 +37,6 @@ if test "$prefix" = "NONE"; then
 	prefix=${ac_default_prefix}
 fi
 
-
-# ------------------------------------------------------------------------------
-#  set path to Python2
-# ------------------------------------------------------------------------------
-AC_ARG_WITH([python2],
-AC_HELP_STRING([--with-python2=PATH], [Path to python2]), [python2=$with_python2])
-
-if test -n "$with_python2"; then
-	AC_SUBST([PYTHON2], ["$with_python2"])
-
-else
-	AC_PATH_PROG([PYTHON2], [python])
-	AC_SUBST([PYTHON2], ["$ac_cv_path_PYTHON2"])
-
-fi
-
-# ------------------------------------------------------------------------------
-#  set path to Python3
-# ------------------------------------------------------------------------------
-AC_ARG_WITH([python3],
-AC_HELP_STRING([--with-python3=PATH], [Path to python3]), [python3=$with_python3])
-
-if test -n "$with_python3"; then
-	AC_SUBST([PYTHON3], ["$with_python3"])
-
-else
-	AC_PATH_PROG([PYTHON3], [python3])
-	AC_SUBST([PYTHON3], ["$ac_cv_path_PYTHON3"])
-
-fi
-
-# ------------------------------------------------------------------------------
-#  set Path to F2PY3
-# ------------------------------------------------------------------------------
-AC_ARG_WITH([f2py3],
-AC_HELP_STRING([--with-f2py3=PATH], [Path to f2py3]), [f2py3=$with_f2py3])
-
-if test -n "$with_f2py3"; then
-	AC_SUBST([F2PY3], ["$with_f2py3"])
-else
-	AC_PATH_PROG([F2PY3], [f2py3])
-	AC_SUBST([F2PY3], ["$ac_cv_path_F2PY3"])
-fi
-
-
 # ------------------------------------------------------------------------------
 #  set general use variables
 # ------------------------------------------------------------------------------
@@ -98,7 +60,13 @@ distroc=$(lsb_release -sc)
 #  check general use tools
 # ------------------------------------------------------------------------------
 AC_PATH_PROG([ASCIIDOC], [asciidoc])
+AC_PATH_PROG([ASCIIDOCTOR], [asciidoctor])
 AC_PATH_PROG([A2X], [a2x])
+AC_PATH_PROG(AWK, awk)
+AC_PATH_PROG(CUT, cut)
+AC_PATH_PROG(CHOWN, chown)
+AC_PATH_PROG(CHMOD, chmod)
+AC_PATH_PROG(HEAD, head)
 AC_PATH_PROG([CHMOD], [chmod])
 AC_PATH_PROG([CHOWN], [chown])
 AC_PATH_PROG([CP], [cp])
@@ -108,11 +76,28 @@ AC_PATH_PROG([LN], [ln])
 AC_PATH_PROG([MKDIR], [mkdir])
 AC_PATH_PROG([MV], [mv])
 AC_PATH_PROG([RM], [rm])
-AC_PATH_PROG([SED], [sed])
+AC_PATH_PROG(SED, sed)
 AC_PATH_PROG([SHELL], [bash])
+AC_PATH_PROG(SORT, sort)
+AC_PATH_PROG(TEST, [test], [test])
+AC_PATH_PROG([TR], [tr])
 AC_PATH_PROG([TOUCH], [touch])
-AC_PATH_PROG([PYTHON2], [python])
-AC_PATH_PROG([PYTHON3], [python3])
+
+
+# ------------------------------------------------------------------------------
+#  set path to Python2
+# ------------------------------------------------------------------------------
+AC_JTSDK_PYTHON2
+
+# ------------------------------------------------------------------------------
+#  set path to Python3
+# ------------------------------------------------------------------------------
+AC_JTSDK_PYTHON3
+
+# ------------------------------------------------------------------------------
+#  set Path to F2PY3
+# ------------------------------------------------------------------------------
+AC_JTSDK_F2PY
 
 # ------------------------------------------------------------------------------
 #  check parallel option (m4)
@@ -134,11 +119,9 @@ AC_BUILD_SEPARATE
 # ------------------------------------------------------------------------------
 
 # general subs
-AC_SUBST([ASCIIDOC], ["$ASCIIDOC"])
 AC_SUBST([A2X], ["$A2X"])
-AC_SUBST([AUTHORS], ["$JTSDK_AUTHORS"])
-AC_SUBST([BUGS], ["$PACKAGE_BUGREPORT"])
-AC_SUBST([COPYRIGHT], ["$JTSDK_COPYRIGHT"])
+AC_SUBST([ASCIIDOC], ["$ASCIIDOC"])
+AC_SUBST([ASCIIDOCTOR], ["$ASCIIDOCTOR"])
 AC_SUBST([DIALOG], ["$ac_cv_path_DIALOG"])
 AC_SUBST([DATASRC], ["$DATASRC"])
 AC_SUBST([DISTROV], [${distrov}])
@@ -151,11 +134,7 @@ AC_SUBST([LOGNAME], ["$LOGNAME"])
 AC_SUBST([MANSRC], ["$MANSRC"])
 AC_SUBST([PKGMGR], [${PKGMGR}])
 AC_SUBST([PREFIX], ["$prefix"])
-AC_SUBST([PROGRAM], ["$PACKAGE_NAME"])
-AC_SUBST([PYTHON2], ["$ac_cv_path_PYTHON2"])
-AC_SUBST([PYTHON3], ["$ac_cv_path_PYTHON3"])
-AC_SUBST([WEB], ["$PACKAGE_URL"])
-AC_SUBST([VERSION], ["$PACKAGE_VERSION"])
+
 
 # system subs
 AC_SUBST([BINDIR], ["$BINDIR"])
@@ -193,19 +172,24 @@ echo ''
 echo '-------------------------------------------------'
 echo 'Configuration Summary'
 echo '-------------------------------------------------'
-echo "
- Package ...................: ${PROGRAM} ${VERSION}
- Distribution ..............: ${DESC} ${HOST_CPU}
- Install prefix ............: ${PREFIX}
- Python2 Directory .........: ${PYTHON2}
- Python3 Directory .........: ${PYTHON3}
- F2PY3 Directory ...........: ${F2PY3}
-
- OPTIONS
- CPU Cores .................: ${JJJJ}
- With HTML Docs ............: ${BDOC}
- Enable Folder Separation ..: ${SEPARATE}
-
- Build ${PROGRAM}, type ....: make
-"
+echo ""
+echo " Package ............: ${PROGRAM} ${VERSION}"
+echo " Distribution .......: ${DESC} ${HOST_CPU}"
+echo " Install prefix .....: ${PREFIX}"
+echo " Python2 ............: ${PYTHON2} ${PY2V}"
+echo " Python3 ............: ${PYTHON3} ${PY3V}"
+echo " F2py ...............: ${F2PY}"
+echo ''
+echo 'OPTIONS'
+echo " CPU Cores ..........: ${JJJJ}"
+echo " With HTML Docs .....: ${BDOC}"
+echo " Folder Separation ..: ${SEPARATE}"
+echo ''
+echo 'JTSDK INFO'
+echo " Copyright...........: ${COPYRIGHT}"
+echo " Website ............: ${WEB}"
+echo " Report Bugs To .....: ${BUGS}"
+echo ''
+echo "To Build, type .....: make"
+echo ''
 
