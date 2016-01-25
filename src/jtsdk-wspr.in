@@ -249,23 +249,25 @@ for f in ./manpages/*.1 ; do
 done
 echo "..Installing $(ls -al ./doc/wspr-main* |awk '{print $9}')"
 install -m 644 doc/wspr-main*.html "$INSTALLD/doc/"
+DOCNAME=$(ls -al doc/wspr-main* |awk '{print $9}' |rev | cut -d"/" -f1 | rev)
 
 # Finished
 echo
 echo '-----------------------------------------------------'
-echo -e ${C_G}"BUILD SUMMARY for ( WSPR )"${C_NC}
+echo -e ${C_G}"BUILD SUMMARY"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-echo " Build Type ..: Release"
-echo " Source ......: $APP_SRC"
-echo " Install .....: $INSTALLD"
-echo ''
-echo ' FMT Tools'
-echo " Install .....: $INSTALLD"
+echo " Name .........: $APP_NAME"
+echo " Version ......: $AVER"
+echo " SVN Version ..: r$SVN_VER"	
+echo " User Guide ...: $DOCNAME"		
+echo " Source .......: $APP_SRC"
+echo " Install ......: $INSTALLD"
+echo " SVN URL ......: $URL"
 echo ''
 echo " TO RUN $APP_NAME"
-echo " cd ..........: $INSTALLD"
-echo " Type, .......: ./$APP_NAME.sh"
+echo " cd ...........: $INSTALLD"
+echo " Type, ........: ./$APP_NAME.sh"
 echo ''
 read -p "Press [ Enter ] to return to the main menu .."
 
