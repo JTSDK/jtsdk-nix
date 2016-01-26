@@ -68,8 +68,8 @@ echo -e ${C_G}" COMMAND LINE OPTIONS"${C_NC}
 echo '----------------------'
 echo ''
 cat <<EOF
- Usage .....: jtsdk-wsjtx [-h] [-b] [-n] [-c] [-t]  
- Example....: jtsdk-wsjtx -b dev -n wsjtx -c release -t install
+ Usage ....: jtsdk-wsjtx [-h] [-b] [-n] [-c] [-t]  
+ Example ..: jtsdk-wsjtx -b dev -n wsjtx -c release -t install
 
  OPTIONS:
 	-h	displays this message
