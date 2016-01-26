@@ -892,6 +892,7 @@ if [[ -f $CFG/clean ]] ; then CLN=Yes ; else CLN="No" ; fi
 if [[ -f $CFG/rcfg ]] ; then RCF=Yes ; else RCF="No" ; fi
 if [[ -f $CFG/separate ]] ; then SEP=Yes ; else SEP="No" ; fi
 if [[ -f $CFG/quiet ]] ; then QUI=Yes ; else QUI="No" ; fi
+if [[ -f $CFG/cores ]] ; then COR=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else COR=$(grep -c /proc/cpuinfo) ; fi
 echo "  autorun ...: $ARN"
 echo "  autosvn ...: $ASV"
 echo "  skipsvn ...: $SKS"
@@ -899,6 +900,7 @@ echo "  separate ..: $CLN"
 echo "  clean .....: $RCF"
 echo "  rcfg ......: $SEP"
 echo "  quiet .....: $QUI"
+echo "  cores .....: $COR"
 echo ''
 echo ' For Help Use .....: jtsdk -h'
 echo ''
@@ -956,7 +958,9 @@ if [[ ! -z $input ]] ; then
 	if [ $input -eq $input 2>/dev/null ] && [ $input -gt "0" 2>/dev/null ] && \
 	[ $input -lt $maxcpus 2>/dev/null ] ; then
 		echo ''
-		echo -e "$CHK1  Seems OK, setting CPU Cores to: $input"
+		echo -e "$CHK1  Setting CPU Cores to: $input"
+		rm -rf "$CFG/cores" > /dev/null 2>&1
+		touch "$CFG/cores" ; echo $input > "$CFG/cores"
 		echo ''
 		exit 0
 	fi
@@ -969,6 +973,8 @@ if [[ ! -z $input ]] ; then
 		echo 'ERROR'
 		echo -e "$CHK2 Cannot set CPU Cores to ...: 0"
 		echo -e " $CHK1  Setting default value to ..: $cpus"
+		rm -rf "$CFG/cores" > /dev/null 2>&1
+		touch "$CFG/cores" ; echo $cpus > "$CFG/cores"
 		echo ''
 		exit 0
 	fi
@@ -980,6 +986,8 @@ if [[ ! -z $input ]] ; then
 		echo ''
 		echo -e "$CHK1 Warning, CPU cores > ...........: $cpus"
 		echo -e "$CHK1 Setting CPU cores as you wish ..: $input"
+		rm -rf "$CFG/cores" > /dev/null 2>&1
+		touch "$CFG/cores" ; echo $input > "$CFG/cores"
 		echo ''
 		exit 0
 	fi
@@ -990,6 +998,8 @@ if [[ -z $input ]] ; then
 	echo ''
 	echo -e "$CHK1  Default value accepted."
 	echo -e "$CHK1  Setting core value to ..: $cpus"
+	rm -rf "$CFG/cores" > /dev/null 2>&1
+	touch "$CFG/cores" ; echo $cpus > "$CFG/cores"
 	echo ''
 fi	
 
