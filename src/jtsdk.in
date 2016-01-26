@@ -39,7 +39,7 @@ CFG="$HOMEDIR/config"
 DOCS="$HOMEDIR/docs"
 
 # dynamic menu generation timer, in minutes -mmin, *cannot be blank !!*
-GENTIME='60'
+GENTIME='1440'
 
 # subversion base urls
 TAGS="http://svn.code.sf.net/p/wsjt/wsjt/tags"
@@ -53,10 +53,8 @@ C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
 
 # unicode bling bling :-)
-CHK=${C_G}✔${C_NC}
-FAILED=' ✘ '
-EEO=' ✔ '
-DDO=' ✘ '
+CHK1=${C_G}✔${C_NC}
+CHK2=' ✘ '
 
 ################################################################################
 #
@@ -447,20 +445,19 @@ then
 
 	clear ||:
 	echo '-----------------------------------------------------------'
-	echo -e ${C_G}' JTSDK Dynamic Menus From Sourceforge'${C_NC}
+	echo -e ${C_G}' WSJT-X Build Menu Update via Sourceforge'${C_NC}
 	echo '-----------------------------------------------------------'
 	echo ''
-	echo ' This function updates several JTSDK menus from the'
+	echo ' This function updates several WSJT-X menus from the'
 	echo ' SourceForge WSJT repository ^/tags and ^/branches.'
 	echo ''
 	echo ' When the event timer is reached, JTSDK will automatically'
 	echo ' update the menu entries the next time it is launched.'
-	echo ' The default update interval is set to [ 60 ] minutes'
+	echo ' The default update interval is set to [ 1440 ] minutes'
+	echo ' or 24 hours / once per day.'
 	echo ''
-	echo ' You can change the update frequency by editing the main'
-	echo ' JTSDK script: /usr/bin/jtsdk or /usr/local/bin/jtsdk'
-	echo ' and adjusting: GENTIME="60" variable. This variable'
-	echo ' must not be blank, and should be stated in minutes.'
+	echo ' You can manually update the menus at any time by using'
+	echo ' the following command: jtsdk -u' 
 	echo ''
 	echo ' Please be patient while the update runs, this can'
 	echo ' take a few seconds depending on your Internet speed'
@@ -470,9 +467,9 @@ then
 # test Internet connection first
 	wget -q --tries=5 --timeout=10 -O - http://google.com > /dev/null 2>&1
 	if [[ $? -eq 0 ]]; then
-		echo -e " * Internet Connection - $CHK"
+		echo -e "$CHK1 Internet Connection"
 	else
-		echo -e " * Internet Connection - $FAILED"
+		echo -e " * Internet Connection - $CHK2"
 		echo ''
 		echo ' You must have access to the Internet to update'
 		echo ' the WSJT-X menus. The script will continue, but'
@@ -489,9 +486,9 @@ then
 # test access to Sourceforge WSJT SVN repository
 	svn list http://svn.code.sf.net/p/wsjt/wsjt > /dev/null 2>&1
 	if [[ $? -eq 0 ]]; then
-		echo -e " * Sourceforge Access - $CHK"
+		echo -e "$CHK1 Sourceforge Access"
 	else
-		echo -e " * Sourceforge Access - $FAILED"
+		echo -e " * Sourceforge Access - $CHK2"
 		echo ''
 		echo ' You must have access to SF SVN repositories to update'
 		echo ' the WSJT-X menus. The script will continue, but'
@@ -507,7 +504,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e " * $UTYPE Dev Lists - $CHK"
+	echo -e "$CHK1 $UTYPE Dev Lists"
 	
 	svn list "$BRANCHES"| grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/dev_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/dev_list.txt
@@ -527,7 +524,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e " * $UTYPE GA and RC List - $CHK"
+	echo -e "$CHK1 $UTYPE GA and RC List"
 	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/ga_rc_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/ga_rc_list.txt
 	cp -u "$TMPD"/ga_rc_list.txt $CFG
@@ -538,7 +535,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e " * $UTYPE Superbuild Dev List - $CHK"
+	echo -e "$CHK1 $UTYPE Superbuild Dev List"
 
 	svn list "$BRANCHES" | grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/sb_dev_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/sb_dev_list.txt
@@ -558,7 +555,7 @@ then
 	else 
 		UTYPE='Updating'
 	fi
-	echo -e " * $UTYPE Superbuild GA and RC List - $CHK"
+	echo -e "$CHK1 $UTYPE Superbuild GA and RC List"
 
 	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]" | sed 's:/*$::' > "$TMPD"/sb_ga_rc_list.txt
 	echo "Back-To-Main-Menu" >> "$TMPD"/sb_ga_rc_list.txt
@@ -569,8 +566,7 @@ then
 	# create a time stamp file
 	touch "$CFG"/time-stamp
 	echo ''
-	read -rp "Press [ ENTER ] to continue ..."
-	
+
 # getopts combined list 
 	if [[ -f $CFG/combined_list.txt ]] ; then 
 		rm -f $CFG/combined_list.txt
@@ -847,7 +843,7 @@ superbuild_menu() {
 
 }
 
-#----------------------------------------------------- command line options help
+#----------------------------------------------------- COMMAND LINE OPTIONS HELP
 cli_help() {
 
 clear ||:
@@ -879,7 +875,7 @@ exit 0
 }
 
 
-#------------------------------------------------------------- list user options
+#------------------------------------------------------------- LIST USER OPTIONS
 list_option_status() {
 clear ||:
 echo '-----------------------------------------------------------'
@@ -907,6 +903,99 @@ echo ''
 echo ' For Help Use .....: jtsdk -h'
 echo ''
 }
+
+#----------------------------------------------------------------- SET CPU CORES
+set_cpu_cores() {
+
+# used to set the number of cpu cores to be used during parallel compinling.
+
+cpus=$(grep -c proc /proc/cpuinfo)
+maxcpus=$(($cpus + 1))
+ALT1=$(($cpus - 1))
+ALT2=$(($cpus - 2 ))
+clear ||:
+echo '-----------------------------------------------------------'
+echo -e ${C_Y}' SETTING CUSTOM CPU SELECTION'${C_NC}
+echo '-----------------------------------------------------------'
+echo ''
+echo ' Using this feature sets the number of CPU cores to be used'
+echo ' in parallel compiling, for example'
+echo ''
+echo  ' make -jx   or  cmake --build . -- -j x'
+echo ''
+echo ' This can have adverse affects on low resource systems such'
+echo ' as SoC ARM devices. For low resource systems, consider using'
+echo " ( $ALT1 or $ALT2 ), for all others systems ($cpus) should be OK."
+echo ''
+echo ' The default is always set to the physical number of cores'
+echo ' available on the system. Max = ( Physical + 1 )'
+echo ''
+echo "* Your max value should be no more than ...: $maxcpus"
+echo "* Suggested number of cores is between ....: 1 and $maxcpus"
+echo -n "* Set the number of cores, default is .....: $cpus : "
+read input
+
+# input entered, check it is at least an integer
+if [[ ! -z $input ]] ; then
+	if [ $input -eq $input 2>/dev/null ] ; then
+		echo "* Doing sanity check for: $input"
+	else
+		echo ''
+		echo "ERROR: this does not look right:"
+		echo ''
+		echo " $input"
+		echo ''
+		echo " Try using something between: ( 1 to $cpus )"
+		echo ''
+		exit 0
+	fi
+fi
+
+# input entered, check integer, check if between 1 and 4
+if [[ ! -z $input ]] ; then
+	if [ $input -eq $input 2>/dev/null ] && [ $input -gt "0" 2>/dev/null ] && \
+	[ $input -lt $maxcpus 2>/dev/null ] ; then
+		echo ''
+		echo -e "$CHK1  Seems OK, setting CPU Cores to: $input"
+		echo ''
+		exit 0
+	fi
+fi
+
+# input entered, check integer, less than 1
+if [[ ! -z $input ]] ; then
+	if [ $input -eq $input 2>/dev/null ] && [ $input -lt "1" 2>/dev/null ] ; then
+		echo ''
+		echo 'ERROR'
+		echo -e "$CHK2 Cannot set CPU Cores to ...: 0"
+		echo -e " $CHK1  Setting default value to ..: $cpus"
+		echo ''
+		exit 0
+	fi
+fi
+
+# input entered, check integer, but if > than MAX number of CPUs, warn and accept
+if [[ ! -z $input ]] ; then
+	if [ $input -eq $input 2>/dev/null ] && [ $input -gt "$cpus" 2>/dev/null ] ; then
+		echo ''
+		echo -e "$CHK1 Warning, CPU cores > ...........: $cpus"
+		echo -e "$CHK1 Setting CPU cores as you wish ..: $input"
+		echo ''
+		exit 0
+	fi
+fi
+
+# set default value of input is empty
+if [[ -z $input ]] ; then
+	echo ''
+	echo -e "$CHK1  Default value accepted."
+	echo -e "$CHK1  Setting core value to ..: $cpus"
+	echo ''
+fi	
+
+}
+
+
 
 ################################################################################
 #
@@ -968,6 +1057,7 @@ option_array=('autorun' 'autosvn' 'skipsvn' 'clean' 'rcfg' 'separate' 'quiet')
 earray=()
 darray=()
 COPT='0'
+CPUX='0'
 HOPT='0'
 UOPT='0'
 LOPT='0'
@@ -979,7 +1069,7 @@ echo '-----------------------------------------------------------'
 echo ''
 
 # start the main getops loop
-while getopts ":hule:d:" opt ; do
+while getopts ":hulce:d:" opt ; do
 	case $opt in
 		c) COPT='1' ;;
 		u) UOPT='1' ;;
@@ -1036,6 +1126,12 @@ done
 # shift off the options
 shift "$(($OPTIND-1))"
 
+# -c option sets the nummber of cpu cores for parallel compiling
+if [[ $COPT == '1' ]] ; then 
+	set_cpu_cores
+	exit 0
+fi
+
 # -u option ( update wsjt-x build list )
 if [[ $UOPT == '1' ]] ; then 
 	rm -f "$CFG/time-stamp" > /dev/null 2>&1
@@ -1058,7 +1154,7 @@ fi
 
 # -e option ( enable x )
 if [[ ! -z ${e_array[@]-} ]] ; then
-	echo -n $EEO" Enable Option(s) ...: "
+	echo -n $CHK1" Enable Option(s) ...: "
 	for i in "${e_array[@]-}" ; do
 		echo -n "$i "
 		touch "$CFG/$i" > /dev/null 2>&1
@@ -1068,7 +1164,7 @@ fi
 
 # -d option ( disable x)
 if [[ ! -z ${d_array[@]-} ]] ; then
-	echo -n $DDO" Disable Option(s) ..: "
+	echo -n $CHK2" Disable Option(s) ..: "
 	for i in "${d_array[@]-}" ; do
 		echo -n "$i "
 		rm -f "$CFG/$i" > /dev/null 2>&1
