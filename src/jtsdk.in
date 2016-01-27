@@ -30,22 +30,7 @@ set -e
 #
 ################################################################################
 
-# set home and directory paths
-HOMEDIR=~/jtsdk
-MENU=@SHARE@
-TMPD="$HOMEDIR/tmp"
-LOGS="$HOMEDIR/logs"
-CFG="$HOMEDIR/config"
-DOCS="$HOMEDIR/docs"
-
-# dynamic menu generation timer, in minutes -mmin, *cannot be blank !!*
-GENTIME='1440'
-
-# subversion base urls
-TAGS="http://svn.code.sf.net/p/wsjt/wsjt/tags"
-BRANCHES="http://svn.code.sf.net/p/wsjt/wsjt/branches"
-
-# Foreground colours
+# foreground colours
 C_R='\033[01;31m'		# red
 C_G='\033[01;32m'		# green
 C_Y='\033[01;33m'		# yellow
@@ -55,6 +40,37 @@ C_NC='\033[01;37m'		# no color
 # unicode bling bling :-)
 CHK1=${C_G}✔${C_NC}
 CHK2=' ✘ '
+
+# set home and directory paths
+HOMEDIR="$HOME/jtsdk"
+MENU=@SHARE@
+TMPD="$HOMEDIR/tmp"
+LOGS="$HOMEDIR/logs"
+CFG="$HOMEDIR/config"
+DOCS="$HOMEDIR/docs"
+
+# subversion base urls
+TAGS="http://svn.code.sf.net/p/wsjt/wsjt/tags"
+BRANCHES="http://svn.code.sf.net/p/wsjt/wsjt/branches"
+
+# options based on configure.ac --enable --disable commands
+#
+# Note(s):
+# [1] these features can be reset with with jtsdk -e [FEATURE] -d [FEATURE]
+# [2] for resetting JJ use jtsdk -c
+# [3] manpages, docs, parallel and separate are enabled by default
+# 
+# SEPARATE = separate by svn revision, command:  = ./autogen.sh --enable-separate
+# BDOCS    = disable user guides, command:       = ./autogen.sh --disable-docs
+# BMANP    = disable manpages, command:          = ./sutogen.sh --disable-manpages
+# JJJJ     = disable multi core builds, command: = ./sutogen.sh --disable-parallel
+SEPARATE=@SEPARATE@
+BDOCS=@BDOCS@
+BMANP=@BMANP@
+JJ=@JJJJ@
+
+# WSJT-X menu generation timer, in minutes -mmin, *cannot be blank !!*
+GENTIME='1440'
 
 ################################################################################
 #
@@ -856,7 +872,7 @@ cat <<EOF
  Example ..: jtsdk -e skipsvn -e clean -d autorun
 
  FEATURE LIST
-   autorun autosvn skipsvn clean rcfg separate quiet
+   autorun autosvn clean docs manpages quiet rcfg skipsvn separate 
  
  SWITCHES
   -h  displays this message
@@ -885,22 +901,28 @@ echo ''
 echo ' Usage ......: jtsdk -e [FEATURE] [-d FEATURE]'
 echo ' Example ....: jtsdk -e skipsvn -e clean -d autorun'
 echo ''
-if [[ -f $CFG/autorun ]] ; then ARN=Yes ; else ARN="No" ; fi
-if [[ -f $CFG/autosvn ]] ; then ASV=Yes ; else ASV="No" ; fi
-if [[ -f $CFG/skipsvn ]] ; then SKS=Yes ; else SKS="No" ; fi
-if [[ -f $CFG/clean ]] ; then CLN=Yes ; else CLN="No" ; fi
-if [[ -f $CFG/rcfg ]] ; then RCF=Yes ; else RCF="No" ; fi
-if [[ -f $CFG/separate ]] ; then SEP=Yes ; else SEP="No" ; fi
-if [[ -f $CFG/quiet ]] ; then QUI=Yes ; else QUI="No" ; fi
-if [[ -f $CFG/cores ]] ; then COR=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else COR=$(grep -c /proc/cpuinfo) ; fi
-echo "  autorun ...: $ARN"
-echo "  autosvn ...: $ASV"
-echo "  skipsvn ...: $SKS"
-echo "  separate ..: $CLN"
-echo "  clean .....: $RCF"
-echo "  rcfg ......: $SEP"
-echo "  quiet .....: $QUI"
-echo "  cores .....: $COR"
+# options are set to Yes / No for display purposes only
+# each build script resets these variables at run time
+if [[ -f $CFG/autorun ]] ; then AUTORUN='Yes' ; else AUTORUN='No ' ; fi
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN='Yes' ; else AUTOSVN='No ' ; fi
+if [[ -f $CFG/clean ]] ; then CLEAN='Yes' ; else CLEAN='No ' ; fi
+if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES="$JJ" ; fi
+if [[ -f $CFG/docs ]] ; then MANPAGES='Yes' ; else MANPAGES='No ' ; fi
+if [[ -f $CFG/manpages ]] ; then MANPAGES='Yes' ; else MANPAGES='No ' ; fi
+if [[ -f $CFG/quiet ]] ; then QUIET='Yes' ; else QUIET='No ' ; fi
+if [[ -f $CFG/rcfg ]] ; then RCFG='Yes' ; else RCFG='No ' ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE='Yes' ; else SEPARATE='No ' ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN='Yes' ; else SKIPSVN='No ' ; fi
+echo "  autorun ...: $AUTORUN     # Run after compiling"
+echo "  autosvn ...: $AUTOSVN     # Automatically update from svn"
+echo "  clean .....: $CLEAN       # Clean the build tree before compiling"
+echo "  docs ......: $DOCS        # "
+echo "  manpages ..: $MANPAGES"
+echo "  quiet .....: $QUIET"
+echo "  rcfg ......: $RCFG"
+echo "  separate ..: $SEPARATE"
+echo "  skipsvn ...: $SKIPSVN"
+echo "  cores .....: $CORES"
 echo ''
 echo ' For Help Use .....: jtsdk -h'
 echo ''
@@ -1040,28 +1062,30 @@ jtsdk_alias_commands
 #------------------------------------------------------------------ USER OPTIONS
 
 # These options are used more in a global sense rather than affecting the main
-# jtsdk script itself. See descriptions below for more details.
+# JTSDK script itself. See descriptions below for more details.
 #
-# user selectable options
+# CLI OPTIONS
 #  -h  displays this message
 #  -c  set number of cpus used in compiling, resets JJ=x
-#  -d  disable [FEATURE]
-#  -e  enable  [FEATURE]
 #  -l  list current user option status
 #  -u  update wsjt build list
-
+#  -t  set WSJT-X update timer
+#  -e  enable  [FEATURE]
+#  -d  disable [FEATURE]
 #
-# features:
+# ENABLE / DISABLE FEATURES
 #   autorun ...: run the package after the build finishes
 #   autosvn ...: automatically update from svn
 #   skipsvn ...: skip svn update completely
 #   clean .....: clean the build tree / source location before building
 #   rcfg ......: re-run the configure script before running $(MAKE) / cmake --build .
 #   separate ..: separate builds by both Version + SVN revision
-#   quiet .....: suppress or in some cases, eliminate on screen messages 
-
-# enable / disable features
-option_array=('autorun' 'autosvn' 'skipsvn' 'clean' 'rcfg' 'separate' 'quiet')
+#   quiet .....: suppress or in some cases, eliminate on screen messages
+#   manpages ..: enabe / disable building manpages
+#   docs ......: enable / disable building user guides
+#
+# FEATURE ARRAY
+option_array=('autorun' 'autosvn' 'skipsvn' 'clean' 'rcfg' 'separate' 'quiet' 'manpages' 'docs')
 
 # getopts specific items vars
 earray=()
@@ -1071,6 +1095,9 @@ CPUX='0'
 HOPT='0'
 UOPT='0'
 LOPT='0'
+MOPT='0'
+DOPT='0'
+TOPT='0'
 
 clear ||:
 echo '-----------------------------------------------------------'
@@ -1079,12 +1106,14 @@ echo '-----------------------------------------------------------'
 echo ''
 
 # start the main getops loop
-while getopts ":hulce:d:" opt ; do
+while getopts ":hclute:d:" opt ; do
 	case $opt in
-		c) COPT='1' ;;
-		u) UOPT='1' ;;
-		h) HOPT='1' ;;
-		l) LOPT='1' ;;
+		c) COPT='1' ;; # change cpu cores
+		u) UOPT='1' ;; # update WSJT-X menus
+		h) HOPT='1' ;; # display help message
+		l) LOPT='1' ;; # list options currently selected
+		t) TOPT='1' ;; # set WSJT-X update timer
+		
 # enable user options
 		e)
 			for i in ${option_array[@]} ; do

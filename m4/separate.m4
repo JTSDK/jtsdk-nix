@@ -1,4 +1,4 @@
-AC_DEFUN([AC_BUILD_SEPARATE], [
+AC_DEFUN([AC_JTSDK_SEPARATE], [
 	AC_ARG_ENABLE([separate],
 		AC_HELP_STRING([--disable-separate], [Disable Sparate Folders by SVN Number]),
 		[ac_cv_separate=yes], [])

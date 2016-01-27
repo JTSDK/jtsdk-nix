@@ -102,17 +102,22 @@ AC_JTSDK_F2PY
 # ------------------------------------------------------------------------------
 #  check parallel option (m4)
 # ------------------------------------------------------------------------------
-AC_BUILD_PARALLEL
+AC_JTSDK_PARALLEL
 
 # ------------------------------------------------------------------------------
 #  check for building docs (m4)
 # ------------------------------------------------------------------------------
-AC_BUILD_DOCS
+AC_JTSDK_DOCS
+
+# ------------------------------------------------------------------------------
+#  check for building docs (m4)
+# ------------------------------------------------------------------------------
+AC_JTSDK_MANPAGES
 
 # ------------------------------------------------------------------------------
 #  separate SVN folders for each build (m4)
 # ------------------------------------------------------------------------------
-AC_BUILD_SEPARATE
+AC_JTSDK_SEPARATE
 
 # ------------------------------------------------------------------------------
 #  substitutions
@@ -180,10 +185,17 @@ echo " Python2 ............: ${PYTHON2} ${PY2V}"
 echo " Python3 ............: ${PYTHON3} ${PY3V}"
 echo " F2py ...............: ${F2PY}"
 echo ''
-echo 'OPTIONS'
+echo 'JTSDK OPTIONS'
 echo " CPU Cores ..........: ${JJJJ}"
+if test "${BDOC}" = "Yes"; then
 echo " With HTML Docs .....: ${BDOC}"
+fi
+if test "${BMANP}" = "Yes"; then
+echo " With Manpages ......: ${BDOC}"
+fi
+if test "${SEPARATE}" = "Yes"; then
 echo " Folder Separation ..: ${SEPARATE}"
+fi
 echo ''
 echo 'JTSDK INFO'
 echo " Copyright...........: ${COPYRIGHT}"

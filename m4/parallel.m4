@@ -1,4 +1,4 @@
-AC_DEFUN([AC_BUILD_PARALLEL], [
+AC_DEFUN([AC_JTSDK_PARALLEL], [
 	AC_ARG_ENABLE([parallel],
 		AC_HELP_STRING([--disable-parallel], [Disable Multi-Core Builds]),
 		[], [ac_cv_parallel=yes])

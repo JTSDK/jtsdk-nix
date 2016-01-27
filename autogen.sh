@@ -171,8 +171,8 @@ fi
 if test -z "$*"; then
 	echo "Using  ./configure using <defaults>"
 	echo
-	echo "If you wish  change parameters, add the arguments"
-	echo "to use $0 command"
+	echo "If you wish change parameters, add the arguments"
+	echo "to: $0 < command >"
 	echo ''
 	sleep 2
 else

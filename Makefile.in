@@ -4,14 +4,14 @@
 #
 # Prerequisites: Bash, Git, Subversion
 
-# Program Infomation
+# program Infomation
 PROGRAM		:=	@PROGRAM@
 VERSION		:=	@VERSION@
 AUTHORS		:=	@AUTHORS@
 BUGS		:=	@BUGS@
 WEB		:=	@WEB@
 
-# System Information
+# system Information
 DESC		:=	@DESC@
 OS		:=	@HOST_OS@
 DISTV		:=	@DISTROV@
@@ -19,7 +19,7 @@ DISTC		:=	@DISTROC@
 ARCH		:=	@HOST_CPU@
 JJJJ		:=	@JJJJ@
 
-# General Use Tools
+# general Use Tools
 CP		:=	@CP@
 CHOWN		:=	@CHOWN@
 CHMOD		:=	@CHMOD@
@@ -38,7 +38,7 @@ DOCSRC		:=	@DOCSRC@
 MANSRC		:=	@MANSRC@
 DATASRC		:=	@DATASRC@
 
-# Install locations
+# install locations
 PREFIX		:=	@PREFIX@
 INSTALL		:=	install
 BINDIR		:=	@BINDIR@
@@ -48,30 +48,36 @@ DOCDIR		:=	@DOCDIR@
 DTDIR		:=	@DTDIR@
 ICOND		:=	@ICOND@
 
-# Home directory locations
+# home directory locations
 LOGNAME		:=	@LOGNAME@
 LOGGRP		:=	$(shell groups @LOGNAME@ | cut -d ' ' -f 3)
 HOMEDIR		:=	/home/@LOGNAME@/jtsdk
 
-# Config Definitions
+# docs / user-guide
 BDOC		:=	@BDOC@
-SEPARATE		:=	@SEPARATE@
+ASCIIDOCTOR	:=	@ASCIIDOCTOR@
 
+# separate by svn revision
+SEPARATE	:=	@SEPARATE@
+
+# definitions
 DEFS		:=	@DEFS@
 
-# Foreground colours
+# for manpages, requires AsciiDoc and A2X
+BMANP		:=	@BMANP@
+A2X			:=	@A2X@
+ASCIIDOC	:=	@ASCIIDOC@
+MANPSRC		:= $(wildcard manpages/*.1.txt)
+
+# foreground colours
 C_R		:=	'\033[01;31m'	# red
 C_G		:=	'\033[01;32m'	# green
 C_Y		:=	'\033[01;33m'	# yellow
 C_C		:=	'\033[01;36m'	# cyan
 C_NC		:=	'\033[01;37m'	# no color
 
-# For Manpages
-A2X			:=	@A2X@
-MANPSRC		:= $(wildcard manpages/*.1.txt)
-
 # Targets
-all: build-doc make-summary
+all: build-doc build-manp make-summary 
 
 build-doc:
 ifeq ($(BDOC),Yes)
@@ -85,6 +91,9 @@ ifeq ($(BDOC),Yes)
 	@echo " Finished"  
 	@echo ''
 endif
+
+build-manp:
+ifeq ($(BMANP),Yes)
 	@echo '---------------------------------------------'
 	@echo -e $(C_Y)"Building Manpages"$(C_NC)
 	@echo '---------------------------------------------'
@@ -93,6 +102,7 @@ endif
 	echo " $$f" ; \
 	$(A2X) --doctype manpage --format manpage --no-xmllint $$f ; \
 	done
+endif
 
 make-summary:
 	@echo ''
@@ -108,6 +118,7 @@ make-summary:
 	@echo 'OPTIONS'
 	@echo " CPU Cores .................: $(JJJJ)"
 	@echo " With HTML Docs ............: $(BDOC)"
+	@echo " With Manpages .............: $(BDOC)"
 	@echo " Enable Folder Separation ..: $(SEPARATE)"
 	@echo ''
 	@echo ' To Install, type ..........: sudo make install'
@@ -136,6 +147,11 @@ install:
 	@install -m 644 $(DATASRC)/jtsdk.menu $(DESTDIR)$(DTDIR)
 	@install -m 644 $(DATASRC)/jtsdk.desktop $(DESTDIR)$(DTDIR)
 	@install -m 644 $(DATASRC)/jtsdk.xpm $(DESTDIR)$(ICOND)
+ifeq ($(BDOC),Yes)
+	@echo '..Installing Documentation and Manpages'
+	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)/jtsdk.html
+endif
+ifeq ($(BMANP),Yes)
 	@$(MKDIR) -p $(MANDIR)
 	@install -m 644 $(MANSRC)/jtsdk.1 $(DESTDIR)$(MANDIR)/jtsdk.1
 	@install -m 644 manpages/jtsdk-hamlib3.1 $(DESTDIR)$(MANDIR)/jtsdk-hamlib3.1
@@ -143,9 +159,6 @@ install:
 	@install -m 644 manpages/jtsdk-wsjtx.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjtx.1
 	@install -m 644 manpages/jtsdk-wsjtx-sb.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjtx-sb.1
 	@install -m 644 manpages/jtsdk-wsjt.1 $(DESTDIR)$(MANDIR)/jtsdk-wspr.1
-ifeq ($(BDOC),Yes)
-	@echo '..Installing Documentation and Manpages'
-	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)/jtsdk.html
 endif
 	@echo "..Changing $(HOMEDIR) Ownership to: [ $(LOGNAME) ]"
 	@$(CHOWN) -R $(LOGNAME):$(LOGGRP) $(HOMEDIR)
