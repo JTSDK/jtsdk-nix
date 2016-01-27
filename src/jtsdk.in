@@ -1087,36 +1087,19 @@ while getopts ":hulce:d:" opt ; do
 		l) LOPT='1' ;;
 # enable user options
 		e)
-			IFS=' ' 
-			if [[ ${option_array[*]} =~ $OPTARG ]] ; then
-				e_array+=($OPTARG)
-			else
-				echo " Invalid Feature ..: ( -e $OPTARG )" 1>&2
-				echo -n " Valid Options ....: "
-				for i in "${option_array[@]-}" ; do echo -n "$i " ; done ; echo ''
-				echo ' For Help Use .....: jtsdk -h'
-				echo ''
-				exit 1
-			fi
+			for i in ${option_array[@]} ; do
+				if [ $i == $OPTARG ] ; then e_array+=("$OPTARG") ; fi
+			done
 		 ;;
 # disable user options
 		d)
-			IFS=' ' 
-			if [[ ${option_array[*]} =~ $OPTARG ]] ; then
-				d_array+=($OPTARG)
-			else
-# bad feature request
-				echo " Invalid Feature ..: ( -d $OPTARG )" 1>&2
-				echo -n " Valid Options ....: "
-				for i in "${option_array[@]-}" ; do echo -n "$i " ; done ; echo ''
-				echo ' For Help Use .....: jtsdk -h'
-				echo ''
-				exit 1
-			fi
+			for i in ${option_array[@]} ; do
+				if [ $i == $OPTARG ] ; then d_array+=("$OPTARG") ; fi
+			done
 		 ;;
 # unknown command line switch
 		\? )
-			echo " Invalid Command ..: ( -$OPTARG )" 1>&2
+			echo " Invalid Command ..: ( -$OPTARG )"  1>&2
 			echo ' For Help Use .....: jtsdk -h'
 			echo ''
 			exit 1
@@ -1124,7 +1107,6 @@ while getopts ":hulce:d:" opt ; do
 		
 # invalid syntax
 		: )
-			echo ''
 			echo " Invalid Syntax ..: ( -$OPTARG ) requires an argument" 1>&2
 			echo ' For Help Use ....: jtsdk -h'
 			echo ''
@@ -1164,7 +1146,7 @@ fi
 
 # -e option ( enable x )
 if [[ ! -z ${e_array[@]-} ]] ; then
-	echo -n $CHK1" Enable Option(s) ...: "
+	echo -n -e $CHK1"  Enable Option(s) ...: "
 	for i in "${e_array[@]-}" ; do
 		echo -n "$i "
 		touch "$CFG/$i" > /dev/null 2>&1
@@ -1174,17 +1156,20 @@ fi
 
 # -d option ( disable x)
 if [[ ! -z ${d_array[@]-} ]] ; then
-	echo -n $CHK2" Disable Option(s) ..: "
+	echo -n -e $CHK2" Disable Option(s) ..: "
 	for i in "${d_array[@]-}" ; do
 		echo -n "$i "
 		rm -f "$CFG/$i" > /dev/null 2>&1
 	done
-
 echo ''
 fi
 
-echo ''
-exit 0
+# exit if either -e or -d options were used
+if [[ ! -z ${e_array[@]-} ]] || [[ ! -z ${d_array[@]-} ]] ; then
+	echo ''
+	exit 0
+fi
+
 
 
 #---------------------------------------------------------------- DRAW MAIN MENU

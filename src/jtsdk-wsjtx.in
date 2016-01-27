@@ -21,6 +21,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------#
 
+# TO-DO: update function separation lines to add info on the right side.
+
 set -e
 
 # grab the number of command line arguments
@@ -33,8 +35,8 @@ TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
 CFG="$HOMEDIR/config"
 MENU=@SHARE@
-JJ=@JJJJ@
 SEPARATE=@SEPARATE@
+JJ=@JJJJ@
 
 # hamlib3 directories
 HL3SRC="$HOMEDIR/src/g4wjs-hamlib"
@@ -49,11 +51,20 @@ C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
 
 # unicode bling bling :-)
-CHK=${C_G}✔${C_NC}
+CHK1=${C_G}✔${C_NC}
 FAILED=${C_R}✘${C_NC}
 
-# enable / disable select functions for debugging
-GDB="1"
+# check global user defined options ( see jtsdk -h )
+# add each option enabled to jtsdk_options array
+jtsdk_options=()
+if [[ -f $CFG/autorun ]] ; then AUTORUN=1 ; jtsdk_options+=('autorun') ; else AUTORUN=0 ; fi
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 ; jtsdk_options+=('autosvn') ; else AUTOSVN=0 ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; jtsdk_options+=('skipsvn') ; else SKIPSVN=0 ; fi
+if [[ -f $CFG/clean ]] ; then CLEAN=1 ; jtsdk_options+=('clean') ; else CLEAN=0 ; fi
+if [[ -f $CFG/rcfg ]] ; then RCFG=1 ; jtsdk_options+=('rcfg') ; else RCFG=0 ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE=1 ; jtsdk_options+=('separate') ; else SEPARATE=0 ; fi
+if [[ -f $CFG/quiet ]] ; then QUIET=1 ; jtsdk_options+=('quiet') ; else QUIET=0 ; fi
+if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES=$JJ ; fi
 
 ################################################################################
 # PROCESS COMMAND-LINE OPTIONS
@@ -253,7 +264,7 @@ esac
 # options status, used during debugging 
 getopts_options_status() {
 
-case $GDB in
+case $QUIET in
 	1)
 		# check the status of each option
 		clear ||:
@@ -263,34 +274,30 @@ case $GDB in
 
 		# -b option
 		if [[ $branch_status = "1" ]] ; then
-			echo -e "$FAILED  -b Branch ..: $BDESC"
-			readp_help_message
+			echo -e "$CHK2  -b Branch ..: $BDESC" ; readp_help_message
 		else 
-			echo -e "$CHK  -b Branch ..: $BDESC"
+			echo -e "$CHK1  -b Branch ..: $BDESC"
 		fi
 
 		# -n option
 		if [[ $name_status = "1" ]] ; then
-			echo -e "$FAILED  -n Name ....: $N_OPT"
-			readp_help_message
+			echo -e "$CHK2  -n Name ....: $N_OPT" ; readp_help_message
 		else 
-			echo -e "$CHK  -n Name ....: $N_OPT"
+			echo -e "$CHK1  -n Name ....: $N_OPT"
 		fi
 
 		# -c option
 		if [[ $config_status = "1" ]] ; then
-			echo -e "$FAILED -c Type .....: $C_OPT"
-			readp_help_message
+			echo -e "$CHK2  -c Type .....: $C_OPT" ; readp_help_message
 		else 
-			echo -e "$CHK  -c Type ....: $C_OPT"
+			echo -e "$CHK1  -c Type ....: $C_OPT"
 		fi
 
 		# -t option
 		if [[ $target_status = "1" ]] ; then
-			echo -e "$FAILED -t Target ...: $T_OPT"
-			readp_help_message
+			echo -e "$CHK2  -t Target ...: $T_OPT" ; readp_help_message
 		else 
-			echo -e "$CHK  -t Target ..: $T_OPT"
+			echo -e "$CHK1  -t Target ..: $T_OPT"
 		fi
 		echo ''
 
@@ -445,44 +452,41 @@ fi
 
 }
 
-
+# TO-DO: re-write to enable AUTOSVN && SKIPSVN
 # chekout or update from svn --------------------------------------------------
 check_svn() {
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" SVN UPDATE"${C_NC}
 echo '-----------------------------------------------------'
+echo ''
+case "$SKIPSVN" in
+	1)
+		echo 'JTSDK Option: [ SKIPSVN ] Enabled'
+	;;
+	*)
+		case "$AUTOSVN" in
+			1)
+				echo 'JTSDK Option: [ AUTOSVN ] Enabled'
+				if [[ ! -d $APP_SRC/.svn ]]  ; then 
+					echo ''
+					echo "Checking Out New Version of $APP_NAME"
+					cd $SRCD
+					svn co $URL
+				else
+					echo ''
+					cd "$APP_SRC"
+					echo "Updating ( $APP_NAME )"
+					svn cleanup && svn update
+				fi
+			;;
 
-if [[ ! -d $APP_SRC/.svn ]]
-then
-	echo ''
-	echo "Checking Out New Version of $APP_NAME"
-	cd $SRCD
-	svn co $URL
-else
-	# Yy / Nn answer to update from svn	
-	while [ 1 ]
-	do
-		echo ''
-		read -p "Update from SVN Before Building? [ Y/N ]: " yn
-		case $yn in
-		
-		[Yy]* )
-			cd "$APP_SRC"
-			echo "Updating ( $APP_NAME )"
-			svn cleanup && svn update
-			break ;;
-		
-		[Nn]* )
-			echo "Nothign to be done..."
-			break ;;
-		
-		* )
-			clear ||:
-			echo "Please use "Y" yes or "N" No." ;;
+			0)
+				echo 'JTSDK Option: SVN Updates Disabled'
+			;;
 		esac
-	done
-fi
+	;;
+esac
 }
 
 # get WSJTX Version information from: Version.cmake ----------------------------
@@ -561,20 +565,22 @@ echo "-- SVN Revision ....: $SVN_VER"
 # setup folder based on separation selection
 check_separation() {
 
-if [ $SEPARATE == "Yes" ] ; then 
-	BUILDD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/build/$C_OPT"
-	INSTALLD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/install/$C_OPT"
-	PKGD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/package"
-
-else
-	BUILDD="$HOMEDIR/wsjtx/$B_OPT/$N_OPT/build/$C_OPT"
-	INSTALLD="$HOMEDIR/wsjtx/$B_OPT/$N_OPT/install/$C_OPT"
-	PKGD="$HOMEDIR/wsjtx/$BOPT/$N_OPT/package"
-fi
+case "$SEPARATE" in
+	1)
+		BUILDD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/build/$C_OPT"
+		INSTALLD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/install/$C_OPT"
+		PKGD="$HOMEDIR/wsjtx/$B_OPT/$AVER/$SVN_VER/package"
+	;;
+	*)
+		BUILDD="$HOMEDIR/wsjtx/$B_OPT/$N_OPT/build/$C_OPT"
+		INSTALLD="$HOMEDIR/wsjtx/$B_OPT/$N_OPT/install/$C_OPT"
+		PKGD="$HOMEDIR/wsjtx/$BOPT/$N_OPT/package"
+	;;
+esac
 
 }
 
-
+# TO-DO: update to add [ QUIET ] user option
 # setup directories ------------------------------------------------------------
 setup_dirs() {
 echo ''
@@ -596,33 +602,51 @@ echo ''
 
 }
 
+#-------------------------------------------------------------- CLEAN BUILD TREE
+run_clean() {
+if [[ $CLEAN == "1" ]] && [[ -f "$BUILDD/Makefile" ]] ; then
+	echo '-----------------------------------------------------'
+	echo -e ${C_Y}" CLEANING BUILD TREE"${C_NC}
+	echo '-----------------------------------------------------'
+	echo ''
+	cd "$BUILDD"
+	echo 'JTSDK Option: [ CLEAN ] Enabled'
+	make clean
+fi
 
-# run cmake configure step -----------------------------------------------------
-run_cmake() {
+}
+
+#----------------------------------------------------------------- RUN CONFIGURE
+run_config() {
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" CONFIGURING [ WSJT-X $AVER $DESC ]"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
-
-# $HL3I is the hamlib3 local install directory
-# $C_OPT is the debug | release 
-# $INSTALLD is the installation directory
-# $APP_SRC source directory 
-
-cmake -G "Unix Makefiles" -Wno-dev \
--D CMAKE_PREFIX_PATH:PATH="$HL3I" \
--D CMAKE_BUILD_TYPE="$C_OPT" \
--D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"
+case $RCFG in
+	0)
+		echo 'JTSDK Option: Cmake Configuration Disabled'
+	;;
+	*)
+		if [[ "$BUILDD/Makefile" ]] ; then
+			echo 'JTSDK Option: [ RCFG ] Enabled'
+			echo ''
+		else
+			echo 'JTSDK Message: Running Cmake on clean build tree'
+			echo ''
+		fi
+		cmake -G "Unix Makefiles" -Wno-dev \
+		-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
+		-D CMAKE_BUILD_TYPE="$C_OPT" \
+		-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"
+	;;
+esac
 
 }
 
-# build the target -------------------------------------------------------------
+#--------------------------------------------------------------------- RUN BUILD
 run_build() {
-
-# this only builds the target, and *does not* install it
-
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" BUILDING TARGET [ $T_OPT ]"${C_NC}
@@ -754,6 +778,7 @@ case "$T_OPT" in
 		echo " cd .......: $INSTALLD/bin"
 		echo " Type, ....: ./wsjtx"
 		echo ''
+		echo ''
 	;;
 
 	package)
@@ -799,6 +824,15 @@ esac
 }
 
 
+#-------------------------------------------------------------- JTSDK OPTION MSG
+jtsdk_options_message() {
+echo ' JTSDK Options'
+echo "   Number of cores ......: $JJ"
+echo -n "   User Selected Items ..: "
+for i in "${jtsdk_options[@]-}" ; do echo -n "$i " ; done ; echo ''
+}
+
+
 ################################################################################
 # START MAIN SCRIPT
 ################################################################################
@@ -810,8 +844,8 @@ branch_status="1"
 name_status="1"
 config_status="1"
 target_status="1"
-
 options=':hb:n:c:t:'
+
 while getopts "$options" FLAG
 do
 	case $FLAG in
@@ -837,18 +871,18 @@ getopts_options_status
 
 # for -t (install | package ) targets ( -c Release | Debug )
 build_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
-'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
-'run_install_build' 'link_kvasd' 'finish_message')
+'get_svn_revision' 'check_separation' 'setup_dirs' 'run_clean' 'run_config' 'run_build' \
+'run_install_build' 'link_kvasd' 'finish_message' 'jtsdk_options_message')
 
 # for user guide ( -t docs )
 ug_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
-'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
-'run_install_build' 'finish_message')
+'get_svn_revision' 'check_separation' 'setup_dirs' 'run_clean' 'run_config' \
+'run_build' 'run_install_build' 'finish_message' 'jtsdk_options_message')
 
 # user defined target ( -t ?? )
 ud_target=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
-'get_svn_revision' 'check_separation' 'setup_dirs' 'run_cmake' 'run_build' \
-'finish_message')
+'get_svn_revision' 'check_separation' 'setup_dirs' 'run_clean' 'run_config' \
+'run_build' 'finish_message' 'jtsdk_options_message')
 
 case "$T_OPT" in
 	install|package)
