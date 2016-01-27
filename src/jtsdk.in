@@ -70,7 +70,7 @@ BMANP=@BMANP@
 JJ=@JJJJ@
 
 # WSJT-X menu generation timer, in minutes -mmin, *cannot be blank !!*
-GENTIME='1440'
+GENTIME='60'
 
 ################################################################################
 #
@@ -868,7 +868,7 @@ echo -e ${C_Y}' COMMAND LINE OPTIONS HELP'${C_NC}
 echo '-----------------------------------------------------------'
 echo ''
 cat <<EOF
- Usage ....: jtsdk [-h] [-e FEATURE] [-c NUM ] [-d FEATURE] [-l] [-u]
+ Usage ....: jtsdk [-h] [-c] [-l] [-t] [-u] [-e FEATURE] [-d FEATURE]
  Example ..: jtsdk -e skipsvn -e clean -d autorun
 
  FEATURE LIST
@@ -877,10 +877,11 @@ cat <<EOF
  SWITCHES
   -h  displays this message
   -c  set number of cpus used in compiling, resets JJ=x
-  -d  disable [FEATURE]
-  -e  enable  [FEATURE]
   -l  list current user option status
+  -t  set WSJT-X menu update frequency ( expressed in minutes )
   -u  update wsjt build list
+  -e  enable  [FEATURE]
+  -d  disable [FEATURE]
 
   See, man(1) for more details: man jtsdk
 
@@ -907,22 +908,29 @@ if [[ -f $CFG/autorun ]] ; then AUTORUN='Yes' ; else AUTORUN='No ' ; fi
 if [[ -f $CFG/autosvn ]] ; then AUTOSVN='Yes' ; else AUTOSVN='No ' ; fi
 if [[ -f $CFG/clean ]] ; then CLEAN='Yes' ; else CLEAN='No ' ; fi
 if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES="$JJ" ; fi
-if [[ -f $CFG/docs ]] ; then MANPAGES='Yes' ; else MANPAGES='No ' ; fi
+if [[ -f $CFG/docs ]] ; then DOCS='Yes' ; else DOCS='No ' ; fi
 if [[ -f $CFG/manpages ]] ; then MANPAGES='Yes' ; else MANPAGES='No ' ; fi
 if [[ -f $CFG/quiet ]] ; then QUIET='Yes' ; else QUIET='No ' ; fi
 if [[ -f $CFG/rcfg ]] ; then RCFG='Yes' ; else RCFG='No ' ; fi
 if [[ -f $CFG/separate ]] ; then SEPARATE='Yes' ; else SEPARATE='No ' ; fi
 if [[ -f $CFG/skipsvn ]] ; then SKIPSVN='Yes' ; else SKIPSVN='No ' ; fi
-echo "  autorun ...: $AUTORUN     # Run after compiling"
-echo "  autosvn ...: $AUTOSVN     # Automatically update from svn"
-echo "  clean .....: $CLEAN       # Clean the build tree before compiling"
-echo "  docs ......: $DOCS        # "
+if [[ -f $CFG/gentime ]] ; then GENTIME=$(awk 'FNR==1 {print $0}' < $CFG/gentime) ; else GENTIME="$GENTIME" ; fi
+
+# calculate gentime in minutes, hours and days
+GMIN=$(($GENTIME))
+GHRS=$(($GENTIME / 60))
+GDAYS=$(($GENTIME / 1440))
+echo "  autorun ...: $AUTORUN"
+echo "  autosvn ...: $AUTOSVN"
+echo "  clean .....: $CLEAN"
+echo "  docs ......: $DOCS"
 echo "  manpages ..: $MANPAGES"
 echo "  quiet .....: $QUIET"
 echo "  rcfg ......: $RCFG"
 echo "  separate ..: $SEPARATE"
 echo "  skipsvn ...: $SKIPSVN"
-echo "  cores .....: $CORES"
+echo "  cores .....: ($CORES)"
+echo "  gentime ...: ($GENTIME m) / ($GHRS h) / ($GDAYS d)"
 echo ''
 echo ' For Help Use .....: jtsdk -h'
 echo ''
@@ -956,7 +964,7 @@ echo ' available on the system. Max = ( Physical + 1 )'
 echo ''
 echo "* Your max value should be no more than ...: $maxcpus"
 echo "* Suggested number of cores is between ....: 1 and $maxcpus"
-echo -n "* Set the number of cores, default is .....: $cpus : "
+echo -n "* Set the number of cores, default is ..... [ $cpus ] : "
 read input
 
 # input entered, check it is at least an integer
@@ -1018,7 +1026,7 @@ fi
 # set default value of input is empty
 if [[ -z $input ]] ; then
 	echo ''
-	echo -e "$CHK1  Default value accepted."
+	echo -e "$CHK1  Default accepted."
 	echo -e "$CHK1  Setting core value to ..: $cpus"
 	rm -rf "$CFG/cores" > /dev/null 2>&1
 	touch "$CFG/cores" ; echo $cpus > "$CFG/cores"
@@ -1027,6 +1035,102 @@ fi
 
 }
 
+
+#----------------------------------------------------------------- SET CPU CORES
+set_gentime() {
+
+# used to set the WSJT-X update
+default_gentime='1440'
+gmax='43800'
+clear ||:
+echo '-----------------------------------------------------------'
+echo -e ${C_Y}' SET WSJT-X MENU UPDATE FREQUENCY'${C_NC}
+echo '-----------------------------------------------------------'
+echo ''
+echo ' Using this feature sets the elapsed time in which the WSJT-X'
+echo ' menus will be updated each JTSDK is start.'
+echo ''
+echo " The default timer is ( 1440 ) expreseed in *Minutes*, or"
+echo ' once every day. Daily is (recommended)'
+echo ''
+echo ' Once every hour ..: 60'
+echo ' Once per Day .....: 1440'
+echo ' Once per Week.....: 10080'
+echo ''
+echo ' * To accept the default setting, press the [ ENTER ] key'
+echo " * Suggested Update frequency ........: 1440"
+echo -n " * Set new update timer, default is .. [ $default_gentime ] : "
+read input
+
+# input entered, check it is at least an integer
+if [[ ! -z $input ]] ; then
+	if [ $input -eq $input 2>/dev/null ] ; then
+		echo " * Doing sanity check for: $input"
+	else
+		echo ''
+		echo "ERROR: this does not look right:"
+		echo ''
+		echo " $input"
+		echo ''
+		echo " Try using something between: ( 60 and $GENTIME )"
+		echo ''
+		exit 0
+	fi
+fi
+
+# input entered, check integer, check if between 1 and $gmax
+if [[ ! -z $input ]] ; then
+	if [ $input -eq $input 2>/dev/null ] && [ $input -gt "0" 2>/dev/null ] && \
+	[ $input -lt "$gmax" 2>/dev/null ] ; then
+		echo ''
+		echo -e "$CHK1  Setting update timer to: $input"
+		rm -rf "$CFG/gentime" > /dev/null 2>&1
+		touch "$CFG/gentime" ; echo $input > "$CFG/gentime"
+		echo ''
+		exit 0
+	fi
+fi
+
+# input entered, check integer, less than 1
+if [[ ! -z $input ]] ; then
+	if [ $input -eq $input 2>/dev/null ] && [ $input -lt "1" 2>/dev/null ] ; then
+		echo ''
+		echo 'ERROR'
+		echo -e "$CHK2  Timer settings cannot be ...: 0"
+		echo -e " $CHK1  Setting default value to ..: 1440"
+		rm -rf "$CFG/gentime" > /dev/null 2>&1
+		touch "$CFG/gentime" ; echo $default_gentime > "$CFG/gentime"
+		echo ''
+		exit 0
+	fi
+fi
+
+# input entered, check integer, but if > than MAX number of hours, warn and accept
+if [[ ! -z $input ]] ; then
+	if [ $input -eq $input 2>/dev/null ] && [ $input -gt "$gmax" 2>/dev/null ] || \
+	[ $input -eq "$gmax" 2>/dev/null ] ; then
+		GTDAYS=$(($input / 1440))
+		echo ''
+		echo -e "$CHK1  ( $GTDAYS days ) is a long time between updates!!"
+		echo -e "$CHK1  Setting timer as you asked ..: $input"
+		rm -rf "$CFG/gentime" > /dev/null 2>&1
+		touch "$CFG/gentime" ; echo $input > "$CFG/gentime"
+		echo ''
+		exit 0
+	fi
+fi
+
+# set default value of input is empty
+if [[ -z $input ]] ; then
+	echo ''
+	echo -e "$CHK1  Default accepted."
+	echo -e "$CHK1  Setting timer to ..: $default_gentime"
+	rm -rf "$CFG/gentime" > /dev/null 2>&1
+	touch "$CFG/gentime" ; echo $default_gentime > "$CFG/gentime"
+	echo ''
+fi	
+
+}
 
 
 ################################################################################
@@ -1112,7 +1216,7 @@ while getopts ":hclute:d:" opt ; do
 		u) UOPT='1' ;; # update WSJT-X menus
 		h) HOPT='1' ;; # display help message
 		l) LOPT='1' ;; # list options currently selected
-		t) TOPT='1' ;; # set WSJT-X update timer
+		t) TOPT='1' ;; # set WSJT-X menu update timer
 		
 # enable user options
 		e)
@@ -1153,23 +1257,28 @@ if [[ $COPT == '1' ]] ; then
 	exit 0
 fi
 
-# -u option ( update wsjt-x build list )
-if [[ $UOPT == '1' ]] ; then 
-	rm -f "$CFG/time-stamp" > /dev/null 2>&1
-	generate_build_lists
-	exit 0
-fi
-
-# -h option
+# -h display cli help message
 if [[ $HOPT == '1' ]] ; then
 	cli_help
 	exit 0
 fi
 
-# TO-DO: this should use an array, possibly a function
-# -l option ( list user options )
+# -l list status of user options
 if [[ $LOPT == '1' ]] ; then
 	list_option_status
+	exit 0
+fi
+
+# -t updates WSJT-X menu generation timer
+if [[ $TOPT == '1' ]] ; then
+	set_gentime
+	exit 0
+fi
+
+# -u updates wsjt-x build list
+if [[ $UOPT == '1' ]] ; then 
+	rm -f "$CFG/time-stamp" > /dev/null 2>&1
+	generate_build_lists
 	exit 0
 fi
 
