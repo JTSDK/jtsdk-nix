@@ -68,17 +68,17 @@ JJ=@JJJJ@
 
 # check global user defined options ( see jtsdk -h )
 # add each option enabled to jtsdk_options array
-wsjt_options=()
-if [[ -f $CFG/autorun ]] ; then AUTORUN=1 ; wsjt_options+=('autorun') ; else AUTORUN=0 ; fi
-if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 ; wsjt_options+=('autosvn') ; else AUTOSVN=0 ; fi
-if [[ -f $CFG/clean ]] ; then CLEAN=1 ; wsjt_options+=('clean') ; else CLEAN=0 ; fi
+wspr_options=()
+if [[ -f $CFG/autorun ]] ; then AUTORUN=1 ; wspr_options+=('autorun') ; else AUTORUN=0 ; fi
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 ; wspr_options+=('autosvn') ; else AUTOSVN=0 ; fi
+if [[ -f $CFG/clean ]] ; then CLEAN=1 ; wspr_options+=('clean') ; else CLEAN=0 ; fi
 if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES=$JJ ; fi
-if [[ -f $CFG/docs ]] ; then DOCS=1 ; wsjt_options+=('docs') ; else DOCS=0 ; fi
-if [[ -f $CFG/manpages ]] ; then MANPAGES=1 ; wsjt_options+=('manpages') ; else MANPAGES=0 ; fi
-if [[ -f $CFG/quiet ]] ; then QUIET=1 ; wsjt_options+=('quiet') ; else QUIET=0 ; fi
-if [[ -f $CFG/rcfg ]] ; then RCFG=1 ; wsjt_options+=('rcfg') ; else RCFG=0 ; fi
-if [[ -f $CFG/separate ]] ; then SEPARATE=1 ; wsjt_options+=('separate') ; else SEPARATE=0 ; fi
-if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wsjt_options+=('skipsvn') ; else SKIPSVN=0 ; fi
+if [[ -f $CFG/docs ]] ; then DOCS=1 ; wspr_options+=('docs') ; else DOCS=0 ; fi
+if [[ -f $CFG/manpages ]] ; then MANPAGES=1 ; wspr_options+=('manpages') ; else MANPAGES=0 ; fi
+if [[ -f $CFG/quiet ]] ; then QUIET=1 ; wspr_options+=('quiet') ; else QUIET=0 ; fi
+if [[ -f $CFG/rcfg ]] ; then RCFG=1 ; wspr_options+=('rcfg') ; else RCFG=0 ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE=1 ; wspr_options+=('separate') ; else SEPARATE=0 ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wspr_options+=('skipsvn') ; else SKIPSVN=0 ; fi
 
 ################################################################################
 # FUNCTOINS
@@ -91,10 +91,10 @@ echo '-----------------------------------------------------'
 echo -e ${C_Y}" SVN UPDATE"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-# check skip svn
 case "$SKIPSVN" in
 	1)
 		if [[ ! -d $APP_SRC/.svn ]] ; then 
+			echo ''
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
 			svn co $URL
@@ -105,23 +105,24 @@ case "$SKIPSVN" in
 	0)
 esac
 
-# check sutosvn
 case "$AUTOSVN" in
 	1)
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
+			echo ''
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
 			svn co $URL
-		elif  [[ $SKIPSVN == "1" ]]  ; then 
-			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
+			echo 'JTSDK Option: [ AUTOSVN ] Enabled'
+			echo ''
 			cd "$APP_SRC"
 			echo "Updating ( $APP_NAME )"
 			svn cleanup && svn update
 		fi
 	;;
 	0)
-	 echo 'JTSDK Option: Auto SVN Updates Disabled'
+	
+		echo 'JTSDK Option: SVN Updates Disabled'
 	;;
 esac
 
@@ -149,14 +150,14 @@ echo "-- SVN Revision Is ........: $SVN_VER"
 }
 
 
-# generate a simple wsjt.sh run script -----------------------------------------
+# generate a simple wspr.sh run script -----------------------------------------
 generate_shell_script() {
 (
-cat <<EOF_WSJT
+cat <<EOF_WSPR
 #!/usr/bin/env bash
 #-------------------------------------------------------------------------------
 # File Name:    wspr.sh
-# Description:  Shell script wrapper to run wsjt
+# Description:  Shell script wrapper to run wspr
 #				JTSDK auto generated file
 #-------------------------------------------------------------------------------
 
@@ -164,9 +165,9 @@ set -e
 
 # python3 path is updated from configure script
 cd $INSTALLD
-env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wspr.py
+env PYTHONPATH="$INSTALLD/WsprMod" @PYTHON3@ -O ./wspr.py
 
-EOF_WSJT
+EOF_WSPR
 ) > "$INSTALLD"/wspr.sh
 
 }
@@ -243,7 +244,7 @@ cd "$APP_SRC"
 autoreconf -f -i
 ./configure --prefix=$INSTALLD
 
-# compile WSJT application
+# compile WSPR application
 echo
 echo '-----------------------------------------------------'
 echo -e ${C_Y}'RUNNING MAKE'${C_NC}

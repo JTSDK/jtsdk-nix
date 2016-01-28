@@ -114,29 +114,32 @@ case "$AUTOSVN" in
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
 			svn co $URL
+		elif  [[ $SKIPSVN == "1" ]]  ; then 
+			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
-			echo 'JTSDK Option: [ AUTOSVN ] Enabled'
-			echo ''
 			cd "$APP_SRC"
 			echo "Updating ( $APP_NAME )"
 			svn cleanup && svn update
 		fi
 	;;
 	0)
-	 echo 'JTSDK Option: SVN Updates Disabled'
+	 echo 'JTSDK Option: Auto SVN Updates Disabled'
 	;;
 esac
-
 }
 
 
 # get WSJT Version information from: wsjt.py -----------------------------------
 get_version() {
-
 # Example
 # Version="10.0 r" + "$Rev: 5247 $"[6:-1]
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
+echo '-----------------------------------------------------'
 AVER=$(cat $APP_SRC/wsjt.py |grep 'Version="' |awk '{print $1}' |cut -c10-13)
-echo "-- Application Version..: $AVER"
+echo ..
+echo " Application Version..: $AVER"
 
 }
 
@@ -144,88 +147,110 @@ echo "-- Application Version..: $AVER"
 get_svn_revision() {
 
 SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
-echo "-- SVN Revision.........: $SVN_VER"
+echo " SVN Revision.........: $SVN_VER"
 
 }
 
-# generate a simple wsjt.sh run script -----------------------------------------
-generate_shell_script() {
-(
-cat <<EOF_WSJT
-#!/usr/bin/env bash
-#-------------------------------------------------------------------------------
-# File Name:    wsjt.sh
-# Description:  Shell script wrapper to run wsjt
-#				JTSDK auto generated file
-#-------------------------------------------------------------------------------
+# setup directories, checking for enable separate
+setup_dirs() {
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SETUP DIRECTORIES"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+case "$SEPARATE" in
+	1)
+		BUILDD="$APP_SRC"
+		INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install"
+	;;
+	*)
+		BUILDD="$APP_SRC"
+		INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install"
+	;;
+esac
 
-set -e
+# make the directories
+mkdir -p "$INSTALLD" >/dev/null 2>&1
 
-# python3 path is updated from configure script
-cd $INSTALLD
-env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wsjt.py
-
-EOF_WSJT
-) > "$INSTALLD"/wsjt.sh
+case "$QUIET" in
+	1)
+		echo 'JTSDK Option: [ QUIET ] Enabled' ;;
+	*)
+		echo " Name .........: WSJT" 
+		echo " App Version ..: $AVER r$SVN_VER"
+		echo " Source .......: $APP_SRC"
+		echo " Build ........: $APP_SRC"
+		echo " Install ......: $INSTALLD"
+		echo ''
+	;;
+esac
 
 }
 
+run_clean() {
+cd "$BUILDD"
+case "$CLEAN" in
+	1)
+		if [[ -f "$BUILDD/Makefile" ]] ; then
+		echo ''
+		echo '-----------------------------------------------------'
+		echo -e ${C_Y}'RUN MAKE DISTCLEAN FIRST'${C_NC}
+		echo '-----------------------------------------------------'
+		echo ''
+		echo 'JTSDK Option: [ CLEAN ] Enabled'
+		echo ''
+		cd "$APP_SRC"
+		make distclean
+		echo ''
+		fi
+	;;
+esac
 
-#-------------------------------------------------------------- WSJTX OPTION MSG
-wsjt_options_message() {
-echo ''
-echo ' JTSDK Options'
-echo "   Number of cores ......: $JJ"
-echo -n "   User Selected Items ..: "
-for i in "${wsjt_options[@]-}" ; do echo -n "$i " ; done ; echo ''
 }
 
-
-################################################################################
-# START MAIN SCRIPT
-################################################################################
-
-clear ||:
-echo '-----------------------------------------------------'
-echo -e ${C_Y}"STARTING BUILD for ( $APP_NAME )"${C_NC}
-echo '-----------------------------------------------------'
-check_svn
-
+run_config() {
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
-echo '-----------------------------------------------------'
-get_version
-get_svn_revision
-
-# set install locaiton
-if [ $SEPARATE == "Yes" ] ; then 
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER"
-else
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER"
-fi
-
-if [[ -f "$APP_SRC/Makefile" ]] ; then
-echo
-echo '-----------------------------------------------------'
-echo -e ${C_Y}'RUN MAKE DISTCLEAN FIRST'${C_NC}
+echo -e ${C_Y}" RUN AUTOCONF and CONFIGURE"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
-cd "$APP_SRC" ; make distclean
-echo ''
-fi
+cd "$BUILDD"
+# add prefix to config array
+cfgarray=("--prefix=$INSTALLD" "--enable-rsdtest")
 
-# run autoreconf to generate new Makefile & configure scripts
-echo
-echo '-----------------------------------------------------'
-echo -e ${C_Y}'RUN AUTORECONF and CONFIGURE'${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-cd "$APP_SRC"
-autoreconf -f -i
-./configure --prefix=$INSTALLD --enable-rsdtest
+# add docs and manpage options to config array
+if [[ $DOCS == "0" ]] ; then cfgarray+=("--disable-docs") ; fi 
+if [[ $MANPAGES == "0" ]] ; then cfgarray+=("-disable-manpages") ; fi
+
+# configure command
+CMD="./configure $@"
+
+case "$RCFG" in
+	0)
+		if 	[[ ! -f "$BUILDD/Makefile" ]] ; then
+			echo 'JTSDK Message: Run ( autoreconf -f -i ) on clean build tree'
+			autoreconf -f -i
+			eval "$CMD ${cfgarray[@]}"
+		fi
+	;;
+	1)
+		if [[ -f "$BUILDD/Makefile" ]] ; then
+			echo 'JTSDK Option: [ RCFG ] Enabled'
+		else
+			echo 'JTSDK Message: Run ( autoreconf -f -i ) on clean build tree'
+		fi
+		echo "JTSDK Config Option: ${cfgarray[@]}"
+		echo ''
+		autoreconf -f -i 
+		eval "$CMD ${cfgarray[@]}"
+	;;
+esac
+
+}
 
 # compile WSJT application
+run_build() {
+cd "$BUILDD"
 echo
 echo '-----------------------------------------------------'
 echo -e ${C_Y}'RUNNING MAKE'${C_NC}
@@ -233,6 +258,9 @@ echo '-----------------------------------------------------'
 echo ''
 make
 
+}
+
+run_install_build() {
 # install the targets
 echo
 echo '-----------------------------------------------------'
@@ -262,18 +290,51 @@ install -m 755 -s $APP_SRC/rsdtest/{rsdtest,rsdtest2,rsdtest3} "$INSTALLD/rsdtes
 echo "..Installing Runtime Script"
 rm -f "$INSTALLD/$APP_NAME.sh" >/dev/null 2>&1
 touch "$INSTALLD/$APP_NAME.sh" && chmod +x "$INSTALLD/$APP_NAME.sh"
-generate_shell_script
 
-# Manpages and User Guide
-for f in ./manpages/*.1 ; do
-	echo "..Installing $f"
-	install -m 644 "$f" "$INSTALLD"/manpages/
-done
-echo "..Installing $(ls -al ./doc/wsjt-main* |awk '{print $9}')"
-install -m 644 doc/wsjt-main*.html "$INSTALLD/doc/"
-DOCNAME=$(ls -al doc/wsjt-main* |awk '{print $9}' |rev | cut -d"/" -f1 | rev)
+# generate shell sctipt
+(
+cat <<EOF_WSJT
+#!/usr/bin/env bash
+#-------------------------------------------------------------------------------
+# File Name:    wsjt.sh
+# Description:  Shell script wrapper to run wsjt
+#				JTSDK auto generated file
+#-------------------------------------------------------------------------------
+
+set -e
+
+# python3 path is updated from configure script
+cd $INSTALLD
+env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wsjt.py
+
+EOF_WSJT
+) > "$INSTALLD"/wsjt.sh
+
+# install manpages, only if MANPAGES=1
+case $MANPAGES in
+	1)
+		# Manpages and User Guide
+		for f in ./manpages/*.1 ; do
+			echo "..Installing $f"
+			install -m 644 "$f" "$INSTALLD"/manpages/
+		done
+	;;
+esac
+
+# install docs, only if DOCS=1
+case $DOCS in
+	1)
+		echo "..Installing $(ls -al ./doc/wsjt-main* |awk '{print $9}')"
+		install -m 644 doc/wsjt-main*.html "$INSTALLD/doc/"
+		DOCNAME=$(ls -al doc/wsjt-main* |awk '{print $9}' |rev | cut -d"/" -f1 | rev)
+	;;
+esac
+
+}
+
 
 # Finished
+finish_message() {
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_G}"BUILD SUMMARY"${C_NC}
@@ -282,7 +343,9 @@ echo ''
 echo " Name .........: $APP_NAME"
 echo " Version ......: $AVER"
 echo " SVN Version ..: r$SVN_VER"
-echo " User Guide ...: $DOCNAME"	
+if [[ $DOCS == "1" ]] ; then
+echo " User Guide ...: $DOCNAME"
+fi
 echo " Source .......: $APP_SRC"
 echo " Install ......: $INSTALLD"
 echo " SVN URL ......: $URL"
@@ -291,9 +354,34 @@ echo " TO RUN $APP_NAME"
 echo " cd ...........: $INSTALLD"
 echo " Type, ........: ./$APP_NAME.sh"
 
-# display opts used
-wsjt_options_message
+}
 
+#--------------------------------------------------------------- WSJT OPTION MSG
+wsjt_options_message() {
+echo ''
+echo ' BUILD OPTIONS'
+echo "   Number of cores ......: $JJ"
+echo "   Makefile Optoins .....: ${cfgarray[@]}"
+echo -n "   User Selected Items ..: "
+for i in "${wsjt_options[@]-}" ; do echo -n "$i " ; done ; echo ''
+
+}
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
+
+clear ||:
+check_svn
+get_version
+get_svn_revision
+setup_dirs
+run_clean
+run_config
+run_build
+run_install_build
+finish_message
+wsjt_options_message
 
 exit 0
 

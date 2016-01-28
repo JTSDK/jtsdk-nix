@@ -690,7 +690,7 @@ case "$RCFG" in
 		fi
 	;;
 	*)
-		if [[ "$BUILDD/Makefile" ]] ; then
+		if [[ -f "$BUILDD/Makefile" ]] ; then
 			echo 'JTSDK Option: [ RCFG ] Enabled'
 			echo ''
 		else
@@ -928,7 +928,7 @@ do
 done
 shift "$((OPTIND-1))" # shift off the options
 
-# getopts status message, for debugging only GDB="1"
+# getopts status message, disabled if [ quiet ] is set
 getopts_options_status
 
 # for -t (install | package ) targets ( -c Release | Debug )
