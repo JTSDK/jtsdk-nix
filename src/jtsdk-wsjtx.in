@@ -486,41 +486,47 @@ fi
 
 }
 
-# TO-DO: re-write to enable AUTOSVN && SKIPSVN
-# chekout or update from svn --------------------------------------------------
+#--------------------------------------------------- CHECKOUT or UPDATE FROM SVN
 check_svn() {
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" SVN UPDATE"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
+# check skip svn
 case "$SKIPSVN" in
 	1)
-		echo 'JTSDK Option: [ SKIPSVN ] Enabled'
+		if [[ ! -d $APP_SRC/.svn ]] ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		else
+			echo 'JTSDK Option: [ SKIPSVN ] Enabled'
+		fi
 	;;
-	*)
-		case "$AUTOSVN" in
-			1)
-				echo 'JTSDK Option: [ AUTOSVN ] Enabled'
-				if [[ ! -d $APP_SRC/.svn ]]  ; then 
-					echo ''
-					echo "Checking Out New Version of $APP_NAME"
-					cd $SRCD
-					svn co $URL
-				else
-					echo ''
-					cd "$APP_SRC"
-					echo "Updating ( $APP_NAME )"
-					svn cleanup && svn update
-				fi
-			;;
+	0)
+esac
 
-			0)
-				echo 'JTSDK Option: SVN Updates Disabled'
-			;;
-		esac
+# check sutosvn
+case "$AUTOSVN" in
+	1)
+		if [[ ! -d $APP_SRC/.svn ]]  ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		elif  [[ $SKIPSVN == "1" ]]  ; then 
+			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
+		else
+			cd "$APP_SRC"
+			echo "Updating ( $APP_NAME )"
+			svn cleanup && svn update
+		fi
+	;;
+	0)
+	 echo 'JTSDK Option: Auto SVN Updates Disabled'
 	;;
 esac
+
 }
 
 # get WSJTX Version information from: Version.cmake ----------------------------

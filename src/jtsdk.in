@@ -1173,7 +1173,7 @@ jtsdk_alias_commands
 #  -c  set number of cpus used in compiling, resets JJ=x
 #  -l  list current user option status
 #  -u  update wsjt build list
-#  -t  set WSJT-X update timer
+#  -t  set WSJT-X menu update timer
 #  -e  enable  [FEATURE]
 #  -d  disable [FEATURE]
 #
@@ -1189,7 +1189,7 @@ jtsdk_alias_commands
 #   docs ......: enable / disable building user guides
 #
 # FEATURE ARRAY
-option_array=('autorun' 'autosvn' 'skipsvn' 'clean' 'rcfg' 'separate' 'quiet' 'manpages' 'docs')
+jtsdk_array=('autorun' 'autosvn' 'skipsvn' 'clean' 'rcfg' 'separate' 'quiet' 'manpages' 'docs')
 
 # getopts specific items vars
 earray=()
@@ -1220,13 +1220,13 @@ while getopts ":hclute:d:" opt ; do
 		
 # enable user options
 		e)
-			for i in ${option_array[@]} ; do
+			for i in ${jtsdk_array[@]} ; do
 				if [ $i == $OPTARG ] ; then e_array+=("$OPTARG") ; fi
 			done
 		 ;;
 # disable user options
 		d)
-			for i in ${option_array[@]} ; do
+			for i in ${jtsdk_array[@]} ; do
 				if [ $i == $OPTARG ] ; then d_array+=("$OPTARG") ; fi
 			done
 		 ;;
@@ -1314,7 +1314,7 @@ fi
 clear ||:
 while [ 0 ]; do
 
-MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" H "Help" E "Exit")
+MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "Optoins" H "Help" E "Exit")
 
 MM_SELECT=$(
 dialog --ok-label SELECT \

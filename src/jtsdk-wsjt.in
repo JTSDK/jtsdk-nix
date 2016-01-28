@@ -86,40 +86,49 @@ if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wsjt_options+=('skipsvn') ; else SKI
 # FUNCTOINS
 ################################################################################
 
-# check if user wants to update from svn before building -----------------------
+#--------------------------------------------------- CHECKOUT or UPDATE FROM SVN
 check_svn() {
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SVN UPDATE"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+# check skip svn
+case "$SKIPSVN" in
+	1)
+		if [[ ! -d $APP_SRC/.svn ]] ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		else
+			echo 'JTSDK Option: [ SKIPSVN ] Enabled'
+		fi
+	;;
+	0)
+esac
 
-if [[ ! -d $APP_SRC/.svn ]]
-then
-	echo
-	echo "Checking Out New Version of $APP_NAME"
-	cd $SRCD
-	svn co $URL
-else
-	# Yy / Nn answer to update from svn	
-	while [ 1 ]
-	do
-		echo
-		read -p "Update from SVN Before Building? [ Y/N ]: " yn
-		case "$yn" in
-		
-		[Yy]* )
-			cd "$APP_SRC" 
+# check sutosvn
+case "$AUTOSVN" in
+	1)
+		if [[ ! -d $APP_SRC/.svn ]]  ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		else
+			echo 'JTSDK Option: [ AUTOSVN ] Enabled'
+			echo ''
+			cd "$APP_SRC"
 			echo "Updating ( $APP_NAME )"
 			svn cleanup && svn update
-			break ;;
-		[Nn]* )
-			echo "Nothing to be done..."
-			break ;;
-		
-		* )
-			clear ||:
-			echo "Please use "Y" yes or "N" No." ;;
-		esac
-	done
-fi
+		fi
+	;;
+	0)
+	 echo 'JTSDK Option: SVN Updates Disabled'
+	;;
+esac
 
 }
+
 
 # get WSJT Version information from: wsjt.py -----------------------------------
 get_version() {

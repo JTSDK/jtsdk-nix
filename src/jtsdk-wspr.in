@@ -22,22 +22,8 @@
 
 set -e
 
-# set home and directory paths
-HOMEDIR=~/jtsdk
-MENU=@SHARE@
-SRCD="$HOMEDIR/src"
-TMPD="$HOMEDIR/tmp"
-LOGS="$HOMEDIR/logs"
-
-
-# app specfic options
-APP_NAME=wspr
-APP_SRC="$SRCD/$APP_NAME"
-URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
-SEPARATE=@SEPARATE@
-PYTHON3=@PYTHON3@
-F2PY3=@F2PY3@
-
+# grab the number of command line arguments
+NARGS=$#
 
 # Foreground colours
 C_R='\033[01;31m'		# red
@@ -46,40 +32,98 @@ C_Y='\033[01;33m'		# yellow
 C_C='\033[01;36m'		# cyan
 C_NC='\033[01;37m'		# no color
 
+# set home and directory paths
+HOMEDIR=~/jtsdk
+SRCD="$HOMEDIR/src"
+TMPD="$HOMEDIR/tmp"
+LOGS="$HOMEDIR/logs"
+CFG="$HOMEDIR/config"
+OPTION=$1
+
+# app specfic options
+APP_NAME=wspr
+APP_SRC="$SRCD/$APP_NAME"
+URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
+
+# fixed expansions from JTSDK configure.ac
+MENU=@SHARE@
+PYTHON3=@PYTHON3@
+F2PY3=@F2PY3@
+
+# options based on JTSDK configure.ac
+#
+# Note(s):
+# [1] these features can be reset with with jtsdk -e [FEATURE] -d [FEATURE]
+# [2] for resetting JJ use jtsdk -c
+# [3] manpages, docs, and separate are enabled by default
+# [4] while available, @PROGRAM@ does not use parallel compiling due to F2PY
+#
+# SEPARATE = separate by svn revision
+# BDOCS    = disable user guides
+# BMANP    = disable manpages
+SEPARATE=@SEPARATE@
+BDOCS=@BDOCS@
+BMANP=@BMANP@
+JJ=@JJJJ@
+
+# check global user defined options ( see jtsdk -h )
+# add each option enabled to jtsdk_options array
+wsjt_options=()
+if [[ -f $CFG/autorun ]] ; then AUTORUN=1 ; wsjt_options+=('autorun') ; else AUTORUN=0 ; fi
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 ; wsjt_options+=('autosvn') ; else AUTOSVN=0 ; fi
+if [[ -f $CFG/clean ]] ; then CLEAN=1 ; wsjt_options+=('clean') ; else CLEAN=0 ; fi
+if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES=$JJ ; fi
+if [[ -f $CFG/docs ]] ; then DOCS=1 ; wsjt_options+=('docs') ; else DOCS=0 ; fi
+if [[ -f $CFG/manpages ]] ; then MANPAGES=1 ; wsjt_options+=('manpages') ; else MANPAGES=0 ; fi
+if [[ -f $CFG/quiet ]] ; then QUIET=1 ; wsjt_options+=('quiet') ; else QUIET=0 ; fi
+if [[ -f $CFG/rcfg ]] ; then RCFG=1 ; wsjt_options+=('rcfg') ; else RCFG=0 ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE=1 ; wsjt_options+=('separate') ; else SEPARATE=0 ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wsjt_options+=('skipsvn') ; else SKIPSVN=0 ; fi
+
 ################################################################################
 # FUNCTOINS
 ################################################################################
-check_svn() {
 
-if [[ ! -d $APP_SRC/.svn ]]
-then
-	echo
-	echo "Checking Out New Version of $APP_NAME"
-	cd $SRCD
-	svn co $URL
-else
-	# Yy / Nn answer to update from svn	
-	while [ 1 ]
-	do
-		echo
-		read -p "Update from SVN Before Building? [ Y/N ]: " yn
-		case "$yn" in
-		
-		[Yy]* )
-			cd "$APP_SRC" 
+#--------------------------------------------------- CHECKOUT or UPDATE FROM SVN
+check_svn() {
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SVN UPDATE"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+# check skip svn
+case "$SKIPSVN" in
+	1)
+		if [[ ! -d $APP_SRC/.svn ]] ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		else
+			echo 'JTSDK Option: [ SKIPSVN ] Enabled'
+		fi
+	;;
+	0)
+esac
+
+# check sutosvn
+case "$AUTOSVN" in
+	1)
+		if [[ ! -d $APP_SRC/.svn ]]  ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		elif  [[ $SKIPSVN == "1" ]]  ; then 
+			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
+		else
+			cd "$APP_SRC"
 			echo "Updating ( $APP_NAME )"
 			svn cleanup && svn update
-			break ;;
-		[Nn]* )
-			echo 'Nothing to be done..'
-			break ;;
-		
-		* )
-			clear ||:
-			echo "Please use "Y" yes or "N" No." ;;
-		esac
-	done
-fi
+		fi
+	;;
+	0)
+	 echo 'JTSDK Option: Auto SVN Updates Disabled'
+	;;
+esac
 
 }
 
@@ -120,7 +164,7 @@ set -e
 
 # python3 path is updated from configure script
 cd $INSTALLD
-env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wspy.py
+env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wspr.py
 
 EOF_WSJT
 ) > "$INSTALLD"/wspr.sh
