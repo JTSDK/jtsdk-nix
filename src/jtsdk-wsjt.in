@@ -218,12 +218,13 @@ echo -e ${C_Y}" RUN AUTOCONF and CONFIGURE"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
+
 # add prefix to config array
 cfgarray=("--prefix=$INSTALLD" "--enable-rsdtest")
 
 # add docs and manpage options to config array
 if [[ $DOCS == "0" ]] ; then cfgarray+=("--disable-docs") ; fi 
-if [[ $MANPAGES == "0" ]] ; then cfgarray+=("-disable-manpages") ; fi
+if [[ $MANPAGES == "0" ]] ; then cfgarray+=("--disable-manpages") ; fi
 
 # configure command
 CMD="./configure $@"
@@ -365,7 +366,7 @@ wsjt_options_message() {
 echo ''
 echo ' BUILD OPTIONS'
 echo "   Number of cores ......: $JJ"
-echo "   Makefile Optoins .....: ${cfgarray[@]}"
+echo "   Makefile Options .....: ${cfgarray[@]}"
 echo -n "   User Selected Items ..: "
 for i in "${wsjt_options[@]-}" ; do echo -n "$i " ; done ; echo ''
 

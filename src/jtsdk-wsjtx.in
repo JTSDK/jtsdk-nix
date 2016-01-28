@@ -676,15 +676,22 @@ echo '-----------------------------------------------------'
 echo ''
 cd "$BUILDD"
 
+# add docs and manpage options to config array
+cfgarray=()
+if [[ $DOCS == "0" ]] ; then cfgarray+=("-D WSJT_GENERATE_DOCS=OFF") ; fi 
+if [[ $MANPAGES == "0" ]] ; then cfgarray+=("-D WSJT_SKIP_MANPAGES=ON") ; fi
+
+RCMD='cmake -G "Unix Makefiles" -Wno-dev ${cfgarray[@]} \
+-D CMAKE_PREFIX_PATH:PATH="$HL3I" -D CMAKE_BUILD_TYPE="$C_OPT" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"
+'
+
 case "$RCFG" in
 	0)
 		if 	[[ ! -f "$BUILDD/Makefile" ]] ; then
 			echo 'JTSDK Message: Running Cmake on clean build tree'
 			echo ''
-			cmake -G "Unix Makefiles" -Wno-dev \
-			-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
-			-D CMAKE_BUILD_TYPE="$C_OPT" \
-			-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"
+			eval "$RCMD"
 		else
 			echo 'JTSDK Option: Cmake Configuration Disabled'
 		fi
@@ -697,10 +704,7 @@ case "$RCFG" in
 			echo 'JTSDK Message: Running Cmake on clean build tree'
 			echo ''
 		fi
-		cmake -G "Unix Makefiles" -Wno-dev \
-		-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
-		-D CMAKE_BUILD_TYPE="$C_OPT" \
-		-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"
+		eval "$RCMD"
 	;;
 esac
 
@@ -890,6 +894,7 @@ esac
 wsjtx_options_message() {
 echo ' JTSDK Options'
 echo "   Number of cores ......: $JJ"
+echo "   Cmake  Options .......: ${cfgarray[@]}"
 echo -n "   User Selected Items ..: "
 for i in "${wsjtx_options[@]-}" ; do echo -n "$i " ; done ; echo ''
 }
