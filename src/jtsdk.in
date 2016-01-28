@@ -70,7 +70,7 @@ BMANP=@BMANP@
 JJ=@JJJJ@
 
 # WSJT-X menu generation timer, in minutes -mmin, *cannot be blank !!*
-GENTIME='60'
+GENTIME='1440'
 
 ################################################################################
 #
@@ -130,10 +130,11 @@ IBMSG="\n    Branch Activity Is Currently Dormant"
 SBTITLE="  WSJT-X SUPERBUILD MENU"
 
 #------------------------------------------------------------- user options lang
-OMTITLE="   USER OPTIONS MENU"
+OMTITLE="  USER OPTIONS MENU"
 OPICKTITLE=" USER OPTIONS PICKLIST"
 OPICKMSG=" Arrow Up/Down, then [ Space Bar ] to Select Items\n
-      Use the [ Enter Key ] to Save Selections"
+      Use the [ Enter Key ] to Save Selections\n
+            ( On = Enabled   Off = Disabled ) "
 
 
 
@@ -986,7 +987,6 @@ if [[ ! -z $input ]] ; then
 		echo ''
 		echo " Try using something between: ( 1 to $cpus )"
 		echo ''
-		exit 0
 	fi
 fi
 
@@ -999,7 +999,6 @@ if [[ ! -z $input ]] ; then
 		rm -rf "$CFG/cores" > /dev/null 2>&1
 		touch "$CFG/cores" ; echo $input > "$CFG/cores"
 		echo ''
-		exit 0
 	fi
 fi
 
@@ -1013,7 +1012,6 @@ if [[ ! -z $input ]] ; then
 		rm -rf "$CFG/cores" > /dev/null 2>&1
 		touch "$CFG/cores" ; echo $cpus > "$CFG/cores"
 		echo ''
-		exit 0
 	fi
 fi
 
@@ -1026,7 +1024,6 @@ if [[ ! -z $input ]] ; then
 		rm -rf "$CFG/cores" > /dev/null 2>&1
 		touch "$CFG/cores" ; echo $input > "$CFG/cores"
 		echo ''
-		exit 0
 	fi
 fi
 
@@ -1081,7 +1078,6 @@ if [[ ! -z $input ]] ; then
 		echo ''
 		echo " Try using something between: ( 60 and $GENTIME )"
 		echo ''
-		exit 0
 	fi
 fi
 
@@ -1094,7 +1090,6 @@ if [[ ! -z $input ]] ; then
 		rm -rf "$CFG/gentime" > /dev/null 2>&1
 		touch "$CFG/gentime" ; echo $input > "$CFG/gentime"
 		echo ''
-		exit 0
 	fi
 fi
 
@@ -1108,7 +1103,6 @@ if [[ ! -z $input ]] ; then
 		rm -rf "$CFG/gentime" > /dev/null 2>&1
 		touch "$CFG/gentime" ; echo $default_gentime > "$CFG/gentime"
 		echo ''
-		exit 0
 	fi
 fi
 
@@ -1123,7 +1117,6 @@ if [[ ! -z $input ]] ; then
 		rm -rf "$CFG/gentime" > /dev/null 2>&1
 		touch "$CFG/gentime" ; echo $input > "$CFG/gentime"
 		echo ''
-		exit 0
 	fi
 fi
 
@@ -1154,10 +1147,10 @@ done
 
 options=$(dialog --backtitle "$BACKTITLE" \
 --title "$OPICKTITLE" \
---ok-label " Save " \
+--ok-label " Enter to Save " \
 --no-cancel \
 --stdout \
---checklist "$OPICKMSG" 0 55 0 $list)
+--checklist "$OPICKMSG" 0 65 10 $list)
 
 if [[ $? -eq 0 ]]; then
 	for i in $options
@@ -1359,7 +1352,7 @@ clear ||:
 while [ 0 ]; do
 
 MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "Options" H "Help" E "Exit")
-OM_OPTIONS=( 1 "List Status" 2 "Selection Options" 3 "Back-To-Main-Menu")
+OM_OPTIONS=( 1 "Current Status" 2 "Set Script Options" 3 "Set Update Timer" 4 "Set CPU Cores" 5 "Update WSJT-X Menus" E "Exit Options")
 
 MM_SELECT=$(
 dialog --ok-label SELECT \
@@ -1440,8 +1433,26 @@ case "$MM_SELECT" in
 				user_options_picklist
 				continue
 			;;
-			
-			Back-To-Main-Menu)
+			3)
+				set_gentime
+				echo ''		
+				read -p " Press [ Enter ] to continue..."
+				continue
+			;;
+			4)
+				set_cpu_cores
+				echo ''		
+				read -p " Press [ Enter ] to continue..."
+				continue
+			;;
+			5)
+				rm -f "$CFG/time-stamp" > /dev/null 2>&1
+				generate_build_lists
+				echo ''		
+				read -p " Press [ Enter ] to continue..."
+				continue
+			;;
+			E)
 				continue
 			;;
 		esac
