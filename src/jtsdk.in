@@ -129,6 +129,13 @@ IBMSG="\n    Branch Activity Is Currently Dormant"
 #---------------------------------------------------------- superbuild menu lang
 SBTITLE="  WSJT-X SUPERBUILD MENU"
 
+#------------------------------------------------------------- user options lang
+OMTITLE="   USER OPTIONS MENU"
+OPICKTITLE=" USER OPTIONS PICKLIST"
+OPICKMSG=" Arrow Up/Down, then [ Space Bar ] to Select Items\n
+      Use the [ Enter Key ] to Save Selections"
+
+
 
 ################################################################################
 #
@@ -1132,6 +1139,43 @@ fi
 
 }
 
+#-------------------------------------------------------- USER OPTIONS PICK LIST
+user_options_picklist() {
+
+n=1
+set +u
+for opt in "${jtsdk_array[@]}"
+do
+		if [[ -f $CFG/$opt ]] ; then status="On" ; else status="Off" ; fi
+        list="$list $opt $status $n"
+		n=$[n+1]
+
+done
+
+options=$(dialog --backtitle "$BACKTITLE" \
+--title "$OPICKTITLE" \
+--ok-label " Save " \
+--no-cancel \
+--stdout \
+--checklist "$OPICKMSG" 0 55 0 $list)
+
+if [[ $? -eq 0 ]]; then
+	for i in $options
+	do
+		if [[ -f $CFG/$i ]] ; then
+			rm -f "$CFG/$i"
+			disabled_array+=($i)
+		else
+			touch "$CFG/$i"
+			enabled_array+=($i)
+		fi
+	done
+fi
+unset list
+set -u
+
+}
+
 
 ################################################################################
 #
@@ -1315,6 +1359,7 @@ clear ||:
 while [ 0 ]; do
 
 MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "Options" H "Help" E "Exit")
+OM_OPTIONS=( 1 "List Status" 2 "Selection Options" 3 "Back-To-Main-Menu")
 
 MM_SELECT=$(
 dialog --ok-label SELECT \
@@ -1374,11 +1419,33 @@ case "$MM_SELECT" in
 		continue ;;
 
 	O) #------------------------------------------------- LIST OPTION STATUS (O)
-		list_option_status
-		echo ''		
-		read -p " Press [ Enter ] to continue..."
-		continue ;;
 
+		OM_SELECT=$(
+		dialog --ok-label SELECT \
+		--nocancel \
+		--backtitle "$BACKTITLE" \
+		--title "$OMTITLE" \
+		--menu "$MENUMSG" 0 50 0 \
+		"${OM_OPTIONS[@]}" 2>&1 > /dev/tty
+		)
+
+		case "$OM_SELECT" in
+			1)
+				list_option_status
+				echo ''		
+				read -p " Press [ Enter ] to continue..."
+		
+			;;
+			2)
+				user_options_picklist
+				continue
+			;;
+			
+			Back-To-Main-Menu)
+				continue
+			;;
+		esac
+	;;
 
 	H) #--------------------------------------------------------------- HELP (H)
 		main_menu_help
