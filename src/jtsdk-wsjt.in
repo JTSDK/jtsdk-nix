@@ -86,6 +86,7 @@ if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wsjt_options+=('skipsvn') ; else SKI
 # FUNCTOINS
 ################################################################################
 
+
 #--------------------------------------------------- CHECKOUT or UPDATE FROM SVN
 check_svn() {
 echo ''
@@ -129,7 +130,7 @@ esac
 }
 
 
-# get WSJT Version information from: wsjt.py -----------------------------------
+#---------------------------------------------------------- WSJT GET APP VERSION
 get_version() {
 # Example
 # Version="10.0 r" + "$Rev: 5247 $"[6:-1]
@@ -143,7 +144,7 @@ echo " Application Version..: $AVER"
 
 }
 
-# get the last changed svn number
+#---------------------------------------------------------- WSJT GET SVN VERSION
 get_svn_revision() {
 
 SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
@@ -151,7 +152,7 @@ echo " SVN Revision.........: $SVN_VER"
 
 }
 
-# setup directories, checking for enable separate
+#--------------------------------------------------------------- WSJT SETUP DIRS
 setup_dirs() {
 echo ''
 echo '-----------------------------------------------------'
@@ -187,6 +188,7 @@ esac
 
 }
 
+#---------------------------------------------------------------- WSJT RUN CLEAN
 run_clean() {
 cd "$BUILDD"
 case "$CLEAN" in
@@ -208,6 +210,7 @@ esac
 
 }
 
+#--------------------------------------------------------------- WSJT RUN CONFIG
 run_config() {
 echo ''
 echo '-----------------------------------------------------'
@@ -228,18 +231,18 @@ CMD="./configure $@"
 case "$RCFG" in
 	0)
 		if 	[[ ! -f "$BUILDD/Makefile" ]] ; then
-			echo 'JTSDK Message: Run ( autoreconf -f -i ) on clean build tree'
+			echo 'JTSDK Message .....: Run ( autoreconf -f -i ) on clean build tree'
 			autoreconf -f -i
 			eval "$CMD ${cfgarray[@]}"
 		fi
 	;;
 	1)
 		if [[ -f "$BUILDD/Makefile" ]] ; then
-			echo 'JTSDK Option: [ RCFG ] Enabled'
+			echo 'JTSDK Option ......: [ RCFG ] Enabled'
 		else
-			echo 'JTSDK Message: Run ( autoreconf -f -i ) on clean build tree'
+			echo 'JTSDK Message .....: Run ( autoreconf -f -i ) on clean build tree'
 		fi
-		echo "JTSDK Config Option: ${cfgarray[@]}"
+		echo "JTSDK Config Options ..: ${cfgarray[@]}"
 		echo ''
 		autoreconf -f -i 
 		eval "$CMD ${cfgarray[@]}"
@@ -248,7 +251,7 @@ esac
 
 }
 
-# compile WSJT application
+#----------------------------------------------------------------- WSJT RUN MAKE
 run_build() {
 cd "$BUILDD"
 echo
@@ -260,6 +263,7 @@ make
 
 }
 
+#------------------------------------------------------------------ WSJT INSTALL
 run_install_build() {
 # install the targets
 echo
@@ -333,7 +337,7 @@ esac
 }
 
 
-# Finished
+#----------------------------------------------------------- WSJT FINISH MESSAGE
 finish_message() {
 echo ''
 echo '-----------------------------------------------------'
@@ -356,7 +360,7 @@ echo " Type, ........: ./$APP_NAME.sh"
 
 }
 
-#--------------------------------------------------------------- WSJT OPTION MSG
+#----------------------------------------------------------- WSJT OPTION MESSAGE
 wsjt_options_message() {
 echo ''
 echo ' BUILD OPTIONS'
@@ -366,6 +370,25 @@ echo -n "   User Selected Items ..: "
 for i in "${wsjt_options[@]-}" ; do echo -n "$i " ; done ; echo ''
 
 }
+
+
+#------------------------------------------------------------------ WSJT AUTORUN
+auto_run() {
+
+# what to open
+RCMD='env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wsjt.py'
+case "$AUTORUN" in
+	1)
+		echo ''
+		echo 'JTSDK Option: [ AUTORUN ] Enabled'
+		echo ''
+		cd "$INSTALLD"
+		eval "$RCMD"
+	;;
+esac
+
+}
+
 
 ################################################################################
 # START MAIN SCRIPT
@@ -382,6 +405,7 @@ run_build
 run_install_build
 finish_message
 wsjt_options_message
+auto_run
 
 exit 0
 

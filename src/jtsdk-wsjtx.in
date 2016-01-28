@@ -895,6 +895,23 @@ for i in "${wsjtx_options[@]-}" ; do echo -n "$i " ; done ; echo ''
 }
 
 
+#------------------------------------------------------------------ WSJT AUTORUN
+auto_run() {
+RCMD='./wsjtx'
+case "$AUTORUN" in
+	1)
+		echo ''
+		echo 'JTSDK Option: [ AUTORUN ] Enabled'
+		echo ''
+		cd "$INSTALLD/bin"
+		eval "$RCMD"
+	;;
+esac
+
+}
+
+
+
 ################################################################################
 # START MAIN SCRIPT
 ################################################################################
@@ -934,7 +951,7 @@ getopts_options_status
 # for -t (install | package ) targets ( -c Release | Debug )
 build_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
 'get_svn_revision' 'check_separation' 'setup_dirs' 'run_clean' 'run_config' 'run_build' \
-'run_install_build' 'link_kvasd' 'finish_message' 'wsjtx_options_message')
+'run_install_build' 'link_kvasd' 'finish_message' 'wsjtx_options_message' 'auto_run')
 
 # for user guide ( -t docs )
 ug_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \

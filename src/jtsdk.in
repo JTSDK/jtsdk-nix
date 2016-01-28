@@ -1314,7 +1314,7 @@ fi
 clear ||:
 while [ 0 ]; do
 
-MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "Optoins" H "Help" E "Exit")
+MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "Options" H "Help" E "Exit")
 
 MM_SELECT=$(
 dialog --ok-label SELECT \
@@ -1372,6 +1372,13 @@ case "$MM_SELECT" in
 		echo ''		
 		read -p " Press [ Enter ] to continue..."
 		continue ;;
+
+	O) #------------------------------------------------- LIST OPTION STATUS (O)
+		list_option_status
+		echo ''		
+		read -p " Press [ Enter ] to continue..."
+		continue ;;
+
 
 	H) #--------------------------------------------------------------- HELP (H)
 		main_menu_help
