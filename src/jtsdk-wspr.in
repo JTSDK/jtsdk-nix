@@ -25,7 +25,7 @@ set -e
 # grab the number of command line arguments
 NARGS=$#
 
-# Foreground colours
+# Foreground colors
 C_R='\033[01;31m'		# red
 C_G='\033[01;32m'		# green
 C_Y='\033[01;33m'		# yellow
@@ -43,7 +43,7 @@ OPTION=$1
 # app specfic options
 APP_NAME=wspr
 APP_SRC="$SRCD/$APP_NAME"
-URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
+URL="https://svn.code.sf.net/p/wspr/wspr/branches/wspr"
 
 # fixed expansions from JTSDK configure.ac
 MENU=@SHARE@
@@ -59,30 +59,29 @@ F2PY3=@F2PY3@
 # [4] while available, @PROGRAM@ does not use parallel compiling due to F2PY
 #
 # SEPARATE = separate by svn revision
-# BDOCS    = disable user guides
+# BDOC     = disable user guides
 # BMANP    = disable manpages
-SEPARATE=@SEPARATE@
-BDOCS=@BDOCS@
-BMANP=@BMANP@
 JJ=@JJJJ@
 
 # check global user defined options ( see jtsdk -h )
 # add each option enabled to jtsdk_options array
 wspr_options=()
-if [[ -f $CFG/autorun ]] ; then AUTORUN=1 ; wspr_options+=('autorun') ; else AUTORUN=0 ; fi
-if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 ; wspr_options+=('autosvn') ; else AUTOSVN=0 ; fi
-if [[ -f $CFG/clean ]] ; then CLEAN=1 ; wspr_options+=('clean') ; else CLEAN=0 ; fi
+if [[ -f $CFG/autorun ]] ; then AUTORUN=1 && wspr_options+=('autorun') ; else AUTORUN=0 ; fi
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 && wspr_options+=('autosvn') ; else AUTOSVN=0 ; fi
+if [[ -f $CFG/clean ]] ; then CLEAN=1 && wspr_options+=('clean') ; else CLEAN=0 ; fi
 if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES=$JJ ; fi
-if [[ -f $CFG/docs ]] ; then DOCS=1 ; wspr_options+=('docs') ; else DOCS=0 ; fi
-if [[ -f $CFG/manpages ]] ; then MANPAGES=1 ; wspr_options+=('manpages') ; else MANPAGES=0 ; fi
-if [[ -f $CFG/quiet ]] ; then QUIET=1 ; wspr_options+=('quiet') ; else QUIET=0 ; fi
-if [[ -f $CFG/rcfg ]] ; then RCFG=1 ; wspr_options+=('rcfg') ; else RCFG=0 ; fi
-if [[ -f $CFG/separate ]] ; then SEPARATE=1 ; wspr_options+=('separate') ; else SEPARATE=0 ; fi
-if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wspr_options+=('skipsvn') ; else SKIPSVN=0 ; fi
+if [[ -f $CFG/docs ]] ; then BDOC=1 && wspr_options+=('docs') ; else BDOC=0 ; fi
+if [[ -f $CFG/manpages ]] ; then BMANP=1 && wspr_options+=('manpages') ; else BMANP=0 ; fi
+if [[ -f $CFG/quiet ]] ; then QUIET=1 && wspr_options+=('quiet') ; else QUIET=0 ; fi
+if [[ -f $CFG/rcfg ]] ; then RCFG=1 && wspr_options+=('rcfg') ; else RCFG=0 ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE=1 && wspr_options+=('separate') ; else SEPARATE=0 ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 && wspr_options+=('skipsvn') ; else SKIPSVN=0 ; fi
+
 
 ################################################################################
 # FUNCTOINS
 ################################################################################
+
 
 #--------------------------------------------------- CHECKOUT or UPDATE FROM SVN
 check_svn() {
@@ -91,10 +90,10 @@ echo '-----------------------------------------------------'
 echo -e ${C_Y}" SVN UPDATE"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
+# check skip svn
 case "$SKIPSVN" in
 	1)
 		if [[ ! -d $APP_SRC/.svn ]] ; then 
-			echo ''
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
 			svn co $URL
@@ -105,146 +104,153 @@ case "$SKIPSVN" in
 	0)
 esac
 
+# check sutosvn
 case "$AUTOSVN" in
 	1)
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
-			echo ''
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
 			svn co $URL
+		elif  [[ $SKIPSVN -eq 1 ]]  ; then 
+			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
-			echo 'JTSDK Option: [ AUTOSVN ] Enabled'
-			echo ''
 			cd "$APP_SRC"
 			echo "Updating ( $APP_NAME )"
 			svn cleanup && svn update
 		fi
 	;;
 	0)
-	
-		echo 'JTSDK Option: SVN Updates Disabled'
+	 echo 'JTSDK Option: Auto SVN Updates Disabled'
+	;;
+esac
+}
+
+
+#---------------------------------------------------------- WSPR GET APP VERSION
+get_version() {
+# Example
+# Version="4.0 r" + "$Rev: 5247 $"[6:-1]
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
+echo '-----------------------------------------------------'
+AVER=$(cat $APP_SRC/wspr.py |grep 'Version="' |awk '{print $1}' |cut -c10-13)
+echo ''
+echo " Application Version..: $AVER"
+
+}
+
+#---------------------------------------------------------- WSPR GET SVN VERSION
+get_svn_revision() {
+
+SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
+echo " SVN Revision.........: $SVN_VER"
+
+}
+
+#--------------------------------------------------------------- WSPR SETUP DIRS
+setup_dirs() {
+echo ''
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" SETUP DIRECTORIES"${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+case "$SEPARATE" in
+	1)
+		BUILDD="$APP_SRC"
+		INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER/install"
+	;;
+	*)
+		BUILDD="$APP_SRC"
+		INSTALLD="$HOMEDIR/$APP_NAME/$AVER/install"
+	;;
+esac
+
+# make the directories
+mkdir -p "$INSTALLD" >/dev/null 2>&1
+
+case "$QUIET" in
+	1)
+		echo 'JTSDK Option: [ QUIET ] Enabled' ;;
+	*)
+		echo " Name .........: WSPR" 
+		echo " App Version ..: $AVER r$SVN_VER"
+		echo " Source .......: $APP_SRC"
+		echo " Build ........: $APP_SRC"
+		echo " Install ......: $INSTALLD"
+		echo ''
 	;;
 esac
 
 }
 
-# get WSPR Version information from: wspy.py
-get_version() {
-
-# Example
-# ------------------------------------------------------------------------------
-# Using wspy.py line: Version="4.0 r" + "$Rev: 4889 $"[6:-2]
-# ------------------------------------------------------------------------------
-
-AVER=$(cat $APP_SRC/wspr.py |grep 'Version="' |awk '{print $1}' |cut -c10-13)
-echo "-- Repository Version Is ..: $AVER"
-
-}
-
-
-# get the last changed svn number
-get_svn_revision() {
-SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
-echo "-- SVN Revision Is ........: $SVN_VER"
-
-}
-
-
-# generate a simple wspr.sh run script -----------------------------------------
-generate_shell_script() {
-(
-cat <<EOF_WSPR
-#!/usr/bin/env bash
-#-------------------------------------------------------------------------------
-# File Name:    wspr.sh
-# Description:  Shell script wrapper to run wspr
-#				JTSDK auto generated file
-#-------------------------------------------------------------------------------
-
-set -e
-
-# python3 path is updated from configure script
-cd $INSTALLD
-env PYTHONPATH="$INSTALLD/WsprMod" @PYTHON3@ -O ./wspr.py
-
-EOF_WSPR
-) > "$INSTALLD"/wspr.sh
+#---------------------------------------------------------------- WSPR RUN CLEAN
+run_clean() {
+cd "$BUILDD"
+case "$CLEAN" in
+	1)
+		if [[ -f "$BUILDD/Makefile" ]] ; then
+		echo ''
+		echo '-----------------------------------------------------'
+		echo -e ${C_Y}'RUN MAKE DISTCLEAN FIRST'${C_NC}
+		echo '-----------------------------------------------------'
+		echo ''
+		echo 'JTSDK Option: [ CLEAN ] Enabled'
+		echo ''
+		cd "$APP_SRC"
+		make distclean
+		echo ''
+		fi
+	;;
+esac
 
 }
 
-# generate hamlib lis ----------------------------------------------------------
-rigctl_error() {
+#--------------------------------------------------------------- WSPR RUN CONFIG
+run_config() {
 echo ''
-echo '--------------------------------------------'
-echo -e ${C_Y}"RIG CONTROL ERROR"${C_NC}
-echo '--------------------------------------------'
+echo '-----------------------------------------------------'
+echo -e ${C_Y}" RUN AUTOCONF and CONFIGURE"${C_NC}
+echo '-----------------------------------------------------'
 echo ''
-cat <<EOF
- There was an error when trying to access the
- application rigctl (from libhamlib-utils) to
- generate the latest rig list.
- 
- Ensure you have Hamlib Utils installed and it
- is reachable from the the command line.
- 
- For most distributions, the package is called:
- 
- libhamlib-utils
- 
-EOF
+cd "$BUILDD"
 
-read -p "Press [ Enter ] to return to the main menu .."
-exit 0
+# add prefix to config array
+cfgarray=("--prefix=$INSTALLD")
+
+# add docs and manpage options to config array
+if [[ $BDOC -eq 0 ]] ; then cfgarray+=("--disable-docs") ; fi 
+if [[ $BMANP -eq 0 ]] ; then cfgarray+=("--disable-manpages") ; fi
+
+# configure command
+CCMD="./configure"
+
+case "$RCFG" in
+	0)
+		if 	[[ ! -f "$BUILDD/Makefile" ]] ; then
+			echo 'JTSDK Message .....: Run ( autoreconf -f -i ) on clean build tree'
+			autoreconf -f -i
+			eval "$CCMD $(echo ${cfgarray[@]})"
+		fi
+	;;
+	1)
+		if [[ -f "$BUILDD/Makefile" ]] ; then
+			echo 'JTSDK Option ......: [ RCFG ] Enabled'
+		else
+			echo 'JTSDK Message .....: Run ( autoreconf -f -i ) on clean build tree'
+		fi
+		echo "JTSDK Config Options ..: ${cfgarray[@]}"
+		echo ''
+		autoreconf -f -i
+		eval "$CCMD $(echo ${cfgarray[@]})"
+	;;
+esac
 
 }
 
-
-################################################################################
-# START MAIN SCRIPT
-################################################################################
-
-# Make sure directories are present, in case they were deleted
-clear ||:
-echo '-----------------------------------------------------'
-echo -e ${C_Y}"STARTING BUILD for ( $APP_NAME )"${C_NC}
-echo '-----------------------------------------------------'
-check_svn
-
-echo ''
-echo '-----------------------------------------------------'
-echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
-echo '-----------------------------------------------------'
-get_version
-get_svn_revision
-
-# set install locaiton
-if [ $SEPARATE == "Yes" ] ; then 
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER/$SVN_VER"
-else
-	INSTALLD="$HOMEDIR/$APP_NAME/$AVER"
-fi
-
-if [[ -f "$APP_SRC/Makefile" ]] ; then
-echo
-echo '-----------------------------------------------------'
-echo -e ${C_Y}'RUN MAKE DISTCLEAN FIRST'${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-cd "$APP_SRC" ; make distclean
-echo ''
-fi
-
-# run autoreconf to generate new Makefile & configure scripts
-echo
-echo '-----------------------------------------------------'
-echo -e ${C_Y}'RUN AUTORECONF and CONFIGURE'${C_NC}
-echo '-----------------------------------------------------'
-echo ''
-cd "$APP_SRC"
-autoreconf -f -i
-./configure --prefix=$INSTALLD
-
-# compile WSPR application
+#----------------------------------------------------------------- WSPR RUN MAKE
+run_build() {
+cd "$BUILDD"
 echo
 echo '-----------------------------------------------------'
 echo -e ${C_Y}'RUNNING MAKE'${C_NC}
@@ -252,10 +258,19 @@ echo '-----------------------------------------------------'
 echo ''
 make
 
-# now install the targets
+}
+
+#------------------------------------------------------------------ WSPR INSTALL
+run_install_build() {
+echo
+echo '-----------------------------------------------------'
+echo -e ${C_Y}'INSTALL WSPR'${C_NC}
+echo '-----------------------------------------------------'
+echo ''
+cd "$APP_SRC"
 mkdir -p "$INSTALLD"/{doc/examples,save/Samples,WsprMod,manpages}
+
 echo "..Installing Binaries"
-# loop through binaries && install strip
 binaries=(fmtest fcal fmeasure fmtave wspr0 wsprcode)
 for i in "${binaries[@]}"
 do
@@ -273,11 +288,6 @@ echo "..Installing Misc Text Files"
 install -m 644 AUTHORS	README NEWS COPYING COPYRIGHT "$INSTALLD"
 install -m 644 doc/examples/* "$INSTALLD"/doc/examples/
 
-echo "..Installing Runtime Script"
-if [[ -f $INSTALLD/$APP_NAME.sh ]] ; then rm -f "$INSTALLD/$APP_NAME.sh" ; fi
-touch "$INSTALLD/$APP_NAME.sh" && chmod +x "$INSTALLD/$APP_NAME.sh"
-generate_shell_script
-
 echo "..Generating Hamlib Rig List"
 rigctl -l >> "$INSTALLD/r.l" || {
 rigctl_error
@@ -287,32 +297,134 @@ awk 'NR > 3 { print }' < "$INSTALLD/r.l" > "$INSTALLD/hamlib_rig_numbers"
 sed  -i 's .\{2\}  ' "$INSTALLD/hamlib_rig_numbers"
 rm -f "$INSTALLD/r.l"
 
-# Manpages and User Guide
-for f in ./manpages/*.1 ; do
-	echo "..Installing $f"
-	install -m 644 "$f" "$INSTALLD"/manpages/
-done
-echo "..Installing $(ls -al ./doc/wspr-main* |awk '{print $9}')"
-install -m 644 doc/wspr-main*.html "$INSTALLD/doc/"
-DOCNAME=$(ls -al doc/wspr-main* |awk '{print $9}' |rev | cut -d"/" -f1 | rev)
+echo "..Installing Runtime Script"
+rm -f "$INSTALLD/$APP_NAME.sh" >/dev/null 2>&1
+touch "$INSTALLD/$APP_NAME.sh" && chmod +x "$INSTALLD/$APP_NAME.sh"
+(
+cat <<EOF_WSPR
+#!/usr/bin/env bash
+#-------------------------------------------------------------------------------
+# File Name:    wspr.sh
+# Description:  Shell script wrapper to run wspr
+#				JTSDK auto generated file
+#-------------------------------------------------------------------------------
 
-# Finished
-echo
+set -e
+
+# python3 path is updated from configure script
+cd $INSTALLD
+env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wspr.py
+
+EOF_WSPR
+) > "$INSTALLD"/wspr.sh
+
+# install manpages, only if BMANP=1
+case "$BMANP" in
+	1)
+		# Manpages and User Guide
+		for f in ./manpages/*.1 ; do
+			echo "..Installing $f"
+			install -m 644 "$f" "$INSTALLD"/manpages/
+		done
+	;;
+esac
+
+# install docs, only if DOCS=1
+case "$BDOC" in
+	1)
+		echo "..Installing $(ls -al ./doc/wspr-main* |awk '{print $9}')"
+		install -m 644 doc/wspr-main*.html "$INSTALLD/doc/"
+		DOCNAME=$(ls -al doc/wspr-main* |awk '{print $9}' |rev | cut -d"/" -f1 | rev)
+	;;
+esac
+
+}
+
+
+#----------------------------------------------------------- WSPR FINISH MESSAGE
+finish_message() {
+echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_G}"BUILD SUMMARY"${C_NC}
 echo '-----------------------------------------------------'
 echo ''
 echo " Name .........: $APP_NAME"
 echo " Version ......: $AVER"
-echo " SVN Version ..: r$SVN_VER"	
-echo " User Guide ...: $DOCNAME"		
+echo " SVN Version ..: r$SVN_VER"
+if [[ $DOCS -eq 1 ]] ; then
+echo " User Guide ...: $DOCNAME"
+fi
 echo " Source .......: $APP_SRC"
 echo " Install ......: $INSTALLD"
 echo " SVN URL ......: $URL"
+
+}
+
+#--------------------------------------------------------- BUILD OPTIONS MESSAGE
+wspr_options_message() {
+echo ''
+echo ' BUILD OPTIONS'
+echo " Number of cores ......: $JJ"
+if [[ -z ${cfgarray[@]} ]] ; then
+		echo " Makefile Options .....: Using Defaults"
+else
+	echo " Makefile Options .....: ${cfgarray[@]}"
+fi
+if [[ -z ${wspr_options[@]} ]] ; then
+echo -n " Global User Options ..: None"
+echo ''
+else
+	echo -n " Global User Options ..: "
+	for i in "${wspr_options[@]-}" ; do echo -n "$i " ; done ; echo ''
+fi
+
+}
+
+
+#------------------------------------------------------------------- RUN MESSAGE
+run_message() {
 echo ''
 echo " TO RUN $APP_NAME"
 echo " cd ...........: $INSTALLD"
 echo " Type, ........: ./$APP_NAME.sh"
+
+}
+
+#------------------------------------------------------------------ WSPR AUTORUN
+auto_run() {
+
+# what to open
+RCMD='env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wspr.py'
+case "$AUTORUN" in
+	1)
+		echo ''
+		echo 'JTSDK Option: [ AUTORUN ] Enabled'
+		echo ''
+		cd "$INSTALLD"
+		eval "$RCMD"
+	;;
+esac
+
+}
+
+
+################################################################################
+# START MAIN SCRIPT
+################################################################################
+
+clear ||:
+check_svn
+get_version
+get_svn_revision
+setup_dirs
+run_clean
+run_config
+run_build
+run_install_build
+finish_message
+wspr_options_message
+run_message
+auto_run
 
 exit 0
 

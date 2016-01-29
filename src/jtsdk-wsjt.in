@@ -25,7 +25,7 @@ set -e
 # grab the number of command line arguments
 NARGS=$#
 
-# Foreground colours
+# Foreground colors
 C_R='\033[01;31m'		# red
 C_G='\033[01;32m'		# green
 C_Y='\033[01;33m'		# yellow
@@ -60,26 +60,23 @@ F2PY3=@F2PY3@
 # [4] while available, @PROGRAM@ does not use parallel compiling due to F2PY
 #
 # SEPARATE = separate by svn revision
-# BDOCS    = disable user guides
+# BDOC     = disable user guides
 # BMANP    = disable manpages
-SEPARATE=@SEPARATE@
-BDOCS=@BDOCS@
-BMANP=@BMANP@
 JJ=@JJJJ@
 
 # check global user defined options ( see jtsdk -h )
 # add each option enabled to jtsdk_options array
 wsjt_options=()
-if [[ -f $CFG/autorun ]] ; then AUTORUN=1 ; wsjt_options+=('autorun') ; else AUTORUN=0 ; fi
-if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 ; wsjt_options+=('autosvn') ; else AUTOSVN=0 ; fi
-if [[ -f $CFG/clean ]] ; then CLEAN=1 ; wsjt_options+=('clean') ; else CLEAN=0 ; fi
+if [[ -f $CFG/autorun ]] ; then AUTORUN=1 && wsjt_options+=('autorun') ; else AUTORUN=0 ; fi
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 && wsjt_options+=('autosvn') ; else AUTOSVN=0 ; fi
+if [[ -f $CFG/clean ]] ; then CLEAN=1 && wsjt_options+=('clean') ; else CLEAN=0 ; fi
 if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES=$JJ ; fi
-if [[ -f $CFG/docs ]] ; then DOCS=1 ; wsjt_options+=('docs') ; else DOCS=0 ; fi
-if [[ -f $CFG/manpages ]] ; then MANPAGES=1 ; wsjt_options+=('manpages') ; else MANPAGES=0 ; fi
-if [[ -f $CFG/quiet ]] ; then QUIET=1 ; wsjt_options+=('quiet') ; else QUIET=0 ; fi
-if [[ -f $CFG/rcfg ]] ; then RCFG=1 ; wsjt_options+=('rcfg') ; else RCFG=0 ; fi
-if [[ -f $CFG/separate ]] ; then SEPARATE=1 ; wsjt_options+=('separate') ; else SEPARATE=0 ; fi
-if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wsjt_options+=('skipsvn') ; else SKIPSVN=0 ; fi
+if [[ -f $CFG/docs ]] ; then BDOC=1 && wsjt_options+=('docs') ; else BDOC=0 ; fi
+if [[ -f $CFG/manpages ]] ; then BMANP=1 && wsjt_options+=('manpages') ; else BMANP=0 ; fi
+if [[ -f $CFG/quiet ]] ; then QUIET=1 && wsjt_options+=('quiet') ; else QUIET=0 ; fi
+if [[ -f $CFG/rcfg ]] ; then RCFG=1 && wsjt_options+=('rcfg') ; else RCFG=0 ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE=1 && wsjt_options+=('separate') ; else SEPARATE=0 ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 && wsjt_options+=('skipsvn') ; else SKIPSVN=0 ; fi
 
 
 ################################################################################
@@ -115,7 +112,7 @@ case "$AUTOSVN" in
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
 			svn co $URL
-		elif  [[ $SKIPSVN == "1" ]]  ; then 
+		elif  [[ $SKIPSVN -eq 1 ]]  ; then 
 			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
 			cd "$APP_SRC"
@@ -139,7 +136,7 @@ echo '-----------------------------------------------------'
 echo -e ${C_Y}" CHECK APP and SVN REVISIONS"${C_NC}
 echo '-----------------------------------------------------'
 AVER=$(cat $APP_SRC/wsjt.py |grep 'Version="' |awk '{print $1}' |cut -c10-13)
-echo ..
+echo ''
 echo " Application Version..: $AVER"
 
 }
@@ -223,18 +220,19 @@ cd "$BUILDD"
 cfgarray=("--prefix=$INSTALLD" "--enable-rsdtest")
 
 # add docs and manpage options to config array
-if [[ $DOCS == "0" ]] ; then cfgarray+=("--disable-docs") ; fi 
-if [[ $MANPAGES == "0" ]] ; then cfgarray+=("--disable-manpages") ; fi
+if [[ $BDOC -eq 0 ]] ; then cfgarray+=("--disable-docs") ; fi 
+if [[ $BMANP -eq 0 ]] ; then cfgarray+=("--disable-manpages") ; fi
 
 # configure command
-CMD="./configure $@"
+CCMD="./configure"
 
 case "$RCFG" in
 	0)
 		if 	[[ ! -f "$BUILDD/Makefile" ]] ; then
 			echo 'JTSDK Message .....: Run ( autoreconf -f -i ) on clean build tree'
 			autoreconf -f -i
-			eval "$CMD ${cfgarray[@]}"
+			echo "$CCMD $(echo ${cfgarray[@]})"
+			eval "$CCMD $(echo ${cfgarray[@]})"
 		fi
 	;;
 	1)
@@ -242,11 +240,13 @@ case "$RCFG" in
 			echo 'JTSDK Option ......: [ RCFG ] Enabled'
 		else
 			echo 'JTSDK Message .....: Run ( autoreconf -f -i ) on clean build tree'
+			echo "$CCMD $(echo ${cfgarray[@]})"
 		fi
 		echo "JTSDK Config Options ..: ${cfgarray[@]}"
 		echo ''
-		autoreconf -f -i 
-		eval "$CMD ${cfgarray[@]}"
+		autoreconf -f -i
+		echo "$CCMD $(echo ${cfgarray[@]})"
+		eval "$CCMD $(echo ${cfgarray[@]})"
 	;;
 esac
 
@@ -266,7 +266,6 @@ make
 
 #------------------------------------------------------------------ WSJT INSTALL
 run_install_build() {
-# install the targets
 echo
 echo '-----------------------------------------------------'
 echo -e ${C_Y}'INSTALL WSJT'${C_NC}
@@ -291,7 +290,6 @@ install -m 644 CALL3.TXT wsjt.ico wsjtrc "$INSTALLD"
 echo "..Installing RSD Test Tools"
 install -m 755 -s $APP_SRC/rsdtest/{rsdtest,rsdtest2,rsdtest3} "$INSTALLD/rsdtest"
 
-# generate shell script
 echo "..Installing Runtime Script"
 rm -f "$INSTALLD/$APP_NAME.sh" >/dev/null 2>&1
 touch "$INSTALLD/$APP_NAME.sh" && chmod +x "$INSTALLD/$APP_NAME.sh"
@@ -315,10 +313,9 @@ env PYTHONPATH="$INSTALLD/WsjtMod" @PYTHON3@ -O ./wsjt.py
 EOF_WSJT
 ) > "$INSTALLD"/wsjt.sh
 
-# install manpages, only if MANPAGES=1
-case $MANPAGES in
+# install manpages, only if BMANP=1
+case "$BMANP" in
 	1)
-		# Manpages and User Guide
 		for f in ./manpages/*.1 ; do
 			echo "..Installing $f"
 			install -m 644 "$f" "$INSTALLD"/manpages/
@@ -326,8 +323,8 @@ case $MANPAGES in
 	;;
 esac
 
-# install docs, only if DOCS=1
-case $DOCS in
+# install docs, only if BDOC=1
+case "$BDOC" in
 	1)
 		echo "..Installing $(ls -al ./doc/wsjt-main* |awk '{print $9}')"
 		install -m 644 doc/wsjt-main*.html "$INSTALLD/doc/"
@@ -348,27 +345,42 @@ echo ''
 echo " Name .........: $APP_NAME"
 echo " Version ......: $AVER"
 echo " SVN Version ..: r$SVN_VER"
-if [[ $DOCS == "1" ]] ; then
+if [[ $BDOC -eq 1 ]] ; then
 echo " User Guide ...: $DOCNAME"
 fi
 echo " Source .......: $APP_SRC"
 echo " Install ......: $INSTALLD"
 echo " SVN URL ......: $URL"
+
+}
+
+#--------------------------------------------------------- BUILD OPTIONS MESSAGE
+wsjt_options_message() {
+echo ''
+echo ' BUILD OPTIONS'
+echo " Number of cores ......: $JJ"
+if [[ -z ${cfgarray[@]} ]] ; then
+	echo " Makefile Options .....: Using Defaults"
+else
+	echo " Makefile Options .....: ${cfgarray[@]}"
+fi
+if [[ -z ${wsjt_options[@]} ]] ; then
+echo -n " Global User Options ..: None"
+echo ''
+else
+	echo -n " Global User Options ..: "
+	for i in "${wsjt_options[@]-}" ; do echo -n "$i " ; done ; echo ''
+fi
+
+}
+
+
+#------------------------------------------------------------------- RUN MESSAGE
+run_message() {
 echo ''
 echo " TO RUN $APP_NAME"
 echo " cd ...........: $INSTALLD"
 echo " Type, ........: ./$APP_NAME.sh"
-
-}
-
-#----------------------------------------------------------- WSJT OPTION MESSAGE
-wsjt_options_message() {
-echo ''
-echo ' BUILD OPTIONS'
-echo "   Number of cores ......: $JJ"
-echo "   Makefile Options .....: ${cfgarray[@]}"
-echo -n "   User Selected Items ..: "
-for i in "${wsjt_options[@]-}" ; do echo -n "$i " ; done ; echo ''
 
 }
 
@@ -406,6 +418,7 @@ run_build
 run_install_build
 finish_message
 wsjt_options_message
+run_message
 auto_run
 
 exit 0

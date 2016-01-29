@@ -202,7 +202,7 @@ sig_catch_cleanup() {
 
 EXIT_STATUS="$?"
 
-if [[ "$EXIT_STATUS" == "0" ]]
+if [[ $EXIT_STATUS -eq 0 ]]
 then
    clean_exit
 
@@ -351,7 +351,7 @@ fi
 
 }
 
-# --------------------------------------------------------------- ALIAS COMMANDS
+# ------------------------------------------------------- ALIAS COMMAND EXAMPLES
 jtsdk_alias_commands() {
 
 if [[ ! -f $DOCS/.jtsdk_aliases ]]; then touch "$DOCS/.jtsdk_aliases" ; fi
@@ -631,7 +631,7 @@ wsjtx_main_menu() {
 
 }
 
-# ------------------------------------------------------ WSJT-X DEVELOPMENT MENU 
+# -------------------------------------------------------------- WSJT-X DEV MENU 
 wsjtx_dev_menu() {
 
 # remove previous selections each time the function is called
@@ -713,7 +713,7 @@ wsjtx_dev_menu() {
 	esac
 }
 
-#----------------------------------------------------- GA and RELEASE CANDIDATES
+#---------------------------------------------------------------- GA and RC MENU
 wsjtx_ga_rc_menu() {
 
 # remove previous selections each time the function is called
@@ -970,7 +970,7 @@ exit 0
 }
 
 
-#------------------------------------------------------------- LIST USER OPTIONS
+#----------------------------------------------------------- LIST GLOBAL OPTIONS
 list_option_status() {
 clear ||:
 echo '-----------------------------------------------------------'
@@ -982,16 +982,16 @@ echo ' Example ....: jtsdk -e skipsvn -e clean -d autorun'
 echo ''
 # options are set to Yes / No for display purposes only
 # each build script resets these variables at run time
-if [[ -f $CFG/autorun ]] ; then AUTORUN='Yes' ; else AUTORUN='No ' ; fi
-if [[ -f $CFG/autosvn ]] ; then AUTOSVN='Yes' ; else AUTOSVN='No ' ; fi
-if [[ -f $CFG/clean ]] ; then CLEAN='Yes' ; else CLEAN='No ' ; fi
+if [[ -f $CFG/autorun ]] ; then AUTORUN='Enabled' ; else AUTORUN='--' ; fi
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN='Enabled' ; else AUTOSVN='--' ; fi
+if [[ -f $CFG/clean ]] ; then CLEAN='Enabled' ; else CLEAN='--' ; fi
 if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES="$JJ" ; fi
-if [[ -f $CFG/docs ]] ; then DOCS='Yes' ; else DOCS='No ' ; fi
-if [[ -f $CFG/manpages ]] ; then MANPAGES='Yes' ; else MANPAGES='No ' ; fi
-if [[ -f $CFG/quiet ]] ; then QUIET='Yes' ; else QUIET='No ' ; fi
-if [[ -f $CFG/rcfg ]] ; then RCFG='Yes' ; else RCFG='No ' ; fi
-if [[ -f $CFG/separate ]] ; then SEPARATE='Yes' ; else SEPARATE='No ' ; fi
-if [[ -f $CFG/skipsvn ]] ; then SKIPSVN='Yes' ; else SKIPSVN='No ' ; fi
+if [[ -f $CFG/docs ]] ; then DOCS='Enabled' ; else DOCS='--' ; fi
+if [[ -f $CFG/manpages ]] ; then MANPAGES='Enabled' ; else MANPAGES='--' ; fi
+if [[ -f $CFG/quiet ]] ; then QUIET='Enabled' ; else QUIET='--' ; fi
+if [[ -f $CFG/rcfg ]] ; then RCFG='Enabled' ; else RCFG='--' ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE='Enabled' ; else SEPARATE='--' ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN='Enabled' ; else SKIPSVN='--' ; fi
 if [[ -f $CFG/gentime ]] ; then GENTIME=$(awk 'FNR==1 {print $0}' < $CFG/gentime) ; else GENTIME="$GENTIME" ; fi
 
 # calculate gentime in minutes, hours and days
@@ -1017,7 +1017,7 @@ echo ''
 #----------------------------------------------------------------- SET CPU CORES
 set_cpu_cores() {
 
-# used to set the number of cpu cores to be used during parallel compinling.
+# used to set the number of cpu cores to be used during parallel compiling.
 
 cpus=$(grep -c proc /proc/cpuinfo)
 maxcpus=$(($cpus + 1))
@@ -1110,7 +1110,7 @@ fi
 }
 
 
-#----------------------------------------------------------------- SET CPU CORES
+#--------------------------------------------------------- WSJT-X MENU GEN TIMER
 set_gentime() {
 
 # used to set the WSJT-X update
@@ -1359,31 +1359,31 @@ done
 shift "$(($OPTIND-1))"
 
 # -c option sets the nummber of cpu cores for parallel compiling
-if [[ $COPT == '1' ]] ; then 
+if [[ $COPT -eq 1 ]] ; then 
 	set_cpu_cores
 	exit 0
 fi
 
 # -h display cli help message
-if [[ $HOPT == '1' ]] ; then
+if [[ $HOPT -eq 1 ]] ; then
 	cli_help
 	exit 0
 fi
 
 # -l list status of user options
-if [[ $LOPT == '1' ]] ; then
+if [[ $LOPT -eq 1 ]] ; then
 	list_option_status
 	exit 0
 fi
 
 # -t updates WSJT-X menu generation timer
-if [[ $TOPT == '1' ]] ; then
+if [[ $TOPT -eq 1 ]] ; then
 	set_gentime
 	exit 0
 fi
 
 # -u updates wsjt-x build list
-if [[ $UOPT == '1' ]] ; then 
+if [[ $UOPT -eq 1 ]] ; then 
 	rm -f "$CFG/time-stamp" > /dev/null 2>&1
 	generate_build_lists
 	exit 0

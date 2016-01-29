@@ -62,31 +62,28 @@ HL3I="$HOMEDIR/hamlib3"
 # SEPARATE = separate by svn revision
 # BDOCS    = disable user guides
 # BMANP    = disable manpages
-SEPARATE=@SEPARATE@
-BDOCS=@BDOCS@
-BMANP=@BMANP@
 JJ=@JJJJ@
 
 # check global user defined options ( see jtsdk -h )
 # add each option enabled to jtsdk_options array
 wsjtx_options=()
-if [[ -f $CFG/wsjtx-custom ]] ; then CUSTOM=1 ; else CUSTOM==0 ; fi
-if [[ -f $CFG/autorun ]] ; then AUTORUN=1 ; wsjtx_options+=('autorun') ; else AUTORUN=0 ; fi
-if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 ; wsjtx_options+=('autosvn') ; else AUTOSVN=0 ; fi
-if [[ -f $CFG/clean ]] ; then CLEAN=1 ; wsjtx_options+=('clean') ; else CLEAN=0 ; fi
+if [[ -f $CFG/wsjtx-custom ]] ; then CUSTOM=1 ; else CUSTOM=0 ; fi
+if [[ -f $CFG/autorun ]] ; then AUTORUN=1 && wsjtx_options+=('autorun') ; else AUTORUN=0 ; fi
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 && wsjtx_options+=('autosvn') ; else AUTOSVN=0 ; fi
+if [[ -f $CFG/clean ]] ; then CLEAN=1 && wsjtx_options+=('clean') ; else CLEAN=0 ; fi
 if [[ -f $CFG/cores ]] ; then CORES=$(awk 'FNR==1 {print $0}' < $CFG/cores) ; else CORES=$JJ ; fi
-if [[ -f $CFG/docs ]] ; then DOCS=1 ; wsjtx_options+=('docs') ; else DOCS=0 ; fi
-if [[ -f $CFG/manpages ]] ; then MANPAGES=1 ; wsjtx_options+=('manpages') ; else MANPAGES=0 ; fi
-if [[ -f $CFG/quiet ]] ; then QUIET=1 ; wsjtx_options+=('quiet') ; else QUIET=0 ; fi
-if [[ -f $CFG/rcfg ]] ; then RCFG=1 ; wsjtx_options+=('rcfg') ; else RCFG=0 ; fi
-if [[ -f $CFG/separate ]] ; then SEPARATE=1 ; wsjtx_options+=('separate') ; else SEPARATE=0 ; fi
-if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wsjtx_options+=('skipsvn') ; else SKIPSVN=0 ; fi
+if [[ -f $CFG/docs ]] ; then DOCS=1 && wsjtx_options+=('docs') ; else DOCS=0 ; fi
+if [[ -f $CFG/manpages ]] ; then MANPAGES=1 && wsjtx_options+=('manpages') ; else MANPAGES=0 ; fi
+if [[ -f $CFG/quiet ]] ; then QUIET=1 && wsjtx_options+=('quiet') ; else QUIET=0 ; fi
+if [[ -f $CFG/rcfg ]] ; then RCFG=1 && wsjtx_options+=('rcfg') ; else RCFG=0 ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE=1 && wsjtx_options+=('separate') ; else SEPARATE=0 ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 && wsjtx_options+=('skipsvn') ; else SKIPSVN=0 ; fi
 
 ################################################################################
 # PROCESS COMMAND-LINE OPTIONS
 ################################################################################
 
-# command line options help message --------------------------------------------
+#------------------------------------------------------ COMMAND LINE OPTION HELP
 cli_help() {
 
 clear ||:
@@ -117,7 +114,7 @@ exit 0
 
 }
 
-# shortcut to cut down on repeated code ----------------------------------------
+#----------------------------------------------------------------- READ HELP MSG
 readp_help_message() {
 	echo ''
 	read -rp "Press [ Enter ] to view the help message"
@@ -138,7 +135,7 @@ fi
 # GETOPT FUNCTIONS
 ################################################################################
 
-# getopts branch validation ----------------------------------------------------
+#----------------------------------------------------- GETOPTS BRANCH VALIDATION
 getopts_branch_check() {
 
 # -b [ BRANCH ]
@@ -177,7 +174,7 @@ esac
 
 }
 
-# getopts name validation ------------------------------------------------------
+#------------------------------------------------------- GETOPTS NAME VALIDATION
 getopts_name_check() {
 
 # -n [ BRANCH NAME ]
@@ -231,7 +228,7 @@ fi
 }
 
 
-# getopts config validation ----------------------------------------------------
+#----------------------------------------------------- GETOPTS CONFIG VALIDATION
 getopts_config_check() {
 
 # -c [ Debug | Release ]
@@ -253,7 +250,7 @@ esac
 
 }
 
-# getopts target validation ----------------------------------------------------
+#----------------------------------------------------- GETOPTS TARGET VALIDATION
 getopts_target_check() {
 
 # -t [ TARGET NAME ]
@@ -277,7 +274,7 @@ esac
 }
 
 
-# options status, used during debugging 
+#------------------------------------------------------ GETOPTS STATUS DEBUG MSG
 getopts_options_status() {
 
 case "$QUIET" in
@@ -328,7 +325,7 @@ esac
 
 }
 
-# configure variable based on user input ----------------------------------------
+#--------------------------------------------------------------- CONFIGURE B_OPT
 configure_options() {
 
 # variables processed by the getopts functions
@@ -356,7 +353,7 @@ esac
 # MAIN SCRIPT FUNCTIONS
 ################################################################################
 
-# display build message --------------------------------------------------------
+#----------------------------------------------------------------- BUILD MESSAGE
 build_message() {
 
 clear ||:
@@ -442,7 +439,7 @@ esac
 
 }
 
-# simple hamlib test -----------------------------------------------------------
+#------------------------------------------------------------------ HAMLIB TESTS
 hamlib_test() {
 echo ''
 echo '-------------------------------------------'
@@ -514,7 +511,7 @@ case "$AUTOSVN" in
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
 			svn co $URL
-		elif  [[ $SKIPSVN == "1" ]]  ; then 
+		elif  [[ $SKIPSVN -eq 1 ]]  ; then 
 			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
 			cd "$APP_SRC"
@@ -543,7 +540,7 @@ echo '-----------------------------------------------------'
 # set (WSJTX_VERSION_MAJOR 1)
 # set (WSJTX_VERSION_MINOR 6)
 # set (WSJTX_VERSION_PATCH 1)
-# set (WSJTX_RC 0)					# release candidate number, comment out or zero for development versions
+# set (WSJTX_RC 0)					# release candidate number
 # set (WSJTX_VERSION_IS_RELEASE 0)	# set to 1 for final release build
 # ------------------------------------------------------------------------------
 
@@ -564,12 +561,12 @@ RC=$(cat $VER_FILE |grep '_RC' |awk '{print $3}' |cut -c1)
 REL=$(cat $VER_FILE |grep '_RELEASE' |awk '{print $3}' |cut -c1)
 
 # Final Release Combinations
-if [[ $REL == "1" ]] ; then AVER="$MA.$MI.$PA" ; fi
-if [[ $RC != "0" ]] && [[ $REL == "1" ]] ; then AVER="$MA.$MI.$PA" ; fi
+if [[ $REL -eq 1 ]] ; then AVER="$MA.$MI.$PA" ; fi
+if [[ $RC -ne 0 ]] && [[ $REL -eq 1 ]] ; then AVER="$MA.$MI.$PA" ; fi
 
 # Release Candidate
-if [[ $RC == "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA" ; fi
-if [[ $RC != "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA-rc$RC" ; fi
+if [[ $RC -eq  0 ]] && [[ $REL -eq 0 ]] ; then AVER="$MA.$MI.$PA" ; fi
+if [[ $RC -ne 0 ]] && [[ $REL -eq 0 ]] ; then AVER="$MA.$MI.$PA-rc$RC" ; fi
 
 echo "-- Branch Version ..: $AVER"
 
@@ -594,7 +591,7 @@ esac
 }
 
 
-# get the last changed svn number ----------------------------------------------
+#-------------------------------------------------------------- GET SVN REVISION
 get_svn_revision() {
 
 SVN_VER=$(svn info "$APP_SRC" |grep "Last Changed Rev:" |awk '{print $4}')
@@ -620,8 +617,7 @@ esac
 
 }
 
-# TO-DO: update to add [ QUIET ] user option
-# setup directories ------------------------------------------------------------
+#-------------------------------------------------------------------- SETUP DIRS
 setup_dirs() {
 echo ''
 echo '-----------------------------------------------------'
@@ -670,7 +666,9 @@ esac
 #----------------------------------------------------------------- RUN CONFIGURE
 run_config() {
 
-#------------------------------------------------------- wsjtx special case lang
+# CUSTOM=1 is for Custom builds
+# CUSTOM=0 is for standard builds
+
 cd "$BUILDD"
 case "$CUSTOM" in
 	1)
@@ -767,8 +765,8 @@ CCMD='cmake -G "Unix Makefiles" -Wno-dev $(echo "${cfgarray[@]}") \
 		echo '-----------------------------------------------------'
 		echo ''
 		cfgarray=()
-		if [[ $DOCS == "0" ]] ; then cfgarray+=("-D WSJT_GENERATE_DOCS=OFF") ; fi 
-		if [[ $MANPAGES == "0" ]] ; then cfgarray+=("-D WSJT_SKIP_MANPAGES=ON") ; fi
+		if [[ $DOCS -eq 0 ]] ; then cfgarray+=("-D WSJT_GENERATE_DOCS=OFF") ; fi 
+		if [[ $MANPAGES -eq 0 ]] ; then cfgarray+=("-D WSJT_SKIP_MANPAGES=ON") ; fi
 
 RCMD='cmake -G "Unix Makefiles" -Wno-dev $(echo "${cfgarray[@]}") \
 -D CMAKE_PREFIX_PATH:PATH="$HL3I" -D CMAKE_BUILD_TYPE="$C_OPT" \
@@ -834,7 +832,7 @@ esac
 }
 
 
-# build the target -------------------------------------------------------------
+#---------------------------------------------------------------- INSTALL TARGET
 run_install_build() {
 
 # this install the build target.
@@ -868,9 +866,10 @@ esac
 }
 
 
-# check kvasd and link if wsjtx version is < 1.7.0 -----------------------------
+#------------------------------------------------------------------- CHECK KVASD
 function link_kvasd() {
 
+# check kvasd and link if wsjtx version is < 1.7.0
 declare -i minv="$MI"
 declare -i maxv="7"
 if (( $minv < $maxv )) ; then KREQ="Yes" ; fi
@@ -910,7 +909,7 @@ esac
 
 }
 
-# finish message ---------------------------------------------------------------
+#---------------------------------------------------------------- FINISH MESSAGE
 finish_message() {
 echo ''
 echo '-----------------------------------------------------'
@@ -930,11 +929,6 @@ case "$T_OPT" in
 		else
 			echo -e ' KVASD ....: '${C_R}"$KVSTATUS"${C_NC}
 		fi
-		echo ''
-		echo " TO RUN WSJT-X"
-		echo " cd .......: $INSTALLD/bin"
-		echo " Type, ....: ./wsjtx"
-		echo ''
 		echo ''
 	;;
 
@@ -981,7 +975,7 @@ esac
 }
 
 
-#-------------------------------------------------------------- WSJTX OPTION MSG
+#--------------------------------------------------------- BUILD OPTIONS MESSAGE
 wsjtx_options_message() {
 echo ' BUILD OPTIONS'
 echo " Number of cores ......: $JJ"
@@ -1001,6 +995,17 @@ fi
 }
 
 
+#------------------------------------------------------------------- RUN MESSAGE
+run_message() {
+echo ''
+echo " TO RUN WSJT-X"
+echo " cd .......: $INSTALLD/bin"
+echo " Type, ....: ./wsjtx"
+echo ''
+
+}
+
+
 #------------------------------------------------------------------ WSJT AUTORUN
 auto_run() {
 RCMD='./wsjtx'
@@ -1016,14 +1021,14 @@ esac
 
 }
 
-#------------------------------------------------------------------ WSJT AUTORUN
+#----------------------------------------------------------------------- CLEANUP
 clean_up() {
 
 # this ensures the wsjtx-custom file is *not* present as it will affect
 # the configuration stage for normal builds
 rm -f "$CFG/wsjtx-custom" > /dev/null 2>&1
-if [[ $OCLEAN == "1" ]] ; then rm -f "$CFG/clean" > /dev/null 2>&1 ; fi
-if [[ $ORCFG == "1" ]] ; then rm -f "$CFG/rcfg" > /dev/null 2>&1 ; fi
+if [[ $OCLEAN -eq 1 ]] ; then rm -f "$CFG/clean" > /dev/null 2>&1 ; fi
+if [[ $ORCFG -eq 1 ]] ; then rm -f "$CFG/rcfg" > /dev/null 2>&1 ; fi
 
 }
 
@@ -1068,7 +1073,7 @@ getopts_options_status
 build_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
 'get_svn_revision' 'check_separation' 'setup_dirs' 'run_clean' 'run_config' 'run_build' \
 'run_install_build' 'link_kvasd' 'finish_message' 'wsjtx_options_message' \
-'clean_up' 'auto_run')
+'clean_up' 'run_message' 'auto_run')
 
 # for user guide ( -t docs )
 ug_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
