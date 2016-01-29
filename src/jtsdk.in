@@ -531,7 +531,7 @@ then
 	echo -e "$CHK1 $UTYPE Dev Lists"
 	
 	svn list "$BRANCHES"| grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/dev_list.txt
-	echo "Back-To-Main-Menu" >> "$TMPD"/dev_list.txt
+	echo "Back" >> "$TMPD"/dev_list.txt
 	
 # exclude some branches
 	for i in "${dev_exclude_array[@]}"
@@ -550,7 +550,7 @@ then
 	fi
 	echo -e "$CHK1 $UTYPE GA and RC List"
 	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/ga_rc_list.txt
-	echo "Back-To-Main-Menu" >> "$TMPD"/ga_rc_list.txt
+	echo "Back" >> "$TMPD"/ga_rc_list.txt
 	cp -u "$TMPD"/ga_rc_list.txt $CFG
 
 # generate Superbuild Dev List
@@ -562,7 +562,7 @@ then
 	echo -e "$CHK1 $UTYPE Superbuild Dev List"
 
 	svn list "$BRANCHES" | grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/sb_dev_list.txt
-	echo "Back-To-Main-Menu" >> "$TMPD"/sb_dev_list.txt
+	echo "Back" >> "$TMPD"/sb_dev_list.txt
 	
 # exclude some branches
 	for i in "${dev_exclude_array[@]}"
@@ -582,7 +582,7 @@ then
 	echo -e "$CHK1 $UTYPE Superbuild GA and RC List"
 
 	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]" | sed 's:/*$::' > "$TMPD"/sb_ga_rc_list.txt
-	echo "Back-To-Main-Menu" >> "$TMPD"/sb_ga_rc_list.txt
+	echo "Back" >> "$TMPD"/sb_ga_rc_list.txt
 
 # copy final menu to the config dir
 	cp -u "$TMPD"/sb_ga_rc_list.txt "$CFG"
@@ -598,7 +598,7 @@ then
 
 # combine the lists
 	cat "$CFG/ga_rc_list.txt" "$CFG/dev_list.txt" \
-	|sort |uniq |sed '/Back-To-Main-Menu/d' > "$CFG/combined_list.txt"
+	|sort |uniq |sed '/Back/d' > "$CFG/combined_list.txt"
 
 fi
 
@@ -615,8 +615,9 @@ wsjtx_main_menu() {
 	1 "Development Branches" \
 	2 "GA and RC Candidates" \
 	3 "Superbuilds" \
+	4 "Custom Configuration" \
 	H "Help" \
-	B "Back-To-Main-Menu"
+	B "Back"
 	)
 	
 	WSJTX_SELECT=$(
@@ -654,18 +655,18 @@ wsjtx_dev_menu() {
 	)
 
 	case "$BRANCH" in
-		Back-To-Main-Menu)
+		Back)
 			return 0
 		;;
 
 # select what target to build
 		*) 
 			TARGET_MENU=(
-			1 "Release Target" \
-			2 "Debug Target" \
+			1 "Release Type" \
+			2 "Debug Type" \
 			3 "User Guide" \
 			4 "Package" \
-			B "Back-To-Main-Menu"
+			B "Back"
 			)
 
 			TARGET=$(
@@ -706,7 +707,7 @@ wsjtx_dev_menu() {
 			read -p " Press [ Enter ] to continue..."
 		;;
 			
-		Back-To-Main-Menu)
+		Back)
 			return 0
 		;;
 	esac
@@ -737,12 +738,12 @@ wsjtx_ga_rc_menu() {
 
 # select the target to build
 	case "$BRANCH" in
-		Back-To-Main-Menu)
+		Back)
 			return 0
 		;;
 		
 		*)
-			TARGET_MENU=(1 "Release Target" 2 "Package" B "Back-To-Main-Menu")
+			TARGET_MENU=(1 "Release Type" 2 "Package" B "Back")
 			TARGET=$(
 			dialog --ok-label SELECT \
 			--no-cancel \
@@ -756,7 +757,7 @@ wsjtx_ga_rc_menu() {
 
 # send command to the build script
 	case $TARGET in
-		Back-To-Main-Menu)
+		Back)
 			return 0
 		;;
 		
@@ -795,7 +796,7 @@ superbuild_menu() {
 	while read -r a b ; do sb_ga_rc_array+=("$a" "$b") ; done < $CFG/sb_ga_rc_list.txt
 
 # display the menu
-	SB_MENU=(1 "Development Branches" 2 "GA and RC Candidates" B "Back-To-Main-Menu")
+	SB_MENU=(1 "Development Branches" 2 "GA and RC Candidates" B "Back")
 	
 	SB_MENU_SELECT=$(
 	dialog --ok-label SELECT \
@@ -808,7 +809,7 @@ superbuild_menu() {
 	
 # setup for either Dev, RC and GA-Release Branches
 	case $SB_MENU_SELECT in
-		Back-To-Main-Menu)
+		Back)
 			return 0
 		;;
 
@@ -827,7 +828,7 @@ superbuild_menu() {
 
 # send command to the build script
 			case "$BRANCH" in 
-				Back-To-Main-Menu)
+				Back)
 					return 0
 				;;
 				
@@ -852,7 +853,7 @@ superbuild_menu() {
 			
 # send command to the build script
 			case "$BRANCH" in 
-				Back-To-Main-Menu)
+				Back)
 					return 0
 				;;
 				
@@ -865,6 +866,75 @@ superbuild_menu() {
 
 	esac
 
+}
+
+# ---------------------------------------------------- WSJT-X CUSTOM CONFIG MENU 
+wsjtx_custom_config() {
+# Set wsjtx-custom, clean and rcfg before starting.
+touch "$CFG/wsjtx-custom"
+
+# remove previous selections each time the function is called
+	unset BRANCH
+	unset TARGET
+	unset TARGET_MENU
+	unset dev_array
+	
+# generate dev_list array
+	dev_array=()
+	while read -r a b ; do dev_array+=("$a" "$b") ; done < $CFG/dev_list.txt
+
+# select which ^/branches/$BRANCH to build
+	BRANCH=$(
+	dialog 	--ok-label "Select" \
+	--no-cancel \
+	--backtitle "$BACKTITLE" \
+	--title "  WSJT-X DEVELOPMENT SELECTION" \
+	--menu "$MENUMSG" 0 55 0 \
+	"${dev_array[@]}" 2>&1 > /dev/tty
+	)
+
+	case "$BRANCH" in
+		Back)
+			return 0
+		;;
+
+# select what target to build
+		*) 
+			TARGET_MENU=(
+			1 "Release Type" \
+			2 "Debug Type" \
+			B "Back"
+			)
+
+			TARGET=$(
+			dialog --ok-label SELECT \
+			--no-cancel \
+			--backtitle "$BACKTITLE" \
+			--title "$WSJTXTITLE" \
+			--menu "$MENUMSG" 0 50 0 \
+			"${TARGET_MENU[@]}" 2>&1 > /dev/tty
+			)
+
+		;;
+	esac
+	
+# send the build command to jtsdk-wsjtx script
+	case $TARGET in
+		1)
+			jtsdk-wsjtx -b dev -n "$BRANCH" -c Release -t install
+			echo ''		
+			read -p " Press [ Enter ] to continue..."
+		;;
+
+		2)
+			jtsdk-wsjtx -b dev -n "$BRANCH" -c Debug -t install
+			echo ''		
+			read -p " Press [ Enter ] to continue..."
+		;;
+		Back)
+			return 0
+		;;
+	esac
 }
 
 #----------------------------------------------------- COMMAND LINE OPTIONS HELP
@@ -1399,7 +1469,12 @@ case "$MM_SELECT" in
 				continue
 			;;
 	
-			Back-To-Main-Menu)
+			4) # Custom Configuration Menu
+				wsjtx_custom_config
+				continue
+			;;
+
+			Back)
 				continue
 			;;
 		esac

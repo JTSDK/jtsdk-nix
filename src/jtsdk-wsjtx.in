@@ -70,6 +70,7 @@ JJ=@JJJJ@
 # check global user defined options ( see jtsdk -h )
 # add each option enabled to jtsdk_options array
 wsjtx_options=()
+if [[ -f $CFG/wsjtx-custom ]] ; then CUSTOM=1 ; else CUSTOM==0 ; fi
 if [[ -f $CFG/autorun ]] ; then AUTORUN=1 ; wsjtx_options+=('autorun') ; else AUTORUN=0 ; fi
 if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 ; wsjtx_options+=('autosvn') ; else AUTOSVN=0 ; fi
 if [[ -f $CFG/clean ]] ; then CLEAN=1 ; wsjtx_options+=('clean') ; else CLEAN=0 ; fi
@@ -80,7 +81,6 @@ if [[ -f $CFG/quiet ]] ; then QUIET=1 ; wsjtx_options+=('quiet') ; else QUIET=0 
 if [[ -f $CFG/rcfg ]] ; then RCFG=1 ; wsjtx_options+=('rcfg') ; else RCFG=0 ; fi
 if [[ -f $CFG/separate ]] ; then SEPARATE=1 ; wsjtx_options+=('separate') ; else SEPARATE=0 ; fi
 if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 ; wsjtx_options+=('skipsvn') ; else SKIPSVN=0 ; fi
-
 
 ################################################################################
 # PROCESS COMMAND-LINE OPTIONS
@@ -143,7 +143,7 @@ getopts_branch_check() {
 
 # -b [ BRANCH ]
 
-case $OPTARG in
+case "$OPTARG" in
 	dev)
 		branch_status="0"			
 		BDESC='^/branches'
@@ -185,7 +185,7 @@ getopts_name_check() {
 DEV_FILE="$CFG/dev_list.txt"
 GAR_FILE="$CFG/ga_rc_list.txt"
 
-case $B_OPT in
+case "$B_OPT" in
 	dev)
 		CLIST="$CFG/dev_list.txt"
 	;;
@@ -237,7 +237,7 @@ getopts_config_check() {
 # -c [ Debug | Release ]
 
 # process option
-case $OPTARG in
+case "$OPTARG" in
 	Release|release)
 		C_OPT="Release"
 		config_status="0"
@@ -259,7 +259,7 @@ getopts_target_check() {
 # -t [ TARGET NAME ]
 
 # process option
-case $OPTARG in
+case "$OPTARG" in
 	install|package|docs)
 		T_OPT="$OPTARG"
 		target_status="0"
@@ -280,7 +280,7 @@ esac
 # options status, used during debugging 
 getopts_options_status() {
 
-case $QUIET in
+case "$QUIET" in
 	1)
 		# check the status of each option
 		clear ||:
@@ -360,7 +360,7 @@ esac
 build_message() {
 
 clear ||:
-case $T_OPT in
+case "$T_OPT" in
 	install)	
 		case "$QUIET" in
 			1)
@@ -529,7 +529,7 @@ esac
 
 }
 
-# get WSJTX Version information from: Version.cmake ----------------------------
+# -------------------------------------------------------------- GET APP VERSION
 # Note: must be performed "After" SVN checkout
 get_app_version() {
 
@@ -574,9 +574,9 @@ if [[ $RC != "0" ]] && [[ $REL == "0" ]] ; then AVER="$MA.$MI.$PA-rc$RC" ; fi
 echo "-- Branch Version ..: $AVER"
 
 # this is used for on screen displays only
-case $REL in
+case "$REL" in
 	0)
-		case $RC in
+		case "$RC" in
 			0 )
 				BTYPE="Development"
 			;;
@@ -669,44 +669,131 @@ esac
 
 #----------------------------------------------------------------- RUN CONFIGURE
 run_config() {
-echo ''
-echo '-----------------------------------------------------'
-echo -e ${C_Y}" CONFIGURING [ WSJT-X $AVER $DESC ]"${C_NC}
-echo '-----------------------------------------------------'
-echo ''
+
+#------------------------------------------------------- wsjtx special case lang
 cd "$BUILDD"
+case "$CUSTOM" in
+	1)
+		larray=()
+		cfgarray=()
+		cfgopts=()
 
-# add docs and manpage options to config array
-cfgarray=()
-if [[ $DOCS == "0" ]] ; then cfgarray+=("-D WSJT_GENERATE_DOCS=OFF") ; fi 
-if [[ $MANPAGES == "0" ]] ; then cfgarray+=("-D WSJT_SKIP_MANPAGES=ON") ; fi
+		# set these only in the WSJT-X Scrpt
+		BACKTITLE="@PROGRAM@ @VERSION@"
+		CMTITLE="  WSJT-X CUSTOM CONFIG MENU"
+		CMPICKTITLE=" CMAKE OPTOINS LIST"
+		CMMSG=" Arrow Up/Down, then [ Space Bar ] to Select Items\n
+			  Use the [ Enter Key ] to Save Selections\n
+				    ** Selecting Sets the Value ** "
 
-RCMD='cmake -G "Unix Makefiles" -Wno-dev ${cfgarray[@]} \
--D CMAKE_PREFIX_PATH:PATH="$HL3I" -D CMAKE_BUILD_TYPE="$C_OPT" \
--D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"
-'
+		# get option list from CMakeLists.txt
+		APP_SRC=/home/ki7mt/jtsdk/src/wsjtx
+		olist=$(grep "option (" < "$APP_SRC/CMakeLists.txt" |cut -c 9- |awk '{print $1}' |sed '/^UPDATE_/d' | tr "\n" ' ')
+		for i in $olist
+		do
+			larray+=("$i")
+		done
 
-case "$RCFG" in
-	0)
-		if 	[[ ! -f "$BUILDD/Makefile" ]] ; then
-			echo 'JTSDK Message: Running Cmake on clean build tree'
-			echo ''
-			eval "$RCMD"
-		else
-			echo 'JTSDK Option: Cmake Configuration Disabled'
+		# loop through larray to create the needed --picklist menu
+		n=1
+		for opt in "${larray[@]}"
+		do
+			if [[ $opt  == *"_DOCS" ]] ; then status="OFF" ; else status="ON" ; fi
+			list="$list $opt $status $n"
+			n=$[n+1]
+		done
+
+# present user with the list of options
+selections=$(dialog --ok-label " Save " --no-cancel \
+--backtitle "$BACKTITLE" \
+--title "$CMTITLE" \
+--stdout \
+--checklist "$CMMSG" 0 55 9 $list)
+
+		# if the user selected something, add it to the cfgarray array
+		if [[ $? -eq 0 ]]; then
+			for i in $selections
+			do
+				if [[ $i  == *"_DOCS" ]] ; then
+					item=$(echo $i | awk '{print "-D "$0"=OFF"}')
+				else
+					item=$(echo $i | awk '{print "-D "$0"=ON"}')
+				fi
+				cfgarray+=("$item")
+			done
 		fi
+
+CCMD='cmake -G "Unix Makefiles" -Wno-dev $(echo "${cfgarray[@]}") \
+-D CMAKE_PREFIX_PATH:PATH="$HL3I" \
+-D CMAKE_BUILD_TYPE="$C_OPT" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"'
+
+
+		# not print the command
+		echo ''
+		echo "-- JTSDK Building Custom Configure Command"
+		if [[ -z  ${cfgarray[@]} ]] ; then
+			echo '-- JTSDK No options selected, using default options'
+			echo '-----'
+			echo "$CCMD"
+			echo '-----'
+		else
+			echo ''
+			echo "-- JTSDK Using CCMD : ${cfgarray[@]}"
+			echo '-----'
+			echo "$CCMD"
+			echo '-----'
+		fi
+		echo ''
+
+	# before we run the cmake command, remove the CMakeCache.txt file
+	# to ensure it is rebuilt.
+	rm -f "$BUILDD/CMakeCache.txt" > /dev/null 2>&1
+
+	# now run the customized command
+	eval "$CCMD"
+	
 	;;
 	*)
-		if [[ -f "$BUILDD/Makefile" ]] ; then
-			echo 'JTSDK Option: [ RCFG ] Enabled'
-			echo ''
-		else
-			echo 'JTSDK Message: Running Cmake on clean build tree'
-			echo ''
-		fi
-		eval "$RCMD"
+		cd "$BUILDD"
+		echo ''
+		echo '-----------------------------------------------------'
+		echo -e ${C_Y}" CONFIGURING [ WSJT-X $AVER $DESC ]"${C_NC}
+		echo '-----------------------------------------------------'
+		echo ''
+		cfgarray=()
+		if [[ $DOCS == "0" ]] ; then cfgarray+=("-D WSJT_GENERATE_DOCS=OFF") ; fi 
+		if [[ $MANPAGES == "0" ]] ; then cfgarray+=("-D WSJT_SKIP_MANPAGES=ON") ; fi
+
+RCMD='cmake -G "Unix Makefiles" -Wno-dev $(echo "${cfgarray[@]}") \
+-D CMAKE_PREFIX_PATH:PATH="$HL3I" -D CMAKE_BUILD_TYPE="$C_OPT" \
+-D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"'
+
+		# check if the user wanted to reconfigure
+		case "$RCFG" in
+			0)
+				if 	[[ ! -f "$BUILDD/Makefile" ]] ; then
+					echo 'JTSDK Message: Running Cmake on clean build tree'
+					echo ''
+					eval "$RCMD"
+				else
+					echo 'JTSDK Option: Cmake Configuration Disabled'
+				fi
+			;;
+			*)
+				if [[ -f "$BUILDD/Makefile" ]] ; then
+					echo 'JTSDK Option: [ RCFG ] Enabled'
+					echo ''
+				else
+					echo 'JTSDK Message: Running Cmake on clean build tree'
+					echo ''
+				fi
+				eval "$RCMD"
+			;;
+		esac
 	;;
 esac
+
 
 }
 
@@ -730,7 +817,7 @@ case "$T_OPT" in
 
 	docs) # default user-guide build
 		cmake --build . --target docs  >/dev/null 2>&1
-		echo " Finnished building ..."
+		echo " Finished building ..."
 	 ;;
 
 	*) # used for custom target building
@@ -746,7 +833,6 @@ esac
 run_install_build() {
 
 # this install the build target.
-
 echo ''
 echo '-----------------------------------------------------'
 echo -e ${C_Y}" INSTALLING TARGET [ $T_OPT ]"${C_NC}
@@ -894,9 +980,19 @@ esac
 wsjtx_options_message() {
 echo ' JTSDK Options'
 echo "   Number of cores ......: $JJ"
-echo "   Cmake  Options .......: ${cfgarray[@]}"
-echo -n "   User Selected Items ..: "
-for i in "${wsjtx_options[@]-}" ; do echo -n "$i " ; done ; echo ''
+if [[ -z ${cfgarray[@]} ]] ; then
+	echo "   Cmake  Options .......: None"
+else
+	echo "   Cmake  Options .......: ${cfgarray[@]}"
+fi
+if [[ -z ${wsjtx_options[@]} ]] ; then
+echo -n "   Global User Options ..: None"
+echo ''
+else
+	echo -n "   Global User Options ..: "
+	for i in "${wsjtx_options[@]-}" ; do echo -n "$i " ; done ; echo ''
+fi
+
 }
 
 
@@ -915,6 +1011,16 @@ esac
 
 }
 
+#------------------------------------------------------------------ WSJT AUTORUN
+clean_up() {
+
+# this ensures the wsjtx-custom file is *not* present as it will affect
+# the configuration stage for normal builds
+rm -f "$CFG/wsjtx-custom" > /dev/null 2>&1
+if [[ $OCLEAN == "1" ]] ; then rm -f "$CFG/clean" > /dev/null 2>&1 ; fi
+if [[ $ORCFG == "1" ]] ; then rm -f "$CFG/rcfg" > /dev/null 2>&1 ; fi
+
+}
 
 
 ################################################################################
@@ -932,7 +1038,7 @@ options=':hb:n:c:t:'
 
 while getopts "$options" FLAG
 do
-	case $FLAG in
+	case "$FLAG" in
 		h) cli_help ;;		
 		b) getopts_branch_check ;;
 		n) getopts_name_check ;;
@@ -956,7 +1062,8 @@ getopts_options_status
 # for -t (install | package ) targets ( -c Release | Debug )
 build_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
 'get_svn_revision' 'check_separation' 'setup_dirs' 'run_clean' 'run_config' 'run_build' \
-'run_install_build' 'link_kvasd' 'finish_message' 'wsjtx_options_message' 'auto_run')
+'run_install_build' 'link_kvasd' 'finish_message' 'wsjtx_options_message' \
+'clean_up' 'auto_run')
 
 # for user guide ( -t docs )
 ug_array=('configure_options' 'build_message' 'check_svn' 'get_app_version' \
