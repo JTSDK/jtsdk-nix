@@ -9,31 +9,31 @@ PROGRAM		:=	@PROGRAM@
 VERSION		:=	@VERSION@
 AUTHORS		:=	@AUTHORS@
 BUGS		:=	@BUGS@
-WEB		:=	@WEB@
+WEB			:=	@WEB@
 
 # system Information
 DESC		:=	@DESC@
-OS		:=	@HOST_OS@
+OS			:=	@HOST_OS@
 DISTV		:=	@DISTROV@
 DISTC		:=	@DISTROC@
 ARCH		:=	@HOST_CPU@
 JJJJ		:=	@JJJJ@
 
 # general Use Tools
-CP		:=	@CP@
+CP			:=	@CP@
 CHOWN		:=	@CHOWN@
 CHMOD		:=	@CHMOD@
 DIALOG		:=	@DIALOG@
-LN		:=	@LN@
-MV		:=	@MV@
-RM		:=	@RM@
-SED		:=	@SED@
+LN			:=	@LN@
+MV			:=	@MV@
+MKDIR		:=	@MKDIR@ -p
+RM			:=	@RM@
+SED			:=	@SED@
 SHELL		:=	@SHELL@
-SVN		:=	@SVN@
-MKDIR		:=	@MKDIR@
+
 PYTHON2		:=	@PYTHON2@
 PYTHON3		:=	@PYTHON3@
-F2PY3		:=	@F2PY3@
+F2PY		:=	@F2PY@
 DOCSRC		:=	@DOCSRC@
 MANSRC		:=	@MANSRC@
 DATASRC		:=	@DATASRC@
@@ -42,7 +42,7 @@ DATASRC		:=	@DATASRC@
 PREFIX		:=	@PREFIX@
 INSTALL		:=	install
 BINDIR		:=	@BINDIR@
-SHARE		:=	@SHARE@
+SHARED		:=	@SHARED@
 MANDIR		:=	@MANDIR@
 DOCDIR		:=	@DOCDIR@
 DTDIR		:=	@DTDIR@
@@ -133,13 +133,13 @@ install:
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo '..Creating Directories'
-	@$(MKDIR) -p $(DESTDIR)$(BINDIR)
-	@$(MKDIR) -p $(DESTDIR)$(SHARED)
-	@$(MKDIR) -p $(DESTDIR)$(MANDIR)
-	@$(MKDIR) -p $(DESTDIR)$(DOCDIR)
-	@$(MKDIR) -p $(DESTDIR)$(DTDIR)
-	@$(MKDIR) -p $(DESTDIR)$(ICOND)
-	@$(MKDIR) -p $(DESTDIR)$(PREFIX)/share/menu
+	@$(MKDIR) $(DESTDIR)$(BINDIR)
+	@$(MKDIR) $(DESTDIR)$(SHARED)
+	@$(MKDIR) $(DESTDIR)$(DOCDIR)
+	@$(MKDIR) $(DESTDIR)$(DTDIR)
+	@$(MKDIR) $(DESTDIR)$(ICOND)
+	@$(MKDIR) $(DESTDIR)$(MENUDIR)
+	@$(MKDIR) $(DESTDIR)$(PREFIX)/share/menu
 	@echo '..Installing Main Scripts'
 	@install -m 755 src/{jtsdk,jtsdk-hamlib3,jtsdk-wsjtx,jtsdk-wsjtx-sb,jtsdk-wspr,jtsdk-wsjt} $(DESTDIR)$(BINDIR)
 	@echo '..Installing Misc Files'

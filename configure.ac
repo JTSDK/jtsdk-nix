@@ -144,9 +144,10 @@ AC_SUBST([PREFIX], ["$prefix"])
 
 # system subs
 AC_SUBST([BINDIR], ["$BINDIR"])
-AC_SUBST([SHARE], ["$SHARE"])
+AC_SUBST([SHARED], ["$SHARED"])
 AC_SUBST([MANDIR], ["$MANDIR"])
 AC_SUBST([DOCDIR], ["$DOCDIR"])
+AC_SUBST([MENUDIR], ["$MENUDIR"])
 
 # ------------------------------------------------------------------------------
 #  configure makefiles and scripts
