@@ -599,7 +599,7 @@ echo "-- SVN Revision ....: $SVN_VER"
 
 }
 
-# setup folder based on separation selection
+#--------------------------------------------------------------- FOLDER SEPARATE
 check_separation() {
 
 case "$SEPARATE" in

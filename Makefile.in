@@ -47,6 +47,7 @@ MANDIR		:=	@MANDIR@
 DOCDIR		:=	@DOCDIR@
 DTDIR		:=	@DTDIR@
 ICOND		:=	@ICOND@
+MENUDIR		:=	@MENUDIR@
 
 # home directory locations
 LOGNAME		:=	@LOGNAME@
@@ -74,7 +75,7 @@ C_R		:=	'\033[01;31m'	# red
 C_G		:=	'\033[01;32m'	# green
 C_Y		:=	'\033[01;33m'	# yellow
 C_C		:=	'\033[01;36m'	# cyan
-C_NC		:=	'\033[01;37m'	# no color
+C_NC	:=	'\033[01;37m'	# no color
 
 # Targets
 all: build-doc build-manp make-summary 
@@ -131,28 +132,27 @@ install:
 	@echo -e $(C_G)"Installing @PROGRAM@ @VERSION@"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
-	@echo '..Installing Directories'
-	@$(MKDIR) -p $(HOMEDIR)/package-info
-	@if [ -f orig-install.txt ] ; then \
-	$(CP) -u orig-install.txt $(HOMEDIR)/package-info ; fi 
-	@if [ -f orig-needed.txt ] ; then \
-	$(CP) -u orig-needed.txt $(HOMEDIR)/package-info ; fi 
-	@echo '..Installing Main Scripts'
-	@install -m 755 src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wsjtx-sb \
-	src/jtsdk-wspr src/jtsdk-wsjt $(DESTDIR)$(BINDIR)
+	@echo '..Creating Directories'
+	@$(MKDIR) -p $(DESTDIR)$(BINDIR)
+	@$(MKDIR) -p $(DESTDIR)$(SHARED)
+	@$(MKDIR) -p $(DESTDIR)$(MANDIR)
 	@$(MKDIR) -p $(DESTDIR)$(DOCDIR)
+	@$(MKDIR) -p $(DESTDIR)$(DTDIR)
+	@$(MKDIR) -p $(DESTDIR)$(ICOND)
+	@$(MKDIR) -p $(DESTDIR)$(PREFIX)/share/menu
+	@echo '..Installing Main Scripts'
+	@install -m 755 src/{jtsdk,jtsdk-hamlib3,jtsdk-wsjtx,jtsdk-wsjtx-sb,jtsdk-wspr,jtsdk-wsjt} $(DESTDIR)$(BINDIR)
 	@echo '..Installing Misc Files'
-	@install -m 644 src/docs/* $(DESTDIR)$(SHARE)
-	@install -m 644 AUTHORS ChangeLog COPYING COPYRIGHT README README.* TO-DO $(DESTDIR)$(DOCDIR)
-	@install -m 644 $(DATASRC)/jtsdk.menu $(DESTDIR)$(DTDIR)
-	@install -m 644 $(DATASRC)/jtsdk.desktop $(DESTDIR)$(DTDIR)
-	@install -m 644 $(DATASRC)/jtsdk.xpm $(DESTDIR)$(ICOND)
+	@install -m 644 AUTHORS COPYING COPYRIGHT README README.* $(DESTDIR)$(DOCDIR)
+	@install -m 644 $(DATASRC)/jtsdk.menu $(DESTDIR)$(MENUDIR)/jtsdk
+	@install -m 644 $(DATASRC)/jtsdk.desktop $(DESTDIR)$(DTDIR)/
+	@install -m 644 $(DATASRC)/jtsdk.xpm $(DESTDIR)$(ICOND)/
 ifeq ($(BDOC),Yes)
-	@echo '..Installing Documentation and Manpages'
-	@install -m 644 docs/jtsdk.html $(DESTDIR)$(DOCDIR)/jtsdk.html
+	@echo '..Installing User Guide'
+	@install -m 644 docs/jtsdk-@VERSION@.html $(DESTDIR)$(DOCDIR)/jtsdk-@VERSION@.html
 endif
 ifeq ($(BMANP),Yes)
-	@$(MKDIR) -p $(MANDIR)
+	@echo '..Installing Manpages'
 	@install -m 644 $(MANSRC)/jtsdk.1 $(DESTDIR)$(MANDIR)/jtsdk.1
 	@install -m 644 manpages/jtsdk-hamlib3.1 $(DESTDIR)$(MANDIR)/jtsdk-hamlib3.1
 	@install -m 644 manpages/jtsdk-wsjt.1 $(DESTDIR)$(MANDIR)/jtsdk-wsjt.1
@@ -174,17 +174,25 @@ uninstall:
 	@echo -e $(C_Y)"Uninstall @PROGRAM@ @VERSION@"$(C_NC)
 	@echo '---------------------------------------------'
 	@echo ''
-	@echo '..Removing installed scripts'
+	@echo '..Removing scripts'
 	@$(RM) -f $(DESTDIR)$(BINDIR)/jtsdk*
-	@echo '..Removing installed manpages'
-	@$(RM) -f ${DESTDIR}$(MANDIR)/jtsdk.1 ${DESTDIR}$(MANDIR)/jtsdk-*.1
-	@echo '..Removing installed share files'
+	@echo '..Removing shared files'
 	@$(RM) -rf $(DESTDIR)$(SHARE)
-	@$(RM) -f $(ICOND)/jtsdk.xpm
-	@$(RM) -f $(DTDIR)/jtsdk.desktop
+	@$(RM) -f $(DESTDIR)$(DOCDIR)/{AUTHORS,COPYING,COPYRIGHT,README}
+	@$(RM) -f $(DESTDIR)$(DOCDIR)/README.*
+	@$(RM) -f $(DESTDIR)$(MENUDIR)/jtsdk
+	@$(RM) -f $(DESTDIR)$(ICOND)/jtsdk.xpm
+	@$(RM) -f $(DESTDIR)$(DTDIR)/jtsdk.desktop
+ifeq ($(BMANP),Yes)
+	@echo '..Removing manpages'
+	@$(RM) -f ${DESTDIR}$(MANDIR)/jtsdk.1 ${DESTDIR}$(MANDIR)/jtsdk-*.1
+endif
+ifeq ($(BDOC),Yes)
+	@echo '..Removing user guide'
+	@$(RM) -f $(DESTDIR)$(DOCDIR)/jtsdk-@VERSION@.html
+endif
 	@echo ''
 	@echo 'UNINSTALL NOTES'
-	@echo ''
 	@echo ' 1. All user generated files remain in: ~/jtsdk'
 	@echo ''
 

@@ -42,10 +42,11 @@ fi
 # ------------------------------------------------------------------------------
 LOGNAME="$LOGNAME"
 BINDIR="$prefix/bin"
-SHARE="$prefix/share/jtsdk"
+SHARED="$prefix/share/jtsdk"
 MANDIR="$prefix/share/man/man1"
 DOCDIR="$prefix/share/jtsdk/doc"
 DTDIR="$prefix/share/applications"
+MENUDIR="$prefix/share/menu"
 MANSRC=$(exec pwd)/manpages
 DOCSRC=$(exec pwd)/docs/source
 DATASRC=$(exec pwd)/data
@@ -202,6 +203,6 @@ echo " Copyright...........: ${COPYRIGHT}"
 echo " Website ............: ${WEB}"
 echo " Report Bugs To .....: ${BUGS}"
 echo ''
-echo "To Build, type .....: make"
+echo "To Build, type ......: make"
 echo ''
 

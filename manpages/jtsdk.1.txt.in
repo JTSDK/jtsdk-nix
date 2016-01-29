@@ -8,7 +8,7 @@
 
 == NAME
 
-jtsdk - Build System for WSJT Applications
+jtsdk - Build Scripts for WSJT Applications
 
 
 == SYNOPSIS
@@ -18,12 +18,11 @@ jtsdk [-h] [-c] [-l] [-t] [-u] [-e OPTION ] [-d OPTION]
 
 == DESCRIPTION
 *JTSDK* is a set of shell scripts and small utilities designed to assist users
-with compiling the *WSJT* suite of applications.
+compiling *WSJT* applications from source code.
 
 
 == OPTIONS
-The following are the command line options used by *jtsdk*, the main shell
-script.
+The following command line options are used by the main *jtsdk* shell script.
 
 *-h*::
  Displays the general use help message
@@ -51,8 +50,8 @@ script.
 
 
 === Command Options
- When using the [-e] and [-d] operators, there are several options that can be
- set which all script can make use of.
+When using the [-e] and [-d] operators, there are several options that can be
+set which all scripts can make use of.
 
 *autorun*::
  Automatically run the build after a successful finish.
@@ -65,7 +64,7 @@ script.
  update.
 
 *clean*::
- Clean the build tree or source location before compiling.
+ Clean the build tree or source location before compiling configing
 
 *rcfg*::
  Re-run the configure script before running pass:[$(MAKE) / cmake --build .]
@@ -81,7 +80,34 @@ script.
  Enable or Disable building Manpages.
 
 *docs*::
- Enable or / Disable building User Guides.
+ Enable or Disable building user guides.
+
+== EXAMPLES
+The following are a few commonly used commands to illustrate the use of
+available options. You may combine any combination of [-e] and [-d] operators
+into a single command.
+
+* To enable auto updates from Subversion, clean the build between each run,
+separate by Subversion revision and automatically run the the build:
+---------
+  jtsdk -e autosvn -e clean -e separate -e autorun
+---------
+
+* To disable compiling manpages and user guides, disable autorun and suppress
+screen messages
+---------
+  jtsdk -d manpages -d docs -d autorun -e quiet
+---------
+
+* After enabling or disabling features, check the current options status
+---------
+  jtsdk -l
+---------
+
+* To update *WSJT-X* build menus
+---------
+  jtsdk -u
+---------
 
 
 == AUTHOR
@@ -119,8 +145,7 @@ GNU General Public License for more details.
 GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
 
 == SEE ALSO
-A full HTML user guide is available in the system folders, typically
-housed in pass:[/usr/share/doc/jtsdk].
+For a full HTML user guide, see pass:[@DOCDIR@/jtsdk-@VERSION@.html].
 
-jtsdk-wsjtx(1), jtsdk-wsjt(1), jtsdk-wspr(1), jtsdk-hamlib3(1)
+jtsdk-wsjtx(1), jtsdk-wsjtx-sb(1), jtsdk-wsjt(1), jtsdk-wspr(1), jtsdk-hamlib3(1)
 

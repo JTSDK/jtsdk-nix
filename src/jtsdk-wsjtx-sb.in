@@ -29,6 +29,13 @@ OPT2="$2"	# is the actual branch folder name, wsjtx, wsjtx-1.6, etc
 OPT3="$3"	# Sets Build or Source tar.gz
 OPT4="0"	# Set to 1 for verbose builds
 
+# foreground colors
+C_R='\033[01;31m'		# red
+C_G='\033[01;32m'		# green
+C_Y='\033[01;33m'		# yellow
+C_C='\033[01;36m'		# cyan
+C_NC='\033[01;37m'		# no color
+
 # system locations
 MENU=@SHARE@
 
@@ -47,14 +54,6 @@ URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-superbuild"
 
 # general options
 JJ=@JJJJ@
-SEPARATE=@SEPARATE@
-
-# foreground colors
-C_R='\033[01;31m'		# red
-C_G='\033[01;32m'		# green
-C_Y='\033[01;33m'		# yellow
-C_C='\033[01;36m'		# cyan
-C_NC='\033[01;37m'		# no color
 
 # variables used in process
 case $OPT1 in
@@ -71,13 +70,32 @@ case $OPT1 in
 	;;
 esac
 
+
+# options based on JTSDK configure.ac --enable --disable commands
+#
+# Note(s):
+# [1] these features can be reset with with jtsdk -e [FEATURE] -d [FEATURE]
+# [2] for resetting JJ use jtsdk -c
+# [3] manpages, docs, parallel (JJ) and separate are enabled by default
+# 
+# SEPARATE = separate by svn revision
+# BDOCS    = disable user guides
+# BMANP    = disable manpages
+JJ=@JJJJ@
+
+# superbuild is only uses 3 features
+if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 && wsjtx_options+=('autosvn') ; else AUTOSVN=0 ; fi
+if [[ -f $CFG/separate ]] ; then SEPARATE=1 && wsjtx_options+=('separate') ; else SEPARATE=0 ; fi
+if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 && wsjtx_options+=('skipsvn') ; else SKIPSVN=0 ; fi
+
+
 ################################################################################
 #
 # FUNCTIONS
 #
 ################################################################################
 
-# display build message --------------------------------------------------------
+#----------------------------------------------------------------- BUILD MESSAGE
 build_message() {
 
 clear ||:
@@ -113,48 +131,51 @@ esac
 
 }
 
-# update or checkout wsjtx-superbuild from svn ---------------------------------
+#--------------------------------------------------- CHECKOUT or UPDATE FROM SVN
 check_svn() {
 echo ''
 echo '-----------------------------------------------------'
-echo -e ${C_Y}" WSJT-X SUPERBUILD SVN UPDATE"${C_NC}
+echo -e ${C_Y}" SVN UPDATE"${C_NC}
 echo '-----------------------------------------------------'
+echo ''
+# check skip svn
+case "$SKIPSVN" in
+	1)
+		if [[ ! -d $APP_SRC/.svn ]] ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		else
+			echo 'JTSDK Option: [ SKIPSVN ] Enabled'
+		fi
+	;;
+	0)
+esac
 
-if [[ ! -d $SRCD/$APP_NAME/.svn ]]
-then
-	echo ''
-	echo "Checking Out New Version of $APP_NAME"
-	cd $SRCD
-	svn co $URL
-else
-	# Yy / Nn answer to update from svn	
-	while [ 1 ]
-	do
-		echo ''
-		read -p "Update from SVN Before Building? [ Y/N ]: " yn
-		case $yn in
-		
-		[Yy]* )
+# check sutosvn
+case "$AUTOSVN" in
+	1)
+		if [[ ! -d $APP_SRC/.svn ]]  ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		elif  [[ $SKIPSVN -eq 1 ]]  ; then 
+			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
+		else
 			cd "$APP_SRC"
 			echo "Updating ( $APP_NAME )"
 			svn cleanup && svn update
-			break ;;
-		
-		[Nn]* )
-			echo "Nothing to be done..."
-			break ;;
-		
-		* )
-			clear ||:
-			echo "Please use "Y" yes or "N" No." ;;
-		esac
-	done
-fi
+		fi
+	;;
+	0)
+	 echo 'JTSDK Option: Auto SVN Updates Disabled'
+	;;
+esac
 
 }
 
 
-# get svn version info from the branch location on Sourceforge -----------------
+#-------------------------------------------------------------- GET SVN REVISION
 get_svn_revision() {
 
 	SVN_VER=$(svn info $CHECK_URL | grep "Last Changed Rev:" | awk '{print $4}')	
@@ -163,26 +184,28 @@ get_svn_revision() {
 }
 
 
-# setup folder based on separation selection -----------------------------------
+#---------------------------------------------------------------- CHECK SEPARATE
 check_separation() {
 
-# separation is enabled / disabled from the configure script, default = Yes
-if [ $SEPARATE == "Yes" ] ; then 
-	BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/build"
-	INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/install"
-	PKGD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/package"
-	MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2/$SVN_VER"
-else
-	BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/build"
-	INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/install"
-	PKGD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/package"
-	MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2"
-fi
+case "$SEPARATE" in
+	1)
+		BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/build"
+		INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/install"
+		PKGD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/$SVN_VER/package"
+		MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2/$SVN_VER"
+	;;
+	*)
+		BUILDD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/build"
+		INSTALLD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/install"
+		PKGD="$HOMEDIR/wsjtx/superbuild/$OPT1/$OPT2/package"
+		MAINT="$HOMEDIR/wsjtx/maintainer/$OPT1/$OPT2"
+	;;
+esac
 
 }
 
 
-# Setup checkout and build directories -----------------------------------------
+#-------------------------------------------------------------------- SETUP DIRS
 setup_dirs() {
 echo ''
 echo '-----------------------------------------------------'
@@ -215,7 +238,7 @@ echo ''
 
 }
 
-# configure the source branch --------------------------------------------------
+#----------------------------------------------------------------- RUN CONFIGURE
 configure_build() {
 
 # NOTE - The WSJTX Superbuild script cannot be run from within it's own directory
@@ -236,7 +259,7 @@ cmake -Wno-dev -D CMAKE_INSTALL_PREFIX="$INSTALLD" -D WSJTX_TAG=$TYPE/$OPT2 $APP
 
 }
 
-# build the [ wsjtx.tgz ] file -------------------------------------------------
+#--------------------------------------------------------- BUILD [ tar.gz file ]
 build_source_package() {
 
 echo ''
@@ -266,7 +289,7 @@ esac
 
 }
 
-# Finished building source package ---------------------------------------------
+#--------------------------------------------------------- SOURCE FINISH MESSAGE
 source_finish_message() {
 
 echo ''
@@ -290,7 +313,7 @@ echo ''
 	
 }
 
-# extract source package -------------------------------------------------------
+#-------------------------------------------------------- EXTRACT PACKAGE SOURCE
 extract_source_pkg() {
 
 echo ''
@@ -304,7 +327,7 @@ tar -xvf $OPT2-$SVN_VER.orig.tar.gz -C "$BASED/tmp"
 
 }
 
-# configure the build ----------------------------------------------------------
+#--------------------------------------------------------------------- CONFIGURE
 run_cmake() {
 echo ''
 echo "-------------------------------------------"
@@ -316,7 +339,7 @@ echo ''
 
 }
 
-# build the target -------------------------------------------------------------
+#--------------------------------------------------------------------- RUN BUILD
 run_build() {
 echo ''
 echo "-------------------------------------------"
@@ -330,7 +353,7 @@ echo ''
 
 }
 
-# install the target -----------------------------------------------------------
+#---------------------------------------------------------- BUILD INSTALL TARGET
 run_install_build() {
 echo ''
 echo "-------------------------------------------"
@@ -343,7 +366,7 @@ echo ''
 
 }
 
-# install summary --------------------------------------------------------------
+#--------------------------------------------------------------- INSTALL SUMMARY
 run_build_summary() {
 
 echo ''

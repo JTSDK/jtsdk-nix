@@ -941,18 +941,18 @@ touch "$CFG/wsjtx-custom"
 cli_help() {
 
 clear ||:
-echo '-----------------------------------------------------------'
-echo -e ${C_Y}' COMMAND LINE OPTIONS HELP'${C_NC}
-echo '-----------------------------------------------------------'
+echo '-------------------------------------------------------------------------'
+echo -e ${C_Y}' COMMAND LINE HELP'${C_NC}
+echo '-------------------------------------------------------------------------'
 echo ''
 cat <<EOF
- Usage ....: jtsdk [-h] [-c] [-l] [-t] [-u] [-e OPTION ] [-d OPTION]
+ Usage ....: jtsdk [-h] [-c] [-l] [-t] [-u] [-e FEATURE ] [-d FEATURE ]
  Example ..: jtsdk -e autosvn -e clean -d autorun
 
- OPTION LIST
+ FEATURES
   autorun autosvn clean docs manpages quiet rcfg skipsvn separate 
  
- SWITCHES
+ OPTIONS
   -h  displays this message
   -c  set number of cpus used in compiling, resets JJ=x
   -l  list current user option status
@@ -961,7 +961,7 @@ cat <<EOF
   -e  enable  [FEATURE]
   -d  disable [FEATURE]
 
-  See, man(1) for more details: man jtsdk
+  For more details, see: man jtsdk
 
 EOF
 

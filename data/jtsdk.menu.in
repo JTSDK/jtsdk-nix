@@ -1,7 +1,8 @@
-?package(jtsdk):needs="X11" \
+?package(jtsdk): \
+ needs="X11" \
  section="Development" \
- description="Build System for WSJT Applications" \
- hints="WSJT,WSJT-X" \
  title="@PROGRAM@ @VERSION@" \
- icon="/usr/share/pixmaps/jtsdk.xpm" \
- command="@BINDIR@/jtsdk"
+ longtitle="JTSDK: Dialog menu system for building WSJT applications" \
+ command="@BINDIR@/jtsdk" \
+ hints="WSJT,WSJT-X,WSPR,JTSDK,Development,Tools" \
+ icon="@PREFIX@/share/pixmaps/jtsdk.xpm"
