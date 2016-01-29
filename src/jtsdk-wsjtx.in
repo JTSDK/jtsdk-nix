@@ -704,7 +704,7 @@ case "$CUSTOM" in
 		done
 
 # present user with the list of options
-selections=$(dialog --ok-label " Save " --no-cancel \
+selections=$(dialog --ok-label " Set Option " --no-cancel \
 --backtitle "$BACKTITLE" \
 --title "$CMTITLE" \
 --stdout \
@@ -721,6 +721,11 @@ selections=$(dialog --ok-label " Save " --no-cancel \
 				fi
 				cfgarray+=("$item")
 			done
+
+		else
+			echo ''
+			echo "Running Default CMakeList.txt Configuration"		
+			echo ''	
 		fi
 
 CCMD='cmake -G "Unix Makefiles" -Wno-dev $(echo "${cfgarray[@]}") \
@@ -729,7 +734,7 @@ CCMD='cmake -G "Unix Makefiles" -Wno-dev $(echo "${cfgarray[@]}") \
 -D CMAKE_INSTALL_PREFIX="$INSTALLD" "$APP_SRC"'
 
 
-		# not print the command
+		# print the command
 		echo ''
 		echo "-- JTSDK Building Custom Configure Command"
 		if [[ -z  ${cfgarray[@]} ]] ; then
@@ -978,18 +983,18 @@ esac
 
 #-------------------------------------------------------------- WSJTX OPTION MSG
 wsjtx_options_message() {
-echo ' JTSDK Options'
-echo "   Number of cores ......: $JJ"
+echo ' BUILD OPTIONS'
+echo " Number of cores ......: $JJ"
 if [[ -z ${cfgarray[@]} ]] ; then
-	echo "   Cmake  Options .......: None"
+	echo " Cmake  Options .......: Using Defaults"
 else
-	echo "   Cmake  Options .......: ${cfgarray[@]}"
+	echo " Cmake  Options .......: ${cfgarray[@]}"
 fi
 if [[ -z ${wsjtx_options[@]} ]] ; then
-echo -n "   Global User Options ..: None"
+echo -n " Global User Options ..: None"
 echo ''
 else
-	echo -n "   Global User Options ..: "
+	echo -n " Global User Options ..: "
 	for i in "${wsjtx_options[@]-}" ; do echo -n "$i " ; done ; echo ''
 fi
 

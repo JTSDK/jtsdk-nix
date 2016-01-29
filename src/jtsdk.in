@@ -615,7 +615,7 @@ wsjtx_main_menu() {
 	1 "Development Branches" \
 	2 "GA and RC Candidates" \
 	3 "Superbuilds" \
-	4 "Custom Configuration" \
+	4 "Custom Build" \
 	H "Help" \
 	B "Back"
 	)
@@ -1422,7 +1422,7 @@ clear ||:
 while [ 0 ]; do
 
 MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "Options" H "Help" E "Exit")
-OM_OPTIONS=( 1 "Current Status" 2 "Set Script Options" 3 "Set Update Timer" 4 "Set CPU Cores" 5 "Update WSJT-X Menus" E "Exit Options")
+OM_OPTIONS=( 1 "Option Status" 2 "Set Options" 3 "Set Update Timer" 4 "Set CPU Cores" 5 "Update WSJT-X Menus" E "Exit Options")
 
 MM_SELECT=$(
 dialog --ok-label SELECT \
