@@ -946,18 +946,18 @@ echo -e ${C_Y}' COMMAND LINE OPTIONS HELP'${C_NC}
 echo '-----------------------------------------------------------'
 echo ''
 cat <<EOF
- Usage ....: jtsdk [-h] [-c] [-l] [-t] [-u] [-e FEATURE] [-d FEATURE]
- Example ..: jtsdk -e skipsvn -e clean -d autorun
+ Usage ....: jtsdk [-h] [-c] [-l] [-t] [-u] [-e OPTION ] [-d OPTION]
+ Example ..: jtsdk -e autosvn -e clean -d autorun
 
- FEATURE LIST
-   autorun autosvn clean docs manpages quiet rcfg skipsvn separate 
+ OPTION LIST
+  autorun autosvn clean docs manpages quiet rcfg skipsvn separate 
  
  SWITCHES
   -h  displays this message
   -c  set number of cpus used in compiling, resets JJ=x
   -l  list current user option status
   -t  set WSJT-X menu update frequency ( expressed in minutes )
-  -u  update wsjt build list
+  -u  update WSJT-X build lists
   -e  enable  [FEATURE]
   -d  disable [FEATURE]
 
@@ -978,7 +978,7 @@ echo -e ${C_Y}' CURRENT OPTION STATUS'${C_NC}
 echo '-----------------------------------------------------------'
 echo ''
 echo ' Usage ......: jtsdk -e [FEATURE] [-d FEATURE]'
-echo ' Example ....: jtsdk -e skipsvn -e clean -d autorun'
+echo ' Example ....: jtsdk -e autosvn -e clean -d autorun'
 echo ''
 # options are set to Yes / No for display purposes only
 # each build script resets these variables at run time
@@ -994,23 +994,50 @@ if [[ -f $CFG/separate ]] ; then SEPARATE='Enabled' ; else SEPARATE='--' ; fi
 if [[ -f $CFG/skipsvn ]] ; then SKIPSVN='Enabled' ; else SKIPSVN='--' ; fi
 if [[ -f $CFG/gentime ]] ; then GENTIME=$(awk 'FNR==1 {print $0}' < $CFG/gentime) ; else GENTIME="$GENTIME" ; fi
 
-# calculate gentime in minutes, hours and days
+# calculate wsjt-x menu gentime in minutes, hours and days
 GMIN=$(($GENTIME))
 GHRS=$(($GENTIME / 60))
 GDAYS=$(($GENTIME / 1440))
-echo "  autorun ...: $AUTORUN"
-echo "  autosvn ...: $AUTOSVN"
-echo "  clean .....: $CLEAN"
-echo "  docs ......: $DOCS"
-echo "  manpages ..: $MANPAGES"
-echo "  quiet .....: $QUIET"
-echo "  rcfg ......: $RCFG"
-echo "  separate ..: $SEPARATE"
-echo "  skipsvn ...: $SKIPSVN"
-echo "  cores .....: ($CORES)"
-echo "  gentime ...: ($GENTIME m) / ($GHRS h) / ($GDAYS d)"
+
+# WSJT-X last menu update
+if [[ -f $CFG/time-stamp ]] ; then
+	LASTUPDATE=$(stat -c %y $CFG/time-stamp)
+	LASTUPDATE=${LASTUPDATE%% *}
+else
+	LASTUPDATE='File Missing, try updating'
+fi
+# WSJT-X dev and GA / RC branch count
+if [[ -f $CFG/dev_list.txt ]] ; then
+	D_LIST=$(wc -l < $CFG/dev_list.txt)
+else
+	D_LIST="File Missing, try updating"
+fi
+if [[ -f $CFG/ga_rc_list.txt ]] ; then
+	G_LIST=$(wc -l < $CFG/ga_rc_list.txt)
+else
+	G_LIST="File Missing, try updating"
+fi
+
+# display data
+echo ' GLOBAL OPTIONS'
+echo "  autorun .........: $AUTORUN"
+echo "  autosvn .........: $AUTOSVN"
+echo "  clean ...........: $CLEAN"
+echo "  docs ............: $DOCS"
+echo "  manpages ........: $MANPAGES"
+echo "  quiet ...........: $QUIET"
+echo "  rcfg ............: $RCFG"
+echo "  separate ........: $SEPARATE"
+echo "  skipsvn .........: $SKIPSVN"
+echo "  cores ...........: ($CORES)"
+echo "  gentime .........: ($GENTIME m) / ($GHRS h) / ($GDAYS d)"
 echo ''
-echo ' For Help Use .....: jtsdk -h'
+echo ' WSJT-X MENU STATUS'
+echo "  Last Update .....: $LASTUPDATE"
+echo "  Dev Branches ....: $D_LIST"
+echo "  GA/RC Branches ..: $G_LIST"
+echo ''
+echo ' OPTION HELP ......: jtsdk -h'
 echo ''
 }
 
@@ -1292,7 +1319,7 @@ jtsdk_alias_commands
 #   rcfg ......: re-run the configure script before running $(MAKE) / cmake --build .
 #   separate ..: separate builds by both Version + SVN revision
 #   quiet .....: suppress or in some cases, eliminate on screen messages
-#   manpages ..: enabe / disable building manpages
+#   manpages ..: enable / disable building manpages
 #   docs ......: enable / disable building user guides
 #
 # FEATURE ARRAY
@@ -1421,8 +1448,8 @@ fi
 clear ||:
 while [ 0 ]; do
 
-MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "Options" H "Help" E "Exit")
-OM_OPTIONS=( 1 "Option Status" 2 "Set Options" 3 "Set Update Timer" 4 "Set CPU Cores" 5 "Update WSJT-X Menus" E "Exit Options")
+MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "JTSDK Options" H "Help" E "Exit")
+OM_OPTIONS=( 1 "Global Option Status" 2 "Set Options" 3 "Set Update Timer" 4 "Set CPU Cores" 5 "Update WSJT-X Menus" E "Exit Options")
 
 MM_SELECT=$(
 dialog --ok-label SELECT \

@@ -1,9 +1,10 @@
 :doctype: manpage
-:man manual: JTSDK Manpage
+:man manual: @PROGRAM@ Manpage
 :man date: {date}
 :man version: Version @VERSION@
 
 = jtsdk(1)
+
 
 == NAME
 
@@ -11,74 +12,115 @@ jtsdk - Build System for WSJT Applications
 
 
 == SYNOPSIS
-jtsdk ['OPTION']
+
+jtsdk [-h] [-c] [-l] [-t] [-u] [-e OPTION ] [-d OPTION]
 
 
 == DESCRIPTION
 *JTSDK* is a set of shell scripts and small utilities designed to assist users
-with compiling the WSJT suit eof applications.
+with compiling the *WSJT* suite of applications.
 
 
 == OPTIONS
-Options are functions that extend or enhance the primary purpose of *JTSDK*. You
-must use the double-hyphen (*--*) to initiate them. The following extended
-functions are currently enabled:
+The following are the command line options used by *jtsdk*, the main shell
+script.
 
-*--clean::
-*Currently-Disabled*: This function will attempt to clean up, +remove+, older
-builds, leaving only the last build compiled for a given application. It is
-still in beta testing.
+*-h*::
+ Displays the general use help message
 
-[FILEBUG]
-*--file-bug
-*Currently-Disabled*: This function is used is similar to +++--sysinfo+++,
-in that, it will use the same code to gather information, then combine them in
-an easy to use .tar.gz file for sending vial email.
+*-c*::
+ Sets number of cpus used when compiling: pass:[( cmake --build . -- -j xx )].
+ *WSJT-X* can take full advantage of multi-core system, where *WSJT* and *WSPR*
+ is limited to single core compiling due to a Python3 NumPy ( *F2PY* ).
+ limitation.
 
-*--help::
-*Currently-Disabled*: Displays the main help page, and information HTML and
-manpage documents.
+*-l*::
+ List current user option status
 
-*--supported::
-*Currently-Disabled*: List what WSJT applications are currently supported.
+*-t*::
+ Set *WSJT-X* menu update frequency ( expressed in minutes )
 
-*--sysinfo::
-*Currently-Disabled*: Generates, then displays information about installed
-packages, system architectures, distribution in use.
+*-u*::
+ Updates WSJT-X build lists
+
+*-e [OPTION]*::
+ Enables the specified feature
+
+*-d [OPTION]*::
+ Disabled the specified feature
 
 
-== BUGS
-If you find a bug or suspect *JTSDK* is not acting as you think it should,
+=== Command Options
+ When using the [-e] and [-d] operators, there are several options that can be
+ set which all script can make use of.
+
+*autorun*::
+ Automatically run the build after a successful finish.
+
+*autosvn*::
+ Automatically update SRCS folders from the Subversion development repository.
+
+*skipsvn*::
+ Skip updating from Subversion repository, pass:[don't] ask, and pass:[don't]
+ update.
+
+*clean*::
+ Clean the build tree or source location before compiling.
+
+*rcfg*::
+ Re-run the configure script before running pass:[$(MAKE) / cmake --build .]
+
+*separate*::
+ Separate builds both by Version and Subversion revision.
+
+*quiet*::
+ Suppress or in some cases, eliminate on screen messages, similar to setting
+ Verbose to 0.
+
+*manpages*::
+ Enable or Disable building Manpages.
+
+*docs*::
+ Enable or / Disable building User Guides.
+
+
+== AUTHOR
+--------------------------------------------------------------------------------
+Written by Greg Beam, KI7MT, <ki7mt@yahoo.com>
+--------------------------------------------------------------------------------
+
+
+== REPORTING BUGS
+If you find a bug or suspect *@PROGRAM@* is not acting as you think it should,
 send an email with as much detail as possible to:
 <wsjt-devel@lists.sourceforge.net>
 
-It may also be helpful to use the +++file-bug+++ options to gather more system
-system information beforehand.
-
-
-== AUTHORS
---------------------------------------------------------------------------------
-Greg Beam, KI7MT, <ki7mt@yahoo.com> .... Manpage Editor
---------------------------------------------------------------------------------
 
 == RESOURCES
 --------------------------------------------------------------------------------
-Main web site: .. <http://www.physics.princeton.edu/pulsar/K1JT/>
-Project Site: ... <http://sourceforge.net/projects/jtsdk/>
+Main web site: ..: <http://www.physics.princeton.edu/pulsar/K1JT/>
+Project Site: ...: <http://sourceforge.net/projects/jtsdk/>
 --------------------------------------------------------------------------------
 
 
-== COPYING
-Copyright &copy; 2014-2015 Joseph H Taylor, Jr, K1JT
+== COPYRIGHT
+@COPYRIGHT@
 
-This program is free software: you can redistribute it and/or modify
+*@PROGRAM@* is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+*@PROGRAM@* is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+
+== SEE ALSO
+A full HTML user guide is available in the system folders, typically
+housed in pass:[/usr/share/doc/jtsdk].
+
+jtsdk-wsjtx(1), jtsdk-wsjt(1), jtsdk-wspr(1), jtsdk-hamlib3(1)
+
