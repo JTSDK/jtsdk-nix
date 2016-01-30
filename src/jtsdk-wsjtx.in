@@ -668,14 +668,14 @@ run_config() {
 
 # CUSTOM=1 is for Custom builds
 # CUSTOM=0 is for standard builds
+unset larray
+unset cfgarray
 
 cd "$BUILDD"
 case "$CUSTOM" in
 	1)
 		larray=()
 		cfgarray=()
-		cfgopts=()
-
 		# set these only in the WSJT-X Scrpt
 		BACKTITLE="@PROGRAM@ @VERSION@"
 		CMTITLE="  WSJT-X CUSTOM CONFIG MENU"
@@ -685,7 +685,6 @@ case "$CUSTOM" in
 				    ** Selecting Sets the Value ** "
 
 		# get option list from CMakeLists.txt
-		APP_SRC=/home/ki7mt/jtsdk/src/wsjtx
 		olist=$(grep "option (" < "$APP_SRC/CMakeLists.txt" |cut -c 9- |awk '{print $1}' |sed '/^UPDATE_/d' | tr "\n" ' ')
 		for i in $olist
 		do
@@ -758,6 +757,8 @@ CCMD='cmake -G "Unix Makefiles" -Wno-dev $(echo "${cfgarray[@]}") \
 	
 	;;
 	*)
+		larray=()
+		cfgarray=()
 		cd "$BUILDD"
 		echo ''
 		echo '-----------------------------------------------------'
