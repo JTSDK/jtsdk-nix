@@ -588,7 +588,7 @@ set via the command line. Option explinations are as follows:
    Using this feature sets the elapsed time in which the WSJT-X
    Menus will be updated each JTSDK is start.
 
-   The default timer is ( 1440 ) expreseed in *Minutes*, or
+   The default timer is ( 1440 ) expressed in *Minutes*, or
    once every day. Daily is (recommended)
 
 
