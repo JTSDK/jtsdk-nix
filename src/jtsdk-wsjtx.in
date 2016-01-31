@@ -765,7 +765,6 @@ CCMD='cmake -G "Unix Makefiles" -Wno-dev $(echo "${cfgarray[@]}") \
 		echo -e ${C_Y}" CONFIGURING [ WSJT-X $AVER $DESC ]"${C_NC}
 		echo '-----------------------------------------------------'
 		echo ''
-		cfgarray=()
 		if [[ $DOCS -eq 0 ]] ; then cfgarray+=("-D WSJT_GENERATE_DOCS=OFF") ; fi 
 		if [[ $MANPAGES -eq 0 ]] ; then cfgarray+=("-D WSJT_SKIP_MANPAGES=ON") ; fi
 

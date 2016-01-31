@@ -207,4 +207,3 @@ clean:
 	$(RM) -f data/jtsdk.menu data/jtsdk.desktop
 	$(RM) -f docs/*.html docs/Makefile docs/*.1
 	$(RM) -f manpages/*.1 manpages/*.txt
-

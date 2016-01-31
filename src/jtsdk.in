@@ -43,8 +43,8 @@ CHK2=' ✘ '
 
 # set home and directory paths
 HOMEDIR="$HOME/jtsdk"
-MENU=@SHARE@
 TMPD="$HOMEDIR/tmp"
+MENU="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
 CFG="$HOMEDIR/config"
 DOCS="$HOMEDIR/docs"
@@ -112,7 +112,8 @@ MENUMSG="     Arrow Up/Down, then [ Enter] to Select"
 WSJTXTITLE=" WSJT-X BUILD MENU"
 
 #---------------------------------------------------------------- help menu lang
-HTITLE="APPLICATION BUILD HELP DOCUMENT"
+HTITLE="MAIN HELP SCREEN"
+OMTITLE="USER OPTIONS MENU SCREEN"
 
 #-------------------------------------------------------- under development lang
 UD=" UNDER DEVELOPMENT"
@@ -351,6 +352,8 @@ fi
 
 }
 
+
+
 # ------------------------------------------------------- ALIAS COMMAND EXAMPLES
 jtsdk_alias_commands() {
 
@@ -449,7 +452,184 @@ EOF_JTSDK_ALIAS
 # --------------------------------------------------------------- MAIN MENU HELP 
 main_menu_help() {
 
-	dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" --textbox "$HELP" 20 80
+if [[ -f $TMPD/main_menu_help.txt ]]; then rm -f "$TMPD/main_menu_help.txt" ; fi
+touch "$TMPD/main_menu_help.txt"
+
+(
+cat <<'EOF_MAIN_HELP'
+
+INTRODUCTION
+------------
+ 
+ * @PROGRAM@ allows you to build most of the WSJT applications through
+   an easy to use menu system or direct command line entry. Several build
+   options exist for each application.
+
+ * Except for the WSJT-X Super-Build, all WSJT-X builds require Hamlib3
+   to be built "before" building then desired version. If Hamlib3 is not
+   found in the default location, a message will be displayed prompting you
+   to perform the build first. This is true for both menu system and command
+   line build.
+
+
+BUILD DESCRIPTIONS
+------------------
+
+ WSJT-X
+ 
+ * Development Branches: using this option, the menu system will list all
+   the available development branches from ^/branches/* that can be build with
+   the current version of JTSDK. Select a branch, followed by the CMake Type to
+   build the combination desired.
+ 
+ * GA and RC Candidates: using this options, the menu system will list all
+   the available GA Release and Release Candidate branches from ^/tags that can
+   be build with current version of JTSDK. Select a branch, followed by the
+   CMake Type to build the combination desired.
+ 
+ * Superbuilds: Superbuilds are available for both Dev and GA/RCCandicates. The
+   Superbuilds combine both WSJT-X and Hamlib3 soruce code into one package.
+ 
+ * Custom Builds: This options allows users to enable or disable elemts contain
+   with the CMakeLists.txt file. The options are generated dynamically after
+   svn checkout or update.
+ 
+ For build specific help, see ADDITIONAL RESOURCES section below
+ 
+ 
+ WSJT and WSPR v4.0
+ 
+ * Both WSJT and WSPR have many targets. Currently, the build script
+   simply runs the install target. Later versions JTSDK may include
+   individual targets for each application. However, once configured, users
+   can change directories to the source tree then build individual targets
+   by calling the Makefile directly.
+ 
+ 
+ WSPR-X and MAP65
+ 
+ * WSPR-X and MAP65 cannot be built on Linux without applying several
+   patches. As such, the builds are classed as "under development" at
+   this time. When the source codes has been updated to build on Linux,
+   the builds will be enabled.
+
+
+ Hamlib3
+ 
+ * Hamlib3 is a custom Git repository maintained by Bill (G4WJS). Updates to
+   this repo may eventually land in the Official Hamlib libraries, however,
+   when the updates will be included is unknown. 
+
+ * There is only one target for building Hamlib3. Selecting via the menu
+   system or direct command line entry. Nothing else should eb required.
+
+
+ADDITIONAL RESOURCES
+--------------------
+
+ * @PROGRAM@ @VERSION@ user guide can be found at:
+
+   Location: @DOCDIR@/jtsdk-@VERSION@.html
+ 
+ * The following manpages are also available:
+ 
+   jtsdk(1), jtsdk-wsjtx(1), jtsdk-wsjtx-sb(1), jtsdk-wsjt(1), jtsdk-wspr(1)
+   jtsdk-hamlib3(1)
+ 
+ 
+ WSJT Home Page:
+ * http://www.physics.princeton.edu/pulsar/K1JT/
+
+ WSJT Program Development:
+ * www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
+
+EOF_MAIN_HELP
+) > "$TMPD/main_menu_help.txt"
+
+HELP="$TMPD/main_menu_help.txt"
+dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$HTITLE" --textbox "$HELP" 20 80
+
+}
+
+
+# ------------------------------------------------------------- OPTION MENU HELP
+options_menu_help() {
+
+if [[ -f $TMPD/options_menu_help.txt ]]; then rm -f "$TMPD/options_menu_help.txt" ; fi
+touch "$TMPD/options_menu_help.txt"
+
+(
+cat <<'EOF_OPTIONS_HELP'
+
+INTRODUCTION
+------------
+The options menu allows the users to view and set varuous elements of @PROGRAM@
+that control build behaviour. All of the options listed in the menu can also be
+set via the command line. Option explinations are as follows:
+
+
+ * Option Status:
+   List the current status of all options
+
+ * Set Options:
+   Allows the user to set features that control various aspects of each build
+   script. Setting these options, either through the memu system or command line
+   affects all scripts.
+
+
+ * Set Update Timer:
+   Using this feature sets the elapsed time in which the WSJT-X
+   Menus will be updated each JTSDK is start.
+
+   The default timer is ( 1440 ) expreseed in *Minutes*, or
+   once every day. Daily is (recommended)
+
+
+ * Set CPU Cores:
+   Using this feature sets the number of CPU cores to be used
+   in parallel compiling, for example
+
+   make -jx   or  cmake --build . -- -j xx
+
+   This can have adverse affects on low resource systems such
+   as SoC ARM devices. For low resource systems, consider using
+   ( 3 or 2 ), for all others systems (4) should be OK.
+
+
+ * Update WSJT-X Menus
+   This function updates several WSJT-X menus from the
+   SourceForge WSJT repository ^/tags and ^/branches.
+
+   When the event timer is reached, JTSDK will automatically
+   update the menu entries the next time it is launched.
+   The default update interval is set to [ 1440 ] minutes
+   or 24 hours / once per day.
+
+
+ADDITIONAL RESOURCES
+--------------------
+
+ * @PROGRAM@ @VERSION@ user guide can be found at:
+
+   Location: @DOCDIR@/jtsdk-@VERSION@.html
+ 
+ * The following manpages are also available:
+ 
+   jtsdk(1), jtsdk-wsjtx(1), jtsdk-wsjtx-sb(1), jtsdk-wsjt(1), jtsdk-wspr(1)
+   jtsdk-hamlib3(1)
+ 
+ 
+ WSJT Home Page:
+ * http://www.physics.princeton.edu/pulsar/K1JT/
+
+ WSJT Program Development:
+ * www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/wsjt-dev-guide.html
+
+EOF_OPTIONS_HELP
+) > "$TMPD/options_menu_help.txt"
+
+OMHELP="$TMPD/options_menu_help.txt"
+dialog --exit-label DONE --backtitle "$BACKTITLE" --title "$OMTITLE" --textbox "$OMHELP" 20 80
 
 }
 
@@ -1288,9 +1468,6 @@ make_dirs
 # generate dialog rc
 make_dialogrc
 
-# menu help files
-HELP="$MENU"/main_menu_help.txt
-
 # generate SB Dev, SB GA and RC lists from Sourceforge
 generate_build_lists
 
@@ -1448,8 +1625,8 @@ fi
 clear ||:
 while [ 0 ]; do
 
-MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "JTSDK Options" H "Help" E "Exit")
-OM_OPTIONS=( 1 "Global Option Status" 2 "Set Options" 3 "Set Update Timer" 4 "Set CPU Cores" 5 "Update WSJT-X Menus" E "Exit Options")
+MM_OPTIONS=( 1 "WSJT" 2 "WSPR" 3 "WSJT-X" 4 "HAMLIB-3" O "Options" H "Help" E "Exit")
+OM_OPTIONS=( 1 "Option Status" 2 "Set Options" 3 "Set Update Timer" 4 "Set CPU Cores" 5 "Update WSJT-X Menus" H "Help" E "Exit Options")
 
 MM_SELECT=$(
 dialog --ok-label SELECT \
@@ -1554,6 +1731,11 @@ case "$MM_SELECT" in
 				read -p " Press [ Enter ] to continue..."
 				continue
 			;;
+			H)
+				options_menu_help
+				continue
+			;;
+
 			E)
 				continue
 			;;
