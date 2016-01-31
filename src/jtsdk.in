@@ -516,12 +516,19 @@ BUILD DESCRIPTIONS
 
  Hamlib3
  
- * Hamlib3 is a custom Git repository maintained by Bill (G4WJS). Updates to
-   this repo may eventually land in the Official Hamlib libraries, however,
+ * Hamlib3 is a custom Git repository maintained by (G4WJS). Updates to
+   this repo may eventually land in the Official Hamlib repository, however,
    when the updates will be included is unknown. 
 
- * There is only one target for building Hamlib3. Selecting via the menu
-   system or direct command line entry. Nothing else should eb required.
+ * Using the jtsdk-hablib3 build scripts, via the menu system or direct
+   command line entry, the build script simply runs the install target.
+   Nothing else should be required.
+
+ Options
+ 
+ * The options menu allows the users to view and set varuous elements of @PROGRAM@
+ that control build behaviour. All of the options listed in the menu can also be
+ set via the command line.
 
 
 ADDITIONAL RESOURCES
