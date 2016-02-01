@@ -88,27 +88,27 @@ cli_help() {
 
 clear ||:
 echo '-------------------------------------------------------------------------'
-echo -e ${C_Y}" WSJT-X COMMAND LINE OPTIONS"${C_NC}
+echo -e ${C_Y}" WSJT-X COMMAND LINE HELP"${C_NC}
 echo '-------------------------------------------------------------------------'
 echo ''
 cat <<EOF
  Usage ....: jtsdk-wsjtx [-h] [-l] [-b] [-n] [-c] [-t]  
  Example ..: jtsdk-wsjtx -b dev -n wsjtx -c release -t install
 
- OPTIONS:
-	-h	displays this message
+ COMMAND LINE SWITCH
+  -h  displays this message
 
-	-l	list available Dev and GA/RC branch names
+  -l  list available Dev and GA/RC branch names
 
-	-b	( dev | gar )
-		dev = development branches ^/branches
-		gar = GA and RC branches ^/tags
+  -b  ( dev | gar )
+      dev = development branches ^/branches
+      gar = GA and RC branches ^/tags
 
-	-n	Branch Name: wsjtx, wsjtx-1.6, wsjtx-1.6.0-rc1, etc
+  -n  Branch Name: wsjtx, wsjtx-1.6, wsjtx-1.6.0-rc1, etc
 
-	-c	Cmake Build Type: ( release | debug )
+  -c  Cmake Build Type: ( release | debug )
 
-	-t	install package docs | user-defined
+  -t  install package docs | user-defined
 
 EOF
 

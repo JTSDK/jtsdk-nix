@@ -56,7 +56,7 @@ BRANCHES="http://svn.code.sf.net/p/wsjt/wsjt/branches"
 # options based on configure.ac --enable --disable commands
 #
 # Note(s):
-# [1] these features can be reset with with jtsdk -e [FEATURE] -d [FEATURE]
+# [1] these features can be reset with with jtsdk -e [OPTOIN] -d [OPTION]
 # [2] for resetting JJ use jtsdk -c
 # [3] manpages, docs, parallel and separate are enabled by default
 # 
@@ -1133,20 +1133,20 @@ echo -e ${C_Y}' JTSDK MAIN COMMAND LINE HELP'${C_NC}
 echo '-------------------------------------------------------------------------'
 echo ''
 cat <<EOF
- Usage ....: jtsdk [-h] [-c] [-l] [-t] [-u] [-e FEATURE ] [-d FEATURE ]
+ Usage ....: jtsdk [-h] [-c] [-l] [-t] [-u] [-e OPTOIN ] [-d OPTOIN ]
  Example ..: jtsdk -e autosvn -e clean -d autorun
 
- FEATURES
+ OPTIONS
   autorun autosvn clean docs manpages quiet rcfg skipsvn separate 
  
- OPTIONS
+ COMMAND LINE SWITCH
   -h  displays this message
   -c  set number of cpus used in compiling, resets JJ=x
   -l  list current user option status
   -t  set WSJT-X menu update frequency ( expressed in minutes )
   -u  update WSJT-X build lists
-  -e  enable  [FEATURE]
-  -d  disable [FEATURE]
+  -e  enable  [OPTOIN]
+  -d  disable [OPTION]
 
   For more details, see: man jtsdk
 
@@ -1492,10 +1492,10 @@ jtsdk_alias_commands
 #  -l  list current user option status
 #  -u  update wsjt build list
 #  -t  set WSJT-X menu update timer
-#  -e  enable  [FEATURE]
-#  -d  disable [FEATURE]
+#  -e  enable  [OPTION]
+#  -d  disable [OPTION]
 #
-# ENABLE / DISABLE FEATURES
+# ENABLE / DISABLE OPTIONS
 #   autorun ...: run the package after the build finishes
 #   autosvn ...: automatically update from svn
 #   skipsvn ...: skip svn update completely
@@ -1506,7 +1506,7 @@ jtsdk_alias_commands
 #   manpages ..: enable / disable building manpages
 #   docs ......: enable / disable building user guides
 #
-# FEATURE ARRAY
+# OPTION ARRAY
 jtsdk_array=('autorun' 'autosvn' 'skipsvn' 'clean' 'rcfg' 'separate' 'quiet' 'manpages' 'docs')
 
 # getopts specific items vars
