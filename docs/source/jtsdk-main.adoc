@@ -1,101 +1,713 @@
-= JTSDK - Software Development Kit
-:revision: v2.0.3
-:icons:
-:numbered:
+:program: JTSDK-Nix
+:version: 2.0.19
+:page: {program} v{version}
 :keywords: amateur radio weak signal communication K1JT WSJT FSK441 JT65 JT6M JT9 WSJTX
 :description: Software for Amateur Radio Weak-Signal Communication
-:page: WSJT Developers Guide
-:prog: JTSDK - Software Development Kit
+:imagesdir: ./images
+:icons: font
+:numbered:
+:toclevels: 3
+:experimental:
+:docinfo1:
+:source-highlighter: coderay
+:y: icon:check[role="green"]
+:n: icon:times[role="red"]
+:o: icon:circle-thin[role="blue"]
+:sr: icon:exclamation-circle[role="red"]
+:sb: icon:sticky-note[role="blue"]
+:sg: icon:stop[role="green"]
+:ub: icon:tty[role="yellow"]
+:ico: icon:tags[role="maroon"]
+:branches: http://sourceforge.net/p/wsjt/wsjt/HEAD/tree/branches[Branches]
+:devmail: mailto:wsjt-devel@lists.sourceforge.net[WSJT Development List]
+:gnu-gpl: http://www.gnu.org/licenses/gpl-3.0.txt[GNU General Public License]
+:joe-taylor: mailto:joe@princeton.edu[K1JT]
+:tags: http://sourceforge.net/p/wsjt/wsjt/HEAD/tree/tags[Tags]
+:trunk: http://sourceforge.net/p/wsjt/wsjt/HEAD/tree/trunk[Trunk]
+:wsjt: http://physics.princeton.edu/pulsar/K1JT/wsjt.html[WSJT]
+:wsjtx: http://physics.princeton.edu/pulsar/K1JT/wsjtx.html[WSJT-X]
+:wspr: http://physics.princeton.edu/pulsar/K1JT/wspr.html[WSPR]
+:dlpackage: http://sourceforge.net/projects/jtsdk/files/linux/2.0.0/[Sourceforge]
+:sourcelist: http://sourceforge.net/p/jtsdk/jtsdk/HEAD/tree/jtsdk-nix/trunk/README.pkg-lists[here]
 
-include::./links.adoc[]
+= {program}
+Version: {version} by Greg Beam, KI7MT
 
-////////////////////////////////////////////////////////////////////////////////
-OVERVIEW
-////////////////////////////////////////////////////////////////////////////////
+////
+----------------------------------------------------------------------- Overview
+////
 
-[[OVERVIEW]]
 == Overview
-_WSJT_, _MAP65_, _WSPR_, and _WSJT-X_ are open-source programs designed for
-weak-signal digital communication by amateur radio. Normal usage requires a
-standard SSB transceiver and a personal computer with soundcard. SDR-style
-hardware including the SDR-IQ, Perseus, SoftRock, and FUNcube Dongle is supported
-by MAP65 and WSPR. SimJT is a utility program that generates simulated signals for
-test purposes.
+* *{page}* brings a number of significant changes, the majority
+of which are focused on {wsjtx}, {wsjt} and {wspr} command line option
+enhancements.
 
-It should be noted, building _WSJT_ applications can be extremely challenging.
-*JTSDK* provides a preconfigured set of packages and custom build scripts which
-allow a user to build all of the main applications with minimal effort. However,
-the default scripts may not be suitable for those actively developing applications
-in all cases. To aid the core developers, several tools have been included that
-allow for much greater flexibility in their final outputs, yet still maintain 
-the core building tools for consistency. The tools and more are explained in each
-of the (4) primary environments.
+.Read Before Running
+* Users should read through this document fully before upgrading as there are a
+number changes that affect output as well as source locations. Many build
+combinations are now possible. Reading each feature and understanding its
+intended purpose will go a long ways toward efficient utilization.
 
-=== Core Features
-*JTSDK* provides the following core features:
+.Command Line Options
+* The core of *{page}* if focused around command line option
+processing for {wsjtx}, {wsjt} and {wspr}. In the past, users were limited to
+what scripts were available for building a specific branch or locked into the
+hard coded options in the build script itself. {wsjtx} for example, has multiple
+branch locations in both {branches} and {tags}. Tags are for GA Release versions,
+Branches are normally for development code. With v{version}, the user can build
+either GA Release or Development Branch code from the same script, thus
+eliminating the need for additional scripts and reducing JTSDK update frequency.
 
-* QT5 + mingw32 (GCC 4.8.0) winpthread Tool Chain
-* MinGW32 (GCC 4.8.1) pthread Tool Chain
-* MSYS Base Environment {plus} Autotools
-* Cygwin 32Bit Env, Bash, Gnu Coreutils, Git, SVN {plus} much more ...
-* Python2 and Python3 with Tcl/Tk in Separate Environments
-* InnoSetup and NSIS installer building tools
-* Build Scripts for WSJT, WSJT-X, WSPR, WSPR-X and MAP65
-* Build Scripts for All WSJT Documentation
-* Supports Win32/64 and Linux x86/x86-64
+.Dynamic Branch Additions
+* In addition to building multiple branch locations, the {wsjtx} build script
+will now accommodate the addition of new branches without having to be updated.
+In the past, each new branch added to the repository required a new script or
+modification of an existing script in order to accommodate the build. As new
+branches are added to the repository, a simple <<WSJTX-LIST, Build List Update>>
+adds them to the available list.
 
-=== Core Functions
-This guide will provide users with the following guidance:
+.Cmake Option Selection for WSJT-X
+* In addition to default builds for Development and GA/RC, using the menu
+option ( Custom Build ) allows users to enable or disable most select features
+listed in the CMakeLists.txt file.
 
-* Installing prerequisites packages
-* Installing JTSDK on (<<INSTALLWINDOWS,Windows>> and <<INSTALLLINUX,Linux>>) 
-* Overview of packages, libraries and frameworks
-* Building each application using default configurations
-* Command line custom configuration builds
-* Outline available tools and script capabilities
-* A brief introduction to using QtCreator for builds
-
-In addition to the core application build tools, each environment provides a
-host of very powerful command line tools. A detailed list is provided in the
-appendix, however, it is up to the user to research how best to employ each tool
-to fully leverage the SDKs potential.
-
-On Windows, *JTSDK*, by design, should not interfere with any previously
-installed development packages. If you find or have a conflict, please report it
-to the {dev_mail_list}.
+.Multi-Core Settings
+* Users now have the ability to set the number of cores used in Mutli-Core
+compiling. This is of particular interest to low resource systems such ARM based
+SoC devices where memory and clock speeds can produce unexpected results if
+maximum expansion is allowed.
 
 
-////////////////////////////////////////////////////////////////////////////////
-OVERVIEW
-////////////////////////////////////////////////////////////////////////////////
+////
+--------------------------------------------------------------------- Change Log
+////
 
-[[COMMUNICATION]]
-== Communication ==
-The following are established communication channels for the WSJT Group.
-For updates and other information on the continuing development of _WSJT_,
-_MAP65_, _WSPR_, _WSPR-X_, and _WSJT-X_ you are invited to subscribe to the
-{dev_mail_list}. 
+[[CHANGE-LOG]]
+== Change Log
+Many behind the scenes updates have been made which only affect things like
+version information, screen displays and the like. Those items are listed under
+<<MINOR-CHANGES,Minor Changes>>. The <<MAJOR-CHANGES,Major Change>> items
+are as follows:
 
-.General Information
-* Main Site: {homepage}
-* Development Site: {projsummary}
+[[MAJOR-CHANGES]]
+.Major Changes
+* {wsjtx} dynamic menu lists for GA Release and Development branches
+* {wsjtx} built list generation via the Menu System or cli entry
+* {wsjtx} built list timer settings via Menu System or cli entry
+* {wsjtx} multi-core selection via the Menu System or cli entry
+* {wsjtx} Cmake option selection via Menu system ( Custom Build )
+* CPU selection from the Menu system or cli entry
+* Application Version {plus} SVN Revision separation is now fully functional
+* (9) user selectable features to customize build script behavior
+* Option status list via Menu System or cli entry
 
-.Development Related
-* Project Manager, email: {joe_taylor}
-* Development Email: {devmail1}
-* Development Mailing List (join): {dev_mail_list}
-* Repository Updates, (join): {dev_mail_svn}
 
-.Community Related
-* Discussion Board: {wsjt_yahoo_group}
+[[MINOR-CHANGES]]
+.Minor Changes
+* Numerous main screen display and error message updates
+* Most help screens have been consolidated into a single file
+* On screen build messages were updated to reflect the user option selections
+* Updated copyright date periods
 
-////////////////////////////////////////////////////////////////////////////////
-ENVIRONMENT
-////////////////////////////////////////////////////////////////////////////////
+== Bug Reports
+One of your responsibilities as a *JTSDK* user is to help the
+volunteer programmers to make the programs better. Bugs reports should be sent
+to the {devmail}. To be useful, bug reports should include at least the
+following information:
+
+- JTSDK Version or Installation Source
+- Operating system
+- Concise description of the problem
+- Exact sequence of steps required to reproduce the problem
+
+////
+------------------------------------------------------------------- DIALOG MENUS
+////
+
+== New Dialog Menus
+As listed in the <<CHANGE-LOG,Change Log>>, there are a number of new features
+and functions that affect various build scenarios. Each of the
+<<MAJOR-CHANGES,Major Changes>> will be explained in this section, with
+script specific features being expanded in their own sections.
+
+////
+---------------------------------------------------------------------- MAIN MENU
+////
+
+=== Main Menu
+On Linux, there are two methods of building, (1) the Dialog Menu System
+and (2), direct command line entry.
+
+The Main Menu is the start point for all menu driven selections. {wsjt}, {wspr}
+and Hamlib3 do not have Sub-Menus 
+
+.Main Menu
+image::main-menu.png[Main Menu]
+
+////
+---------------------------------------------------------------- WSJTX MAIN MENU
+////
+
+=== WSJT-X Main Menu
+{wsjtx} has several several Sub-Menus. The following is the {wsjtx} main menu
+and the functions of each entry.
+
+See <<WSJTX-MAIN-MENU,WSJT-X Main Menu Table>> for full descriptions.
+
+image::wsjtx-main-menu.png[WSJT-X Main Menu]
+
+////
+----------------------------------------------------------------- WSJTX DEV MENU
+////
+
+[[WSJTX-DEV-LIST]]
+==== WSJT-X Development Menu
+This menu requires that *kbd:[jtsdk -u]* has been run at least one time. It is
+generated from pass:[^/branches/*] that are capable of being built with the
+current QT5 package set.
+
+[TIP]
+=====
+Note the naming difference between the Development and
+<<WSJTX-GARC-LIST,GA / RC>>, *kbd:[wsjtx-1.6]* v.s. *kbd:[wsjtx-1.6.0]*.
+=====
+
+image::wsjtx-dev-branch-menu.png[Development Branch menu]
+
+
+////
+---------------------------------------------------------------- WSJTC GARC MENU
+////
+
+
+[[WSJTX-GARC-LIST]]
+==== WSJT-X GA / RC Menu
+This menu requires that *kbd:[jtsdk -u]* has been run at least one time. It is
+generated from pass:[^/tags/*] that are capable of being built with the
+current QT5 package set.
+
+[TIP]
+=====
+Note the naming difference between the Development and
+<<WSJTX-DEV-LIST,Dev List>>, *kbd:[wsjtx-1.6.0]* v.s. *kbd:[wsjtx-1.6]*.
+=====
+image::ga-rc-menu.png[GA and RC Tags menu]
+
+////
+---------------------------------------------------------- WSJTX SUPERBUILD MENU
+////
+
+[[WSJTX-SUPERBUILD-LIST]]
+==== WSJT-X Superbuild Menu
+This menu requires that *kbd:[jtsdk -u]* has been run at least one time. The
+Superbuild lists are a combination of pass:[^/branches/*] and pass:[^/tags/*]
+that are capable of being built with the current QT5 package set.
+
+[TIP]
+=====
+The superbuild menus are a combination of <<WSJTX-DEV-LIST,Dev Lists>> and
+<<WSJTX-GARC,GA/ RC Lists>>.
+=====
+
+image::wsjtx-superbuild.png[Superbuild Menu]
+
+////
+------------------------------------------------------------- WSJTX CUSTOM BUILD
+////
+
+==== WSJT-X Custom Build Menu
+When using the {wsjtx} Custom Build option, the CMakeList.txt file is parsed
+and the options are presented to the user. When using the menus the 
+*kbd:[space-bar]* selects the option and *kbd:[enter]* saves.
+
+image::wsjtx-custom-config-menu.png[WSJT-X Custom Build]
+
+[IMPORTANT]
+=====
+Due to the fact the CMakeLists.txt file is required locally for this option,
+Custom Builds are only available through the Dialog Menu System.
+=====
+
+////
+------------------------------------------------------------------- USER OPTIONS
+////
+
+[[USER-OPTIONS]]
+=== User Options
+New in v{version} is the ability set various options which influence certain
+elements within each build scripts. In total, there are (9) features that can
+be set in either the Dialog Menu system or direct command line entry.
+
+See <<USER-OPTION-TABLE,User Option Table>> for full descriptions.
+
+image::options-main-menu.png[Options Main Menu]
+
+
+////
+------------------------------------------------------------------ OPTION STATUS
+////
+
+==== Options Status
+This simply lists ll the available options and whether or not they are enabled.
+It also includes CPU and Timer data.
+
+image::options-status.png[Options Status]
+
+////
+----------------------------------------------------- OPTIONS UPDATE WSJTX MENUS
+////
+
+==== Update WSJT-X menus
+This function updates several WSJT-X menus from the
+SourceForge WSJT repository ^/tags and ^/branches.
+
+When the event timer is reached, JTSDK will automatically
+update the menu entries the next time it is launched.
+The default update interval is set to [ 1440 ] minutes
+or 24 hours / once per day.
+
+image::wsjtx-menus.png[WSJT-X Menus]
+
+////
+----------------------------------------------------------------- OPTIONS MATRIX
+////
+
+==== Options Matrix
+The following matrix lists the options, where they apply and their description.
+Enable-Disable commands are case sensitive, please use all lower case. When
+using the menus the *kbd:[space-bar]* selects the option and *kbd:[enter]* saves
+it. You can select as many as you like either enabling or disabling.
+
+See <<OPTION-MATRIX-DETAILS,Options Matrix Details>> for full descriptions.
+
+[IMPORTANT]
+=====
+If you have set *kbd:[jtsdk -e skipsvn]* and *kbd:[jtsdk -e autosvn]*,
+*kbd:[skipsvn]* will take precedence and no attempt to update from SVN
+will be made unless the repository does not exist, in which case a checkout
+will be performed.
+=====
+
+image::user-option-picklist.png[Options Picklist]
+
+
+////
+-------------------------------------------------------------- OPTIONS SET TIMER
+////
+
+==== Set Update Timer
+This function sets up a simple timer to trigger WSJT-X Menus updates. Each time
+*{program}* is stated, the timer is checked. The the ET reaches the specified
+value, the update is triggered. You can set the timer using *kbd:[jtsdk -t]*
+
+The default timer is set at ( 1440 minutes ) or once every day. Daily is
+( recommended ). You can run the update any time you wish with *kbd:[jtsdk -u]*
+
+image::jtsdk-timer.png[Timer Settings]
+
+////
+---------------------------------------------------------- OPTIONS SET CPU CORES
+////
+
+==== Set CPU Cores
+Using this feature sets the number of CPU cores to be used
+in parallel compiling, for example
+
+image::jtsdk-cpus.png[Set CPU Count]
+
+////
+----------------------------------------------------------- COMMAND LINE OPTIONS
+////
+
+== New Command Line Options
+Many of the Dialog Menu options use the same options that were enabled for
+command line use. The following matrix outlines the current set of options, 
+indexed by script.
+
+The Dialog Menu systems covers the majority of what is available with the
+exception of the command line switches themselves.
+
+////
+-------------------------------------------------------------- JTSDK MAIN SCRIPT
+////
+
+=== JTSDK Main Script
+The *JTSDK* main script controls all of the user enable / disable options, as
+well as {wsjtx} Menu generation, {wsjtx} Timer and user CPU settings. The
+following list is all of the options available when using *kbd:[jtsdk -x]*,
+*kbd:[  -x  ]* the option selection. The following matrix lists the available
+commands.
+
+See <<COMMAND-REFERENCE,JTSDK Command Reference Table>> for full descriptions.
+
+image::jtsdk-help.png[Set CPU Count]
+
+
+////
+-------------------------------------------------------------- WSJTX MAIN SCRIPT
+////
+
+=== WSJT-X Main Script
+The *kbd:[jtsdk-wsjtx -x]*, *kbd:[  -x  ]* is the option selection,
+is a sub-set of the main *JTSDK* script. The primary purpose for all the
+options in the *jtsdk-wsjtx* script is to describe the *kbd:[-b BRANCH]*,
+*kbd:[-n NAME]*, *kbd:[-c CMAKE TYPE]* and *kbd:[-t TARGET]*. Using
+*kbd:[jtsdk-wsjtx -h]* or *kbd:[jtsdk-wsjtx -l]* will display the information
+and exit the script.
+
+See <<JTSDK-WSJTX-COMMANDS,WSJT-X Command Reference Table>> for full descriptions.
+
+image::jtsdk-wsjtx-help.png[Set CPU Count]
+
+////
+------------------------------------------------------------------- INSTALLATION
+////
+
+== Installation
+For Debian based distros (with the exception of Debian itself), its highly
+advised that you use the <<PPA,PPA>> method of installation. By design, this
+is a two step process:
+
+. Installing *{page}*
+. Install package dependencies
+
+The following matrix lists the various distributions that have
+been tested, others may also work. The matrix lists the recommended install
+method. If your distribution is not listed the default method is via 
+<<SOURCE-CODE,Install From Source Code>>
+
+[cols="1,1,1,1,1", options="header, autowidth"]
+|===
+|Distribution|Arch|Version|Method|Comments
+
+|Debian
+|i386,amd64,armv7,ppc64el
+|8.0 and Sid
+|<<SOURCE-CODE,Source Code>>
+|Tested on 8.0 and Sid
+
+|Fedora
+|i386,amd64
+|20, 21, 22, 23
+|<<SOURCE-CODE,Source Code>>
+|Tested on 22 and 23
+
+|Linux Lite
+|i386,amd64
+|2.0 thru 2.8
+|<<VIA-PA,PPA>>
+|Tested on 2.7 and 2.8
+
+|Linux Mint
+|i386,amd64
+|17.1, 17.2, 17.3
+|<<VIA-PA,PPA>>
+|Tested on the Mate Desktop
+
+|Ubuntu
+|i386,amd64,armv7,ppc64el
+|14.04, 15.04, 15.10, 16.04
+|<<VIA-PA,PPA>>
+| Tested on Unity Desktop
+
+|Ubuntu-Mate
+|i386,amd64,armv7,ppc64el
+|15.10
+|<<VIA-PA,PPA>>
+|Tested on the Mate Desktop
+
+|===
+
+
+////
+---------------------------------------------------------------- INSTALL via PPA
+////
+
+[[VIA-PPA]]
+=== Via PPA
+To install via *PPA*, perform the following actions in a terminal:
+
+[source,shell]
+----------
+# in the terminal type:
+
+sudo add-apt-repository -y ppa:ki7mt/jtsdk
+sudo apt-get update
+sudo apt-get install jtsdk
+----------
+
+After installing *{page}*, you have three choices for package dependency
+installation.
+
+[cols="1,1", options="header, autowidth"]
+|===
+|Package|Purpose
+
+|jtsdk-minimal
+|Install the bare minimum package requirments
+
+|jtsdk-standard
+|Installs minimal {plus} packages for user guides
+
+|jtsdk-full
+|Installs standard {plus} packages for manpages
+|===
+
+[IMPORTANT]
+=====
+If you select anything other than *jtsdk-full*, you will *not* be able to build
+manpages or documentation for any of the applications {wsjtx}, {wsjt}, {wspr} and
+*{page}*. Selecting minimal can save on a significant number pf packages, please
+remember the limitations.
+=====
+
+Install application dependencies:
+
+[source,shell]
+----------
+# in the terminal type:
+
+sudo apt-get install jtsdk-full
+----------
+
+////
+-------------------------------------------------------- INSTALL vis SOURCE CODE
+////
+
+
+[[SOURCE-CODE]]
+=== Source Code 
+When installing from source code, you should uninstall any previous version of
+*{program}* before installing *v{version}* as many Makefile changes have been made.
+
+There are two options you may want to consider; *kbd:[--disable-docs]* and / or
+*kbd:[--disable-manpages]*. If have not installed *AsciiDoc*, *AsciiDoctor*
+{plus} their dependencies, you should disable both manpages and docs.
+
+As list of package dependencies is included in the package, however, the package
+names may vary from distro to distro, and it may not be 100pass:[%] for your
+particular situation. You can find the list {sourcelist}.
+
+The installation steps are as follows:
+
+* Download jtsdk-nix-2.0.19.tar.gz from {dlpackage}
+* Extract: tar -xf jtsdk-nix-2.0.19.tar.gz
+* cd ./jtsdk-nix-2.0.19
+* ./autogen.sh --prefix=/usr/local
+* make
+* sudo make install
+
+[IMPORTANT]
+=====
+Remember to add --disable-docs --disable-manpages  to the autogen.sh line if
+you have not install the required dependencies
+=====
+
+
+[[COMMAND-REFERENCE]]
+== Command Reference
+For your convenience, the following summary lists all the available command line
+entry values per individual script and options matrix details.
+
+.User Option Table
+[[USER-OPTION-TABLE]]
+[cols="1,1", options="header, autowidth"]
+|===
+|Selection|Description
+
+|Option Status
+|Lists the status of each option
+
+|Set Options
+|Enable or Disable an option
+
+|Set Update Timer
+|Set the WSJT-X update timer ( expressed in minutes)
+
+|Set CPU Cores
+|Set the number of CPU cores using during compiling
+
+|Update WSJT-X Menus
+|Manually update WSJT-X build menus
+
+|Help
+|Options Help Message
+
+|Exit Options
+|Return to the Main-Menu
+|===
+
+
+////
+--------------------------------------------------------- WSJT-X MAIN MENU TABLE
+////
+
+.WSJT-X Main Menu Table
+[[WSJTX-MAIN-MENU]]
+[cols="1,1", options="header, autowidth"]
+|===
+|Selection|Description
+
+|Development Branches
+|List of branches from pass:[^/branches]
+
+|GA and RC Branches
+|List of branches from pass:[^/tags]
+
+|Superbuilds
+|Development, GA and RC Lists
+
+|Help
+|WSJT-X Main Help Message
+
+|Back
+|Return to the Main-Menu
+|===
+
+////
+------------------------------------------------------------- JTSDK OPTION TABLE
+////
+
+.Option Matrix Detail Table
+[[OPTIONS-MATRIX-DETAILS]]
+[cols="1,^1,^1,^1,1", options="header, autowidth"]
+|===
+|Option|WSJT-X|WSJT|WSPR|Description
+
+|separate
+|{y}
+|{y}
+|{y}
+|Separate by App Version {plus} SVN Version
+
+|quiet
+|{y}
+|{y}
+|{y}
+|Suppress or limit detailed on screen messages
+
+|skipsvn
+|{y}
+|{y}
+|{y}
+|If Enabled, don't ask and don't update from SVN
+
+|autosvn
+|{y}
+|{y}
+|{y}
+|If Enabled, perform the SVN update without asking
+
+|clean
+|{y}
+|{y}
+|{y}
+|Clean the build tree before cmake --build . or $(MAKE)
+
+|autorun
+|{y}
+|{y}
+|{y}
+|Run the build without asking
+
+|rcfg
+|{y}
+|{y}
+|{y}
+|Re-run configure or cmake
+
+|manpages
+|{y}
+|{y}
+|{y}
+|Enable or Disable building manpages
+
+|docs
+|{y}
+|{y}
+|{y}
+|Enable or Disable building user guides
+|===
+
+////
+----------------------------------------------------- JTSDK SCRIPT OPTIONS TABLE
+////
+
+
+.JTSDK Script Command Table
+[[JTSDK-COMMANDS]]
+[cols="1,1,1", options="header, autowidth"]
+|===
+|Command|Option|Description
+
+|*jtsdk*
+|-h
+|displays the help message
+
+|
+|-c
+|set number of cpus used in compiling, resets JJ=x
+
+|
+|-l
+|list current user option status
+
+|
+|-t
+|set WSJT-X menu update frequency ( expressed in minutes )
+
+|
+|-u
+|update WSJT-X build lists
+
+|
+|-e
+| enable  [OPTION]
+
+|
+|-d
+| disable [OPTION]
+
+|===
+
+////
+---------------------------------------------------- WSJT-X SCRIPT OPTIONS TABLE
+////
+
+.JTSDK-WSJT Script Command Table
+[[JTSDK-WSJTX-COMMANDS]]
+[cols="1,1,1", options="header, autowidth"]
+|===
+|Command|Option|Description
+
+|*jtsdk-wsjtx*
+|-h
+|displays the help message
+
+|
+|-l
+|list available Dev and GA/RC branch names
+
+|
+|-b
+|dev or gar +
+dev = development branches ^/branches +
+gar = GA and RC branches ^/tags +
+
+|
+|-n
+|Branch Name: wsjtx, wsjtx-1.6, wsjtx-1.6.0-rc1, etc
+
+
+|
+|-c
+|Cmake Build Type: release or debug
+
+|
+|-t
+|install package docs | user-defined
+
+|===
 
 == License
 include::license.adoc[]
-
-:numbered!:
-[appendix]
-
