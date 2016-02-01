@@ -1164,7 +1164,7 @@ echo '-----------------------------------------------------------'
 echo -e ${C_Y}' CURRENT OPTION STATUS'${C_NC}
 echo '-----------------------------------------------------------'
 echo ''
-echo ' Usage ......: jtsdk -e [FEATURE] [-d FEATURE]'
+echo ' Usage ......: jtsdk [-e OPTION] [-d OPTION]'
 echo ' Example ....: jtsdk -e autosvn -e clean -d autorun'
 echo ''
 # options are set to Yes / No for display purposes only
