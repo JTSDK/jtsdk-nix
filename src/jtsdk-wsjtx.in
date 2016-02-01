@@ -87,16 +87,18 @@ if [[ -f $CFG/skipsvn ]] ; then SKIPSVN=1 && wsjtx_options+=('skipsvn') ; else S
 cli_help() {
 
 clear ||:
-echo '----------------------'
-echo -e ${C_G}" COMMAND LINE OPTIONS"${C_NC}
-echo '----------------------'
+echo '-------------------------------------------------------------------------'
+echo -e ${C_Y}" WSJT-X COMMAND LINE OPTIONS"${C_NC}
+echo '-------------------------------------------------------------------------'
 echo ''
 cat <<EOF
- Usage ....: jtsdk-wsjtx [-h] [-b] [-n] [-c] [-t]  
+ Usage ....: jtsdk-wsjtx [-h] [-l] [-b] [-n] [-c] [-t]  
  Example ..: jtsdk-wsjtx -b dev -n wsjtx -c release -t install
 
  OPTIONS:
 	-h	displays this message
+
+	-l	list available Dev and GA/RC branch names
 
 	-b	( dev | gar )
 		dev = development branches ^/branches
@@ -1021,6 +1023,40 @@ esac
 
 }
 
+#------------------------------------------------------------- LIST BRANCH NAMES
+list_branch_names() {
+
+# this function lists the names found in the dev and gar_rc lists after running
+# jtsdk -u
+
+clear ||:
+echo '-------------------------------------------------------------------------'
+echo -e ${C_Y}" BRANCH NAME LISTING"${C_NC}
+echo '-------------------------------------------------------------------------'
+echo ''
+echo 'These names are used when specifying jtsdk-wsjtx [-n NAME]'
+echo '* For more help, use ..........: jtsdk-wsjtx -h '
+echo '* To Generate new lists, use ..: jtsdk -u'
+echo ''
+echo "Development Branch Names ( ^/branches )"
+if [[ -f $CFG/dev_list.txt ]] ; then
+	grep -v '^Back' "$CFG/dev_list.txt"
+else 
+	echo ''
+	echo "ERROR: Dev list not found, try running: jtsdk -u"
+fi
+echo ''
+echo "GA and RC Branch Names ( ^/tags )"
+if [[ -f $CFG/ga_rc_list.txt ]] ; then
+	grep -v '^Back' "$CFG/ga_rc_list.txt"
+else
+	echo ''
+	echo "ERROR: GA/RC list not found, try running: jtsdk -u"
+fi
+echo ''
+}
+
+
 #----------------------------------------------------------------------- CLEANUP
 clean_up() {
 
@@ -1039,12 +1075,13 @@ if [[ $ORCFG -eq 1 ]] ; then rm -f "$CFG/rcfg" > /dev/null 2>&1 ; fi
 
 # start getopts processing -----------------------------------------------------
 
-# set these to "1" initially
+# set these to "1" or "0" initially
 branch_status="1"
 name_status="1"
 config_status="1"
 target_status="1"
-options=':hb:n:c:t:'
+listnames="0"
+options=':hlb:n:c:t:'
 
 while getopts "$options" FLAG
 do
@@ -1054,6 +1091,7 @@ do
 		n) getopts_name_check ;;
 		c) getopts_config_check ;;
 		t) getopts_target_check ;;
+		l) listnames=1 ;;
 		\? )
 			clear ||:
 			echo " Unknown option: -$OPTARG" >&2
@@ -1065,6 +1103,13 @@ do
 	esac
 done
 shift "$((OPTIND-1))" # shift off the options
+
+# -l options
+# list the branch names and exit
+if [[ $listnames -eq 1 ]] ; then
+	list_branch_names
+	exit 0
+fi
 
 # getopts status message, disabled if [ quiet ] is set
 getopts_options_status

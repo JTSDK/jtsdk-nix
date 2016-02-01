@@ -6,18 +6,44 @@
 = jtsdk-wsjtx(1)
 
 == NAME
-jtsdk-wsjtx - Build Script for WSJTX Applications
+jtsdk-wsjtx - Build Script for WSJTX Application
 
 
 == SYNOPSIS
-jtsdk-wsjtx ['OPTION']
+jtsdk [-h] [-l] [-b] [-n] [-c] [-t]
 
 
 == DESCRIPTION
-*JTSDK WSJTX* is a simple shell script for building WSJTX
+*JTSDK WSJTX* is a simple shell script for building WSJTX. Several options
+are available to customize the build from the command line.
+
 
 == OPTIONS
-This script should be run from within JTSDK. No options are available.
+This script can be run from within *JTSDK* or stand alone with the following
+optoins.
+
+*-h*::
+ Displays the general use help message
+ 
+*-l*::
+ Lists branch names for use with [-n NAME]
+
+*-b* [dev | gar]::
+  * dev = development branches ^/branches
+  * gar = GA and RC branches ^/tags
+
+*-n* [branch name]::
+  * Example, Dev Branch names: wsjtx, wsjtx-1.6
+  * Example, GAR Branch Names: wsjtx-1.6.0, wsjtx-1.6.0-rc1, wsjtx-1.5.0
+  * To generate branch lists, use ..: jtsdk -u
+  * To list branch names, use ......: jtsdk-wsjtx -l
+
+*-c* [release | debug]::
+  Used for setting the Cmake build Type
+
+*-c* [target]::
+  * Default Targets: install package docs | user-defined
+  * ( user-defined ) can be any leagal target after running confiuration
 
 
 == AUTHOR

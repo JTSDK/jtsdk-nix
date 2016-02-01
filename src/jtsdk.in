@@ -1129,7 +1129,7 @@ cli_help() {
 
 clear ||:
 echo '-------------------------------------------------------------------------'
-echo -e ${C_Y}' COMMAND LINE HELP'${C_NC}
+echo -e ${C_Y}' JTSDK MAIN COMMAND LINE HELP'${C_NC}
 echo '-------------------------------------------------------------------------'
 echo ''
 cat <<EOF
