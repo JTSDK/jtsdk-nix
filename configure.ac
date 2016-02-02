@@ -6,6 +6,7 @@ AC_INIT([JTSDK],[2.0.19],[wsjt-devel@lists.sourceforge.net],[],
 [http://physics.princeton.edu/pulsar/k1jt/devel.html])
 JTSDK_AUTHORS="Greg Beam, Joseph H Taylor, and others"
 JTSDK_COPYRIGHT="Copyright (C) Greg Beam (KI7MT), Joseph H Taylor, Jr (K1JT)"
+JTSDK_LICENSE='GNU GPLv3'
 
 AC_SUBST([PROGRAM], ["$PACKAGE_NAME"])
 AC_SUBST([WEB], ["$PACKAGE_URL"])
@@ -13,6 +14,7 @@ AC_SUBST([VERSION], ["$PACKAGE_VERSION"])
 AC_SUBST([AUTHORS], ["$JTSDK_AUTHORS"])
 AC_SUBST([BUGS], ["$PACKAGE_BUGREPORT"])
 AC_SUBST([COPYRIGHT], ["$JTSDK_COPYRIGHT"])
+AC_SUBST([LICENSE], ["$JTSDK_LICENSE"])
 
 # ------------------------------------------------------------------------------
 #  canonical host information
