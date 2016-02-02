@@ -88,7 +88,7 @@ ifeq ($(BDOC),Yes)
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo ' Generating HTML Documentation, please wait..'
-	@(cd docs/ ; make clean > /dev/null 2>&1 ; make all > /dev/null 2>&1)
+	@(cd docs/ ; $(ASCIIDOCTOR) -b html5 -a data-uri -a toc=left -o jtsdk-$(VERSION).html source/jtsdk-main.adoc)
 	@echo " Finished"  
 	@echo ''
 endif
