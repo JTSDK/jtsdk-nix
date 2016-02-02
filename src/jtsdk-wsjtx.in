@@ -1,11 +1,11 @@
 #! /usr/bin/env bash
 #
 # Name ..........: jtsdk-wsjtx
-# Execution .....: Called from JTSDK Main Script
+# Execution .....: Called from @PROGRAM@ Main Script
 # Copyright .....: @COPYRIGHT@
 # License .......: @LICENSE@
 # Contributors ..: @AUTHORS@
-# Comment .......: Part of the JTSDK Linux Project
+# Comment .......: Part of the @PROGRAM@ Linux Project
 #
 # jtsdk-wsjtx is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
 CFG="$HOMEDIR/config"
-MENU=@SHARE@
+MENU=@SHARED@
 
 # hamlib3 directories
 HL3SRC="$HOMEDIR/src/g4wjs-hamlib"

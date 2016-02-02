@@ -1,17 +1,18 @@
 #! /usr/bin/env bash
 #
-# Name			: jtsdk-wsjt.sh
-# Execution		: As normal user type: jtsdk-wsjt.sh
-# Copyright		: @JTSDK_COPYRIGHT@
-# Contributors	: @JTSDK_AUTHORS@
-# Comment		: Part of the JTSDK Linux Project
+# Name ..........: jtsdk-wsjt.sh
+# Execution .....: As normal user type: jtsdk-wsjt.sh
+# Copyright .....: @COPYRIGHT@
+# License .......: @LICENSE@
+# Contributors ..: @AUTHORS@
+# Comment .......: Part of the JTSDK Linux Project
 #
-# @PROGRAM@ is free software: you can redistribute it and/or modify
+# jtsdk-wsjt is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation either version 3 of the License, or
 # (at your option) any later version. 
 #
-# @PROGRAM@ is distributed in the hope that it will be useful,
+# jtsdk-wsjt is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -47,9 +48,9 @@ URL="https://svn.code.sf.net/p/wsjt/wsjt/trunk"
 LOGGRP=$(groups $USER | cut -d ' ' -f 3)
 
 # fixed expansions from JTSDK configure.ac
-MENU=@SHARE@
+MENU=@SHARED@
 PYTHON3=@PYTHON3@
-F2PY3=@F2PY3@
+F2PY3=@F2PY@
 
 # options based on JTSDK configure.ac
 #

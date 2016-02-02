@@ -1,17 +1,18 @@
 #! /usr/bin/env bash
 #
-# Name			: jtsdk-hamlib3.sh
-# Execution		: As normal user type: jtsdk-hamlib3.sh
-# Copyright		: @COPYRIGHT@
-# Contributors	: @AUTHORS@
-# Comment		: Part of the @PROGRAM@ Linux Project
+# Name ..........: jtsdk-hamlib3.sh
+# Execution .....: As normal user type: jtsdk-hamlib3.sh
+# Copyright .....: @COPYRIGHT@
+# License .......: @LICENSE@
+# Contributors ..: @AUTHORS@
+# Comment .......: Part of the @PROGRAM@ Linux Project
 #
-# @PROGRAM@ is free software: you can redistribute it and/or modify
+# jtsdk-hamlib3 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation either version 3 of the License, or
 # (at your option) any later version. 
 #
-# @PROGRAM@ is distributed in the hope that it will be useful,
+# jtsdk-hamlib3 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -24,7 +25,7 @@ set -e
 
 # set home and directory paths
 HOMEDIR=~/jtsdk
-MENU=@SHARE@
+MENU=@SHARED@
 SRCD="$HOMEDIR/src"
 TMPD="$HOMEDIR/tmp"
 LOGS="$HOMEDIR/logs"
