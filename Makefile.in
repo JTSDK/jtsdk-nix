@@ -88,7 +88,7 @@ ifeq ($(BDOC),Yes)
 	@echo '---------------------------------------------'
 	@echo ''
 	@echo ' Generating HTML Documentation, please wait..'
-	@(cd docs/ ; $(ASCIIDOCTOR) -b html5 -a data-uri -a toc=left -o jtsdk-$(VERSION).html source/jtsdk-main.adoc)
+	@(cd docs/source/ ; $(ASCIIDOCTOR) -b html5 -a data-uri -a toc=left -o jtsdk-$(VERSION).html jtsdk-main.adoc)
 	@echo " Finished"  
 	@echo ''
 endif
@@ -199,7 +199,7 @@ endif
 # Cleanup Source Tree
 .PHONY: clean
 clean:
-	$(RM) -f config.log configure config.status autoscan.log configure.scan Makefile \
+	$(RM) -f config.log config.status autoscan.log configure.scan Makefile \
 	installed.txt temp.list needed.txt installed.txt
 	$(RM) -f src/jtsdk src/jtsdk-hamlib3 src/jtsdk-wsjtx src/jtsdk-wsjtx-sb \
 	src/jtsdk-wspr src/jtsdk-wsjt
