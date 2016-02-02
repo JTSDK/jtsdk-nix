@@ -149,7 +149,7 @@ install:
 	@install -m 644 $(DATASRC)/jtsdk.xpm $(DESTDIR)$(ICOND)/
 ifeq ($(BDOC),Yes)
 	@echo '..Installing User Guide'
-	@install -m 644 docs/jtsdk-@VERSION@.html $(DESTDIR)$(DOCDIR)/jtsdk-@VERSION@.html
+	@install -m 644 docs/source/jtsdk-$(VERSION).html $(DESTDIR)$(DOCDIR)/jtsdk-$(VERSION).html
 endif
 ifeq ($(BMANP),Yes)
 	@echo '..Installing Manpages'
