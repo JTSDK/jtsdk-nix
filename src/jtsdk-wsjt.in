@@ -66,7 +66,7 @@ F2PY3=@F2PY@
 JJ=@JJJJ@
 
 # check global user defined options ( see jtsdk -h )
-# add each option enabled to jtsdk_options array
+# add each option enabled to wsjt_options array
 wsjt_options=()
 if [[ -f $CFG/autorun ]] ; then AUTORUN=1 && wsjt_options+=('autorun') ; else AUTORUN=0 ; fi
 if [[ -f $CFG/autosvn ]] ; then AUTOSVN=1 && wsjt_options+=('autosvn') ; else AUTOSVN=0 ; fi
@@ -122,7 +122,13 @@ case "$AUTOSVN" in
 		fi
 	;;
 	0)
-	 echo 'JTSDK Option: Auto SVN Updates Disabled'
+		if [[ ! -d $APP_SRC/.svn ]]  ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		else
+			echo 'JTSDK Option: [ AUTOSVN ] Disabled'
+		fi
 	;;
 esac
 }

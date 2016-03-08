@@ -65,7 +65,7 @@ HL3I="$HOMEDIR/hamlib3"
 JJ=@JJJJ@
 
 # check global user defined options ( see jtsdk -h )
-# add each option enabled to jtsdk_options array
+# add each option enabled to wsjtx_options array
 wsjtx_options=()
 if [[ -f $CFG/wsjtx-custom ]] ; then CUSTOM=1 ; else CUSTOM=0 ; fi
 if [[ -f $CFG/autorun ]] ; then AUTORUN=1 && wsjtx_options+=('autorun') ; else AUTORUN=0 ; fi
@@ -506,7 +506,7 @@ case "$SKIPSVN" in
 	0)
 esac
 
-# check sutosvn
+# check autosvn
 case "$AUTOSVN" in
 	1)
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
@@ -522,7 +522,13 @@ case "$AUTOSVN" in
 		fi
 	;;
 	0)
-	 echo 'JTSDK Option: Auto SVN Updates Disabled'
+		if [[ ! -d $APP_SRC/.svn ]]  ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		else
+			echo 'JTSDK Option: [ AUTOSVN ] Disabled'
+		fi
 	;;
 esac
 

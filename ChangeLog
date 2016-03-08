@@ -1,4 +1,7 @@
-Current Development Version: JTSDK Nix v2.0.18
+Current Release Version: JTSDK Nix v2.0.20
+
+2016-03-08 Greg Beam <ki7mt@yahoo.com>
+* Fixed bug in Autosvn update if the folder does not exist
 
 2015-12-16 Greg Beam <ki7mt@yahoo.com>
 * Removed wsprd_exp build via developer Makefile

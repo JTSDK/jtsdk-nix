@@ -168,7 +168,13 @@ case "$AUTOSVN" in
 		fi
 	;;
 	0)
-	 echo 'JTSDK Option: Auto SVN Updates Disabled'
+		if [[ ! -d $APP_SRC/.svn ]]  ; then 
+			echo "Checking Out New Version of $APP_NAME"
+			cd $SRCD
+			svn co $URL
+		else
+			echo 'JTSDK Option: [ AUTOSVN ] Disabled'
+		fi
 	;;
 esac
 
