@@ -1,10 +1,10 @@
-Last Update: 01-FEB-2016
+Last Update: 08-MAR-2016
 
 The following package installations have been tested and known to work for the
 respective distribution / version:
 
 
-Ubuntu 14.04, 15.04, 15.10
+Ubuntu 14.04, 15.04, 15.10, 16-04
 --------------------------------------------------------------------------------
 
 sudo apt-get install automake asciidoctor clang-3.5 cmake dialog g++ gettext \
@@ -15,7 +15,7 @@ python3-tk python3-dev python3-numpy python3-pip python3-setuptools python-dev \
 qtbase5-dev qtmultimedia5-dev source-highlight subversion texinfo xmlto
 
 
-Linux Mint 17.1 ( may work with others )
+Linux Mint 17.x ( may work with others )
 --------------------------------------------------------------------------------
 
 sudo apt-get install automake asciidoc clang-3.5 cmake dialog g++ gettext \
@@ -42,11 +42,11 @@ xmlto libfreetype6-dev libjpeg-dev liblcms2-dev libtiff5-dev libwebp-dev \
 libwebpmux1 mime-support tcl8.6-dev tk8.6-dev zlib1g-dev
 
 
-SPECIAL: Ubuntu 14.10 (Utopic) and Debian 8.x (Jessie) 
+SPECIAL: Debian 8.x (Jessie) 
 --------------------------------------------------------------------------------
 
-Last Update: 15-JUN-2015
-For Debian 8.x (Jessie) / Ubuntu 14.04 (Utopic) Only!
+Last Update: 08-MAR-2016
+Debian 8.x (Jessie)
 
 Due to a repository package incompatibility in python3-pil, the following
 update is required in order to build WSJT and WSPR. This is not a JTSDK issue,

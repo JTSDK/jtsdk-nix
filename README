@@ -30,9 +30,9 @@ source-highlight, subversion, texinfo, xmlto, xsltproc
 
 INSTALLATION
 ========================
-* Download jtsdk-nix-2.0.18.tar.gz
-* Extract: tar -xf jtsdk-nix-2.0.18.tar.gz
-* cd ./jtsdk-nix-2.0.18
+* Download jtsdk-nix-2.0.20.tar.gz
+* Extract: tar -xf jtsdk-nix-2.0.20.tar.gz
+* cd ./jtsdk-nix-2.0.20
 * ./autogen.sh --prefix=/usr/local
 * make
 * sudo make install
@@ -43,7 +43,7 @@ TO RUN JTSDK:
 
 
 TO UNINSTALL
-* cd ./jtsdk-nix-2.0.18
+* cd ./jtsdk-nix-2.0.20
 * sudo make uninstall
 
 
