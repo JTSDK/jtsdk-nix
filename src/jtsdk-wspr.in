@@ -44,7 +44,7 @@ OPTION=$1
 # app specfic options
 APP_NAME=wspr
 APP_SRC="$SRCD/$APP_NAME"
-URL="https://svn.code.sf.net/p/wspr/wspr/branches/wspr"
+URL="http://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
 
 # fixed expansions from JTSDK configure.ac
 MENU=@SHARED@
