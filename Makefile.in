@@ -178,7 +178,7 @@ uninstall:
 	@echo '..Removing scripts'
 	@$(RM) -f $(DESTDIR)$(BINDIR)/jtsdk*
 	@echo '..Removing shared files'
-	@$(RM) -rf $(DESTDIR)$(SHARE)
+	@$(RM) -rf $(DESTDIR)$(SHARED)
 	@$(RM) -f $(DESTDIR)$(DOCDIR)/{AUTHORS,COPYING,COPYRIGHT,README}
 	@$(RM) -f $(DESTDIR)$(DOCDIR)/README.*
 	@$(RM) -f $(DESTDIR)$(MENUDIR)/jtsdk
