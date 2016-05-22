@@ -525,10 +525,41 @@ See <<JTSDK-WSJTX-COMMANDS,WSJT-X Command Reference Table>> for full description
 
 image::jtsdk-wsjtx-help.png[Set CPU Count]
 
+
 ////
----------------------------------------------------------------- Command Reference
+------------------------------------------------------------- MANPAGES
 ////
 
+[[MANPAGE-REFERENCE]]
+== Manpages
+*{program}* includes a manpage for each of the main build scripts. The
+following matrix details how to render the manpage and its basic description.
+
+[cols="1,1", options="header, autowidth"]
+|===
+|Command|Description
+
+|*man jtsdk*
+|Manpage for the main *JTSDK* script
+
+|*man jtsdk-wsjt*
+|Manpage for the *WSJT* build script
+
+|*man jtsdk-wspr*
+|Manpage for the *WSPR* build script
+
+|*man jtsdk-wsjtx*
+|Manpage for the *WSJT-X* build script
+
+|*man jtsdk-wsjtx-sb*
+|Manpage for the *WSJT-X Superbuild* build script
+
+|===
+
+
+////
+------------------------------------------------------------- Command Reference
+////
 
 [[COMMAND-REFERENCE]]
 == Command Reference
