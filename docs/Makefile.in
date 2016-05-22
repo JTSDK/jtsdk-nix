@@ -20,7 +20,7 @@ all: docs
 
 # Build JTSDK Main HTML Document
 docs:
-	$(ASCIIDOCTOR) -b html5 -a data-uri -a toc=right -o jtsdk-@VERSION@.html $(DOCSRC)/jtsdk-main.adoc
+	$(ASCIIDOCTOR) -b html5 -a data-uri -a toc=left -o jtsdk-@VERSION@.html $(DOCSRC)/jtsdk-main.adoc
 
 # Cleanup Source Tree
 .PHONY: clean

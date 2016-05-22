@@ -1,5 +1,5 @@
 :program: JTSDK-Nix
-:version: 2.0.19
+:version: 2.0.21
 :page: {program} v{version}
 :keywords: amateur radio weak signal communication K1JT WSJT FSK441 JT65 JT6M JT9 WSJTX
 :description: Software for Amateur Radio Weak-Signal Communication
@@ -34,12 +34,12 @@
 Version: {version} by Greg Beam, KI7MT
 
 ////
------------------------------------------------------------------------ Overview
+---------------------------------------------------------------------- Overview
 ////
 
 == Overview
-* *{page}* brings a number of significant changes, the majority
-of which are focused on {wsjtx}, {wsjt} and {wspr} command line option
+* *{page}* includes all features from previous version of *JTSDK*, the
+majority of which are focused on {wsjtx}, {wsjt} and {wspr} command line option
 enhancements.
 
 .Read Before Running
@@ -73,9 +73,9 @@ listed in the CMakeLists.txt file.
 
 .Multi-Core Settings
 * Users now have the ability to set the number of cores used in Mutli-Core
-compiling. This is of particular interest to low resource systems such ARM based
-SoC devices where memory and clock speeds can produce unexpected results if
-maximum expansion is allowed.
+compiling. This is of particular interest to low resource systems such as ARM
+based SoC devices where memory and clock speeds can produce unexpected results
+if maximum expansion is allowed.
 
 
 ////
@@ -84,35 +84,23 @@ maximum expansion is allowed.
 
 [[CHANGE-LOG]]
 == Change Log
-Many behind the scenes updates have been made which only affect things like
-version information, screen displays and the like. Those items are listed under
-<<MINOR-CHANGES,Minor Changes>>. The <<MAJOR-CHANGES,Major Change>> items
-are as follows:
-
-[[MAJOR-CHANGES]]
-.Major Changes
-* {wsjtx} dynamic menu lists for GA Release and Development branches
-* {wsjtx} built list generation via the Menu System or cli entry
-* {wsjtx} built list timer settings via Menu System or cli entry
-* {wsjtx} multi-core selection via the Menu System or cli entry
-* {wsjtx} Cmake option selection via Menu system ( Custom Build )
-* CPU selection from the Menu system or cli entry
-* Application Version {plus} SVN Revision separation is now fully functional
-* (9) user selectable features to customize build script behavior
-* Option status list via Menu System or cli entry
-
+*{page}* is a bug fix release. See <<MINOR-CHANGES,Minor Changes>>
+listed below for details:
 
 [[MINOR-CHANGES]]
 .Minor Changes
-* Numerous main screen display and error message updates
-* Most help screens have been consolidated into a single file
-* On screen build messages were updated to reflect the user option selections
-* Updated copyright date periods
+* Fixed bug for *WSPR* SVN check out
+* Updated README and README.pkg-lists.txt files
+* Fixed bug that removes the *JTSDK* shared folder during uninstall
+* Fixed bug for Autosvn when the folders do not exist
+* Added libusb-1.0-0-dev package support for Hamlib3
+* Added libudev-dev, coderay and AsciDoctor packages where appropriate
+* Updated *{page}* Release Notes
 
 == Bug Reports
 One of your responsibilities as a *JTSDK* user is to help the
 volunteer programmers to make the programs better. Bugs reports should be sent
-to the {devmail}. To be useful, bug reports should include at least the
+to the {devmail}. To be useful, bug reports should include, at a minimum, the
 following information:
 
 - JTSDK Version or Installation Source
@@ -121,260 +109,21 @@ following information:
 - Exact sequence of steps required to reproduce the problem
 
 ////
-------------------------------------------------------------------- DIALOG MENUS
-////
-
-== New Dialog Menus
-As listed in the <<CHANGE-LOG,Change Log>>, there are a number of new features
-and functions that affect various build scenarios. Each of the
-<<MAJOR-CHANGES,Major Changes>> will be explained in this section, with
-script specific features being expanded in their own sections.
-
-////
----------------------------------------------------------------------- MAIN MENU
-////
-
-=== Main Menu
-On Linux, there are two methods of building, (1) the Dialog Menu System
-and (2), direct command line entry.
-
-The Main Menu is the start point for all menu driven selections. {wsjt}, {wspr}
-and Hamlib3 do not have Sub-Menus 
-
-.Main Menu
-image::main-menu.png[Main Menu]
-
-////
----------------------------------------------------------------- WSJTX MAIN MENU
-////
-
-=== WSJT-X Main Menu
-{wsjtx} has several several Sub-Menus. The following is the {wsjtx} main menu
-and the functions of each entry.
-
-See <<WSJTX-MAIN-MENU,WSJT-X Main Menu Table>> for full descriptions.
-
-image::wsjtx-main-menu.png[WSJT-X Main Menu]
-
-////
------------------------------------------------------------------ WSJTX DEV MENU
-////
-
-[[WSJTX-DEV-LIST]]
-==== WSJT-X Development Menu
-This menu requires that *kbd:[jtsdk -u]* has been run at least one time. It is
-generated from pass:[^/branches/*] that are capable of being built with the
-current QT5 package set.
-
-[TIP]
-=====
-Note the naming difference between the Development and
-<<WSJTX-GARC-LIST,GA / RC>>, *kbd:[wsjtx-1.6]* v.s. *kbd:[wsjtx-1.6.0]*.
-=====
-
-image::wsjtx-dev-branch-menu.png[Development Branch menu]
-
-
-////
----------------------------------------------------------------- WSJTC GARC MENU
-////
-
-
-[[WSJTX-GARC-LIST]]
-==== WSJT-X GA / RC Menu
-This menu requires that *kbd:[jtsdk -u]* has been run at least one time. It is
-generated from pass:[^/tags/*] that are capable of being built with the
-current QT5 package set.
-
-[TIP]
-=====
-Note the naming difference between the Development and
-<<WSJTX-DEV-LIST,Dev List>>, *kbd:[wsjtx-1.6.0]* v.s. *kbd:[wsjtx-1.6]*.
-=====
-image::ga-rc-menu.png[GA and RC Tags menu]
-
-////
----------------------------------------------------------- WSJTX SUPERBUILD MENU
-////
-
-[[WSJTX-SUPERBUILD-LIST]]
-==== WSJT-X Superbuild Menu
-This menu requires that *kbd:[jtsdk -u]* has been run at least one time. The
-Superbuild lists are a combination of pass:[^/branches/*] and pass:[^/tags/*]
-that are capable of being built with the current QT5 package set.
-
-[TIP]
-=====
-The superbuild menus are a combination of <<WSJTX-DEV-LIST,Dev Lists>> and
-<<WSJTX-GARC,GA/ RC Lists>>.
-=====
-
-image::wsjtx-superbuild.png[Superbuild Menu]
-
-////
-------------------------------------------------------------- WSJTX CUSTOM BUILD
-////
-
-==== WSJT-X Custom Build Menu
-When using the {wsjtx} Custom Build option, the CMakeList.txt file is parsed
-and the options are presented to the user. When using the menus the 
-*kbd:[space-bar]* selects the option and *kbd:[enter]* saves.
-
-image::wsjtx-custom-config-menu.png[WSJT-X Custom Build]
-
-[IMPORTANT]
-=====
-Due to the fact the CMakeLists.txt file is required locally for this option,
-Custom Builds are only available through the Dialog Menu System.
-=====
-
-////
-------------------------------------------------------------------- USER OPTIONS
-////
-
-[[USER-OPTIONS]]
-=== User Options
-New in v{version} is the ability set various options which influence certain
-elements within each build scripts. In total, there are (9) features that can
-be set in either the Dialog Menu system or direct command line entry.
-
-See <<USER-OPTION-TABLE,User Option Table>> for full descriptions.
-
-image::options-main-menu.png[Options Main Menu]
-
-
-////
------------------------------------------------------------------- OPTION STATUS
-////
-
-==== Options Status
-This simply lists ll the available options and whether or not they are enabled.
-It also includes CPU and Timer data.
-
-image::options-status.png[Options Status]
-
-////
------------------------------------------------------ OPTIONS UPDATE WSJTX MENUS
-////
-
-==== Update WSJT-X menus
-This function updates several WSJT-X menus from the
-SourceForge WSJT repository ^/tags and ^/branches.
-
-When the event timer is reached, JTSDK will automatically
-update the menu entries the next time it is launched.
-The default update interval is set to [ 1440 ] minutes
-or 24 hours / once per day.
-
-image::wsjtx-menus.png[WSJT-X Menus]
-
-////
------------------------------------------------------------------ OPTIONS MATRIX
-////
-
-==== Options Matrix
-The following matrix lists the options, where they apply and their description.
-Enable-Disable commands are case sensitive, please use all lower case. When
-using the menus the *kbd:[space-bar]* selects the option and *kbd:[enter]* saves
-it. You can select as many as you like either enabling or disabling.
-
-See <<OPTION-MATRIX-DETAILS,Options Matrix Details>> for full descriptions.
-
-[IMPORTANT]
-=====
-If you have set *kbd:[jtsdk -e skipsvn]* and *kbd:[jtsdk -e autosvn]*,
-*kbd:[skipsvn]* will take precedence and no attempt to update from SVN
-will be made unless the repository does not exist, in which case a checkout
-will be performed.
-=====
-
-image::user-option-picklist.png[Options Picklist]
-
-
-////
--------------------------------------------------------------- OPTIONS SET TIMER
-////
-
-==== Set Update Timer
-This function sets up a simple timer to trigger WSJT-X Menus updates. Each time
-*{program}* is stated, the timer is checked. The the ET reaches the specified
-value, the update is triggered. You can set the timer using *kbd:[jtsdk -t]*
-
-The default timer is set at ( 1440 minutes ) or once every day. Daily is
-( recommended ). You can run the update any time you wish with *kbd:[jtsdk -u]*
-
-image::jtsdk-timer.png[Timer Settings]
-
-////
----------------------------------------------------------- OPTIONS SET CPU CORES
-////
-
-==== Set CPU Cores
-Using this feature sets the number of CPU cores to be used
-in parallel compiling, for example
-
-image::jtsdk-cpus.png[Set CPU Count]
-
-////
------------------------------------------------------------ COMMAND LINE OPTIONS
-////
-
-== New Command Line Options
-Many of the Dialog Menu options use the same options that were enabled for
-command line use. The following matrix outlines the current set of options, 
-indexed by script.
-
-The Dialog Menu systems covers the majority of what is available with the
-exception of the command line switches themselves.
-
-////
--------------------------------------------------------------- JTSDK MAIN SCRIPT
-////
-
-=== JTSDK Main Script
-The *JTSDK* main script controls all of the user enable / disable options, as
-well as {wsjtx} Menu generation, {wsjtx} Timer and user CPU settings. The
-following list is all of the options available when using *kbd:[jtsdk -x]*,
-*kbd:[  -x  ]* the option selection. The following matrix lists the available
-commands.
-
-See <<COMMAND-REFERENCE,JTSDK Command Reference Table>> for full descriptions.
-
-image::jtsdk-help.png[Set CPU Count]
-
-
-////
--------------------------------------------------------------- WSJTX MAIN SCRIPT
-////
-
-=== WSJT-X Main Script
-The *kbd:[jtsdk-wsjtx -x]*, *kbd:[  -x  ]* is the option selection,
-is a sub-set of the main *JTSDK* script. The primary purpose for all the
-options in the *jtsdk-wsjtx* script is to describe the *kbd:[-b BRANCH]*,
-*kbd:[-n NAME]*, *kbd:[-c CMAKE TYPE]* and *kbd:[-t TARGET]*. Using
-*kbd:[jtsdk-wsjtx -h]* or *kbd:[jtsdk-wsjtx -l]* will display the information
-and exit the script.
-
-See <<JTSDK-WSJTX-COMMANDS,WSJT-X Command Reference Table>> for full descriptions.
-
-image::jtsdk-wsjtx-help.png[Set CPU Count]
-
-////
 ------------------------------------------------------------------- INSTALLATION
 ////
 
 == Installation
-For Debian based distros (with the exception of Debian itself), its highly
+For Debian based distros (with the exception of Debian itself), it is highly
 advised that you use the <<PPA,PPA>> method of installation. By design, this
 is a two step process:
 
-. Installing *{page}*
-. Install package dependencies
+. Installing *{page}* core package
+. Install *WSJT, WSJT-X, WSPR and Hamlib3* build dependencies
 
 The following matrix lists the various distributions that have
-been tested, others may also work. The matrix lists the recommended install
-method. If your distribution is not listed the default method is via 
-<<SOURCE-CODE,Install From Source Code>>
+been tested; others may also work. The matrix also states the recommended install
+method for each distribution. If your distribution is not listed, the default
+method is to <<SOURCE-CODE,Install From Source Code>>.
 
 [cols="1,1,1,1,1", options="header, autowidth"]
 |===
@@ -391,6 +140,12 @@ method. If your distribution is not listed the default method is via
 |20, 21, 22, 23
 |<<SOURCE-CODE,Source Code>>
 |Tested on 22 and 23
+
+|OpenSuse
+|i386,amd64
+|Tumbleweed
+|<<SOURCE-CODE,Source Code>>
+|Tumbleweed
 
 |Linux Lite
 |i386,amd64
@@ -412,7 +167,7 @@ method. If your distribution is not listed the default method is via
 
 |Ubuntu-Mate
 |i386,amd64,armv7,ppc64el
-|15.10
+|15.10, 16.04
 |<<VIA-PA,PPA>>
 |Tested on the Mate Desktop
 
@@ -457,8 +212,8 @@ installation.
 =====
 If you select anything other than *jtsdk-full*, you will *not* be able to build
 manpages or documentation for any of the applications {wsjtx}, {wsjt}, {wspr} and
-*{page}*. Selecting minimal can save on a significant number pf packages, please
-remember the limitations.
+*{page}*. Selecting minimal can prevent a significant number of packages from
+being installed, however, *remember the limitations*.
 =====
 
 Install application dependencies:
@@ -471,28 +226,28 @@ sudo apt-get install jtsdk-full
 ----------
 
 ////
--------------------------------------------------------- INSTALL vis SOURCE CODE
+------------------------------------------------------- INSTALL vis SOURCE CODE
 ////
 
 
 [[SOURCE-CODE]]
 === Source Code 
 When installing from source code, you should uninstall any previous version of
-*{program}* before installing *v{version}* as many Makefile changes have been made.
+*{program}* before installing *v{version}* as Makefile changes may have been made.
 
 There are two options you may want to consider; *kbd:[--disable-docs]* and / or
-*kbd:[--disable-manpages]*. If have not installed *AsciiDoc*, *AsciiDoctor*
+*kbd:[--disable-manpages]*. If you have not installed *AsciiDoc*, *AsciiDoctor*
 {plus} their dependencies, you should disable both manpages and docs.
 
 As list of package dependencies is included in the package, however, the package
-names may vary from distro to distro, and it may not be 100pass:[%] for your
-particular situation. You can find the list {sourcelist}.
+names can very by distro, and it may not be 100pass:[%] for your particular
+situation. You can find the list {sourcelist}.
 
 The installation steps are as follows:
 
-* Download jtsdk-nix-2.0.19.tar.gz from {dlpackage}
-* Extract: tar -xf jtsdk-nix-2.0.19.tar.gz
-* cd ./jtsdk-nix-2.0.19
+* Download jtsdk-nix-2.0.21.tar.gz from {dlpackage}
+* Extract: tar -xf jtsdk-nix-2.0.21.tar.gz
+* cd ./jtsdk-nix-2.0.21
 * ./autogen.sh --prefix=/usr/local
 * make
 * sudo make install
@@ -500,8 +255,279 @@ The installation steps are as follows:
 [IMPORTANT]
 =====
 Remember to add --disable-docs --disable-manpages  to the autogen.sh line if
-you have not install the required dependencies
+you have not install the required dependencies. Likewise, set the appropriate
+option(s) from the <<USER-OPTION-TABLE,User Option Table>>
 =====
+
+////
+--------------------------------------------------------------------- MAIN MENU
+////
+
+[[DIALOG-MENU-SYSTEM]]
+== JTSDK Main Menu
+On Linux, there are two methods of building, (1) the Dialog Menu System
+and (2), direct command line entry. The Main Menu is the start point for all
+menu driven selections. {wsjt}, {wspr} and Hamlib3 do not have Sub-Menus 
+
+.Main Menu
+image::main-menu.png[Main Menu]
+
+=== WSJT
+There is no sub-menu for {wsjt}. Selecting this menu option will build the 
+latest {wsjt} svn revision from from the {trunk}.
+
+=== WSPR
+There is no sub-menu for {wspr}. Selecting this menu option will build the 
+latest {wspr} svn revision from the development branch.
+
+=== Hamlib3
+There is no sub-menu for Hamlib3. Selecting this menu option will build the 
+latest git repository from Bill (G4WJS).
+
+
+////
+--------------------------------------------------------------- WSJTX MAIN MENU
+////
+
+=== WSJT-X Main Menu
+{wsjtx} has several several Sub-Menus. The following is the {wsjtx} main menu
+and the functions of each entry.
+
+See <<WSJTX-MAIN-MENU,WSJT-X Main Menu Table>> for full descriptions.
+
+image::wsjtx-main-menu.png[WSJT-X Main Menu]
+
+////
+---------------------------------------------------------------- WSJTX DEV MENU
+////
+
+[[WSJTX-DEV-LIST]]
+==== WSJT-X Development Menu
+The Development Menu requires that *kbd:[jtsdk -u]* has been run at least once.
+It is generated from pass:[^/branches/*] that are capable of being built with
+the current QT5 tool set.
+
+[TIP]
+=====
+Note the naming difference between the Development and
+<<WSJTX-GARC-LIST,GA / RC>>, *kbd:[wsjtx-1.6]* v.s. *kbd:[wsjtx-1.6.0]*.
+=====
+
+image::wsjtx-dev-branch-menu.png[Development Branch menu]
+
+
+////
+--------------------------------------------------------------- WSJTC GARC MENU
+////
+
+
+[[WSJTX-GARC-LIST]]
+==== WSJT-X GA / RC Menu
+The *WSJT-X GA / RC Menu* requires that *kbd:[jtsdk -u]* has been run at least
+one time. It is generated from pass:[^/tags/*] that are capable of being built
+with the current QT5 tool set.
+
+[TIP]
+=====
+Note the naming difference between the Development and
+<<WSJTX-DEV-LIST,Dev List>>, *kbd:[wsjtx-1.6.0]* v.s. *kbd:[wsjtx-1.6]*.
+=====
+image::ga-rc-menu.png[GA and RC Tags menu]
+
+////
+--------------------------------------------------------- WSJTX SUPERBUILD MENU
+////
+
+[[WSJTX-SUPERBUILD-LIST]]
+==== WSJT-X Superbuild Menu
+The *WSJT-X Superbuild Menu* requires that *kbd:[jtsdk -u]* has been run at
+least one time. The Superbuild lists are a combination of pass:[^/branches/*] and pass:[^/tags/*]
+that are capable of being built with the current QT5 tool set.
+
+[TIP]
+=====
+The superbuild menus are a combination of <<WSJTX-DEV-LIST,Dev Lists>> and
+<<WSJTX-GARC,GA/ RC Lists>>.
+=====
+
+image::wsjtx-superbuild.png[Superbuild Menu]
+
+////
+------------------------------------------------------------ WSJTX CUSTOM BUILD
+////
+
+==== WSJT-X Custom Build Menu
+When using the {wsjtx} Custom Build option, the CMakeList.txt file is parsed
+and the options are presented to the user. When using the menus the 
+*kbd:[space-bar]* selects the option and *kbd:[enter]* saves.
+
+image::wsjtx-custom-config-menu.png[WSJT-X Custom Build]
+
+[IMPORTANT]
+=====
+Due to the fact the CMakeLists.txt file is required locally for this option,
+Custom Builds are only available through the Dialog Menu System.
+=====
+
+////
+------------------------------------------------------------------ USER OPTIONS
+////
+
+[[USER-OPTIONS]]
+=== User Options
+User Options allow the user to set various options which influence certain
+elements within each build script. In total, there are (9) features that can
+be set in either the Dialog Menu system or direct command line entry. These
+settings are *Global* in nature, meaning, they apply to all build scripts where
+applicable.
+
+See <<USER-OPTION-TABLE,User Option Table>> for full descriptions.
+
+image::options-main-menu.png[Options Main Menu]
+
+
+////
+----------------------------------------------------------------- OPTION STATUS
+////
+
+==== Options Status
+Lists the available options and whether or not they are enabled. It also
+includes CPU and Timer data.
+
+image::options-status.png[Options Status]
+
+////
+---------------------------------------------------- OPTIONS UPDATE WSJTX MENUS
+////
+
+==== Update WSJT-X menus
+Updates several WSJT-X menus from the SourceForge WSJT repository ^/tags and ^/branches.
+
+When the event timer is reached, JTSDK will automatically update the menu
+entries the next time it is launched. The default update interval is set to
+[ 1440 ] minutes or 24 hours / once per day.
+
+image::wsjtx-menus.png[WSJT-X Menus]
+
+////
+---------------------------------------------------------------- OPTIONS MATRIX
+////
+
+==== Options Matrix
+The Options Matrix lists all options, where they apply and their description.
+Enable / Disable commands are case sensitive. Please use all lower case. When
+using the menus the *kbd:[space-bar]* selects the option and *kbd:[enter]* saves
+it. You can select as many as you like, enabling or disabling.
+
+See <<USER-OPTION-TABLE,Options Matrix Details>> for full descriptions.
+
+[IMPORTANT]
+=====
+If you have set *kbd:[jtsdk -e skipsvn]* and *kbd:[jtsdk -e autosvn]*,
+*kbd:[skipsvn]* will take precedence and no attempt to update from SVN
+will be made unless the repository does not exist, in which case, a full
+checkout will be performed.
+=====
+
+image::user-option-picklist.png[Options Picklist]
+
+
+////
+------------------------------------------------------------- OPTIONS SET TIMER
+////
+
+==== Set Update Timer
+The Timer function sets up a simple timer to trigger WSJT-X Menus updates. Each
+time *{program}* is stated, the timer is checked. If the elapsed time (ET)
+reaches the specified value, an update even is triggered. You can set the timer
+using *kbd:[jtsdk -t]*
+
+The default timer is set at ( 1440 minutes ) or once every day ( recommended ).
+You can run the update any time you wish with *kbd:[jtsdk -u]*
+
+image::jtsdk-timer.png[Timer Settings]
+
+////
+--------------------------------------------------------- OPTIONS SET CPU CORES
+////
+
+==== Set CPU Cores
+Using this feature sets the number of CPU cores to be used in parallel
+compiling.
+
+image::jtsdk-cpus.png[Set CPU Count]
+
+////
+---------------------------------------------------------- COMMAND LINE OPTIONS
+////
+
+== Command Line Options
+The following matrix outlines the current set of command line options, indexed
+by script.
+
+////
+------------------------------------------------------------- JTSDK MAIN SCRIPT
+////
+
+=== JTSDK Main Script
+The *kbd:[jtsdk-wsjtx -x]*, *kbd:[  -x  ]* is the option selection,
+is a sub-set of the main *JTSDK* script. The primary purpose for all the
+options in the *jtsdk-wsjtx* script is to describe the *kbd:[-b BRANCH]*,
+*kbd:[-n NAME]*, *kbd:[-c CMAKE TYPE]* and *kbd:[-t TARGET]*. Using
+*kbd:[jtsdk-wsjtx -h]* or *kbd:[jtsdk-wsjtx -l]* will display the information
+and exit the script.
+See <<COMMAND-REFERENCE,JTSDK Command Reference Table>> for full descriptions.
+
+image::jtsdk-help.png[Set CPU Count]
+
+////
+------------------------------------------------------------- WSJT BUILD SCRIPT
+////
+
+=== WSJT Build Script
+At preset, there are no command line options available for building {wsjt}.
+The only option to build is via the <<DIALOG-MENU-SYSTEM,Dialog Menu System>>.
+
+////
+------------------------------------------------------------- WSPR BUILD SCRIPT
+////
+
+=== WSPR Build Script
+At preset, there are no command line options available for building {wspr}.
+The only option to build is via the <<DIALOG-MENU-SYSTEM,Dialog Menu System>>.
+
+////
+---------------------------------------------------------- Hamlib3 BUILD SCRIPT
+////
+
+=== Hamlib3 Build Script
+At preset, there are no command line options available for building {wspr}.
+The only option to build is via the <<DIALOG-MENU-SYSTEM,Dialog Menu System>>.
+
+////
+------------------------------------------------------------ WSJTX BUILD SCRIPT
+////
+
+=== WSJT-X Build Script
+{wsjtx} has several command line options for building outside the 
+<<DIALOG-MENU-SYSTEM,Dialog Menu System>>.
+
+The primary purpose for all the options in the *jtsdk-wsjtx* script is to
+suppluiy suplu the scripts with critical build parameters, for example:
+
+jtsdk-wsjtx *kbd:[-b BRANCH]* *kbd:[-n NAME]* *kbd:[-c CMAKE TYPE]* *kbd:[-t TARGET]*.
+
+Using *kbd:[jtsdk-wsjtx -h]* will display the help screen, and 
+*kbd:[jtsdk-wsjtx -l]* will list the available build types after you've run
+*kbd:[jtsdk -u]*
+
+See <<JTSDK-WSJTX-COMMANDS,WSJT-X Command Reference Table>> for full descriptions.
+
+image::jtsdk-wsjtx-help.png[Set CPU Count]
+
+////
+---------------------------------------------------------------- Command Reference
+////
 
 
 [[COMMAND-REFERENCE]]
@@ -539,7 +565,7 @@ entry values per individual script and options matrix details.
 
 
 ////
---------------------------------------------------------- WSJT-X MAIN MENU TABLE
+-------------------------------------------------------- WSJT-X MAIN MENU TABLE
 ////
 
 .WSJT-X Main Menu Table
@@ -565,7 +591,7 @@ entry values per individual script and options matrix details.
 |===
 
 ////
-------------------------------------------------------------- JTSDK OPTION TABLE
+------------------------------------------------------------ JTSDK OPTION TABLE
 ////
 
 .Option Matrix Detail Table
