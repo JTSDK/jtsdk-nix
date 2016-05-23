@@ -14,9 +14,14 @@ jtsdk-hamlib3
 
 
 == DESCRIPTION
-*JTSDK Hamlib3 * is a simple shell script for building Bill's ( G4WJS )
+*JTSDK Hamlib3* is a simple shell script for building Bill's ( G4WJS )
 version of Hamlib used in compiling WSJT-X. This script should be run from
 within @PROGRAM@. No options are available.
+
+The script builds a static version of the library specifically for use
+with *WSJT-X*. The library is not installed system wide but it can be linked
+against using the appropriate commands for any given application provided
+the appropriate build commands and paths are used.
 
 
 == AUTHOR
