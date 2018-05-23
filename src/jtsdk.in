@@ -50,8 +50,8 @@ CFG="$HOMEDIR/config"
 DOCS="$HOMEDIR/docs"
 
 # subversion base urls
-TAGS="http://svn.code.sf.net/p/wsjt/wsjt/tags"
-BRANCHES="http://svn.code.sf.net/p/wsjt/wsjt/branches"
+TAGS="http://svn.code.sf.net/p/wsjt/wsjt/wsjtx/tags"
+BRANCHES="http://svn.code.sf.net/p/wsjt/wsjt/wsjtx/branches"
 
 # options based on configure.ac --enable --disable commands
 #

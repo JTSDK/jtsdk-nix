@@ -44,7 +44,7 @@ OPTION=$1
 # app specfic options
 APP_NAME=wspr
 APP_SRC="$SRCD/$APP_NAME"
-URL="http://svn.code.sf.net/p/wsjt/wsjt/branches/wspr"
+URL="http://svn.code.sf.net/p/wsjt/wsjt/wspr/trunk"
 
 # fixed expansions from JTSDK configure.ac
 MENU=@SHARED@
@@ -111,7 +111,7 @@ case "$AUTOSVN" in
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $SRCD/$APP_NAME
 		elif  [[ $SKIPSVN -eq 1 ]]  ; then 
 			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
