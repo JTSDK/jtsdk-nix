@@ -21,8 +21,8 @@ Build-Depends: debhelper (>= 9.2.0),
          xmlto,
          xsltproc
 Homepage: http://physics.princeton.edu/pulsar/K1JT/devel.html
-Vcs-SVN: svn://svn.code.sf.net/p/jtsdk/jtsdk/jtsdk-nix/branches/jtsdk-nix-2.0.19
-Vcs-Browser: https://svn.code.sf.net/p/jtsdk/jtsdk/jtsdk-nix/branches/jtsdk-nix-2.0.19
+Vcs-SVN: svn://svn.code.sf.net/p/jtsdk/jtsdk/jtsdk-nix/tags/jtsdk-nix-2.0.22
+Vcs-Browser: https://svn.code.sf.net/p/jtsdk/jtsdk/jtsdk-nix/tags/jtsdk-nix-2.0.22
 
 Package: jtsdk
 Architecture: any

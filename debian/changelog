@@ -1,3 +1,10 @@
+jtsdk (2.0.22-1) unstable; urgency=medium
+
+  * New upstream release 2.0.22
+  * Update Hamlib build script to use bootstrap v.s. autogen.sh
+
+ -- Greg Beam <ki7mt@yahoo.com>  Wed, 2 Aug 2017 17:30:00 -0700
+
 jtsdk (2.0.21-2) unstable; urgency=medium
 
   * Fix user-guide version in Debian/jtsdk-install file
