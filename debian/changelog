@@ -1,3 +1,10 @@
+jtsdk (2.0.24-1) unstable; urgency=medium
+
+  * New upstream release 2.0.24
+  * Update WSJT and JTSDK main do to upstream repo url changes
+
+ -- Greg Beam <ki7mt@yahoo.com>  Wed, 23 May 2018 18:00:00 -0700
+
 jtsdk (2.0.23-1) unstable; urgency=medium
 
   * New upstream release 2.0.23

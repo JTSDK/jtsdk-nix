@@ -1,0 +1,477 @@
+m4trace:m4/docs.m4:1: -1- AC_DEFUN([AC_JTSDK_DOCS], [
+AC_ARG_ENABLE([docs],
+	AC_HELP_STRING([--disable-docs], [Disable Documentation]),
+	[ac_cv_docs=yes],
+	[ac_cv_docs=no]
+	)
+if test "x$ac_cv_docs" = "xyes"; then
+	BDOC=No
+	AC_MSG_NOTICE([Build Documentation Disabled])
+else
+	BDOC=Yes
+	AC_MSG_NOTICE([Build Documentation Enabled])
+	AC_PATH_PROG([ASCIIDOCTOR], [asciidoctor])
+fi
+AC_SUBST([BDOC], ["$BDOC"])
+
+])
+m4trace:m4/f2py.m4:1: -1- AC_DEFUN([AC_JTSDK_F2PY], [
+HAVE_F2PY=no
+
+# check with-f2py first
+AC_ARG_WITH([f2py],
+AC_HELP_STRING([--with-f2py=DIR], [Path to f2py3]), [F2PY=$with_f2py])
+AC_MSG_CHECKING([F2PY --with-f2py])
+
+# if --with-f2py is not empty
+if test -n "$F2PY"; then
+
+# check if user provided location works
+$F2PY -v >/dev/null 2>&1
+	
+	if test "$?" != "0"; then
+		HAVE_F2PY=no
+		AC_MSG_RESULT([no])
+	else
+		HAVE_F2PY=yes
+		F2PY_PATH="$F2PY"
+		F2PYV=`$F2PY -v`
+		AC_DEFINE([HAVE_F2PY], [1])
+		AC_DEFINE_UNQUOTED([F2PY_PATH], ["${F2PY}"], [Path to F2PY])
+		AC_SUBST([F2PY], ["${F2PY}"])
+		AC_MSG_RESULT([yes v${F2PYV}])
+	fi
+else
+	AC_MSG_RESULT([no])
+fi
+
+# if f2py is not supplied, try calling with with f2py3
+if test "$HAVE_F2PY" = "no"; then
+
+	AC_MSG_CHECKING([F2PY using: f2py3])
+	f2py3 -v  >/dev/null 2>&1
+
+	# test if f2py3 is called with f2py3 worked
+	if test "$?" != "0"; then
+		AC_MSG_RESULT([no])
+		HAVE_F2PY=no
+	else
+		HAVE_F2PY=yes
+		F2PY=`which f2py3`
+		F2PYV=`$F2PY -v`
+		AC_DEFINE([HAVE_F2PY], [1])
+		AC_DEFINE_UNQUOTED([F2PY], ["${F2PY}"], [Path to F2PY])
+		AC_SUBST([F2PY], ["${F2PY}"])
+		AC_MSG_RESULT([yes v${F2PYV}])
+	fi
+fi
+
+# if not user supplied, check by calling f2py
+if test "$HAVE_F2PY" = "no"; then
+
+	AC_MSG_CHECKING([F2PY using: f2py])
+	f2py -v  >/dev/null 2>&1
+
+	# test if f2py3 is called using "f2py"
+	if test "$?" != "0"; then
+		AC_MSG_RESULT([no])
+		HAVE_F2PY=no
+	else
+		HAVE_F2PY=yes
+		F2PY=`which f2py`
+		F2PYV=`$F2PY -v`
+		AC_DEFINE([HAVE_F2PY], [1])
+		AC_DEFINE_UNQUOTED([F2PY], ["${F2PY}"], [Path to F2PY])
+		AC_SUBST([F2PY], ["${F2PY}"])
+		AC_MSG_RESULT([yes v${F2PYV}])
+	fi
+fi
+
+])
+m4trace:m4/manpages.m4:1: -1- AC_DEFUN([AC_JTSDK_MANPAGES], [
+AC_ARG_ENABLE([manpages],
+	AC_HELP_STRING([--disable-manpages], [Disable Manpages]),
+	[ac_cv_manpages=yes],
+	[ac_cv_manpages=no]
+	)
+
+if test "x$ac_cv_manpages" = "xyes"; then
+	BMANP=No
+	AC_MSG_NOTICE([Build Manpages is Disabled])
+else
+	BMANP=Yes
+	AC_MSG_NOTICE([Build Manpages is Enabled])
+	AC_PATH_PROG(ASCIIDOC, asciidoc)
+	AC_PATH_PROG(A2X, a2x)
+fi
+AC_SUBST([BMANP], ["$BMANP"])
+
+])
+m4trace:m4/parallel.m4:1: -1- AC_DEFUN([AC_JTSDK_PARALLEL], [
+	AC_ARG_ENABLE([parallel],
+		AC_HELP_STRING([--disable-parallel], [Disable Multi-Core Builds]),
+		[], [ac_cv_parallel=yes])
+
+num1=`grep -c proc /proc/cpuinfo`
+if test "x$ac_cv_parallel" = "xyes"; then
+	case "$HOST_CPU" in
+		armv6*|armv7*)
+			AC_MSG_WARN([ARM Device detected, reducing cores by (1)])
+			JJJJ=`expr $num1 - 1`
+			AC_MSG_NOTICE([Multi-Core builds *enabled*. Using ( $JJJJ ) cores])
+		;;
+		*)
+			JJJJ="$num1"
+			AC_MSG_NOTICE([Multi-Core builds *enabled*. Using ( $JJJJ ) cores])
+		;;
+	esac
+else
+	JJJJ=1
+	AC_MSG_NOTICE([Milti-Core builds *disabled*. Using ($JJJJ) cores])
+fi
+	AC_SUBST([JJJJ], ["$JJJJ"])
+
+])
+m4trace:m4/python2.m4:1: -1- AC_DEFUN([AC_JTSDK_PYTHON2], [
+HAVE_PY2=no
+
+# check with-enable first
+AC_ARG_WITH([python2],
+AC_HELP_STRING([--with-python2=DIR], [Path to python2]), [PY2=$with_python2])
+AC_MSG_CHECKING([Python2 --with-python2])
+
+# if --with-python2 is not empty
+if test -n "$PY2"; then
+
+# check if user provided python3 is >= 2.6
+$PY2 -c "import sys; sys.exit(sys.version < '2.6')" >/dev/null 2>&1
+	
+	if test "$?" != "0"; then
+		HAVE_PY2=no
+		AC_MSG_RESULT([no])
+	else
+		HAVE_PY2=yes
+		PY2_PATH="$PY2"
+		PY2V=`$PY2_PATH -c "import sys; print sys.version" |${HEAD} -1 |${AWK} '{print $1}' |${CUT} -c1-5`
+		AC_DEFINE([HAVE_PY2], [1])
+		AC_DEFINE_UNQUOTED([PY2_PATH], ["${PY2}"], [Path to Python2])
+		AC_SUBST([PYTHON2], ["${PY2}"])
+		AC_MSG_RESULT([yes ${PY2V}])
+	fi
+else
+	AC_MSG_RESULT([no])
+fi
+
+# if not user supplied, check by calling python
+if test "$HAVE_PY2" = "no"; then
+
+	AC_MSG_CHECKING([Python2 using: python])
+	python -c "import sys; sys.exit(sys.version < '2.6')" >/dev/null 2>&1
+
+	if test "$?" != 0; then
+		AC_MSG_RESULT([no])
+		HAVE_PY2=no
+	else
+		HAVE_PY2=yes
+		PY2_PATH=`which python`
+		PY2V=`$PY2_PATH -c "import sys; print sys.version" |${HEAD} -1 |${AWK} '{print $1}' |${CUT} -c1-5`
+		AC_DEFINE([HAVE_PY2], [1])
+		AC_DEFINE_UNQUOTED([PY2_PATH], ["${PY2_PATH}"], [Path to Python2])
+		AC_SUBST([PYTHON2], ["${PY2_PATH}"])
+		AC_MSG_RESULT([yes ${PY2V}])
+	fi
+fi
+
+# if not user supplied, if not by calling python, check by calling python2
+if test "$HAVE_PY2" = "no"; then
+	AC_MSG_CHECKING([Python2 using: python2])
+	python2 -c "import sys; sys.exit(sys.version < '2.6')" >/dev/null 2>&1
+
+	if test "$?" != 0; then
+		AC_MSG_RESULT([no])
+		HAVE_PY2=no
+	else
+		HAVE_PY2=yes
+		PY2_PATH=`which python2`
+		PY2V=`$PY2_PATH -c "import sys; print sys.version" |${HEAD} -1 |${AWK} '{print $1}' |${CUT} -c1-5`
+		AC_DEFINE([HAVE_PY2], [1])
+		AC_DEFINE_UNQUOTED([PY2_PATH], ["${PY2_PATH}"], [Path to Python2])
+		AC_SUBST([PYTHON2], ["${PY2_PATH}"])
+		AC_MSG_RESULT([yes ${PY2V}])
+	fi
+fi
+
+])
+m4trace:m4/python3.m4:1: -1- AC_DEFUN([AC_JTSDK_PYTHON3], [
+HAVE_PY3=no
+
+# check with-enable first
+AC_ARG_WITH([python3],
+AC_HELP_STRING([--with-python3=DIR], [Path to python3]), [PY3=$with_python3])
+AC_MSG_CHECKING([Python3 --with-python3])
+
+# if --with-python3 is not empty
+if test -n "$PY3"; then
+
+# check if user provided python3 is >= 3.2
+$PY3 -c "import sys; sys.exit(sys.version < '3.2')" >/dev/null 2>&1
+	
+	if test "$?" != "0"; then
+		HAVE_PY3=no
+		AC_MSG_RESULT([no])
+	else
+		HAVE_PY3=yes
+		PY3_PATH="$PY3"
+		PY3V=`$PY3_PATH -c "import sys; print(sys.version)" |${HEAD} -1 |${AWK} '{print $1}' |${CUT} -c1-5`
+		AC_DEFINE([HAVE_PY3], [1])
+		AC_DEFINE_UNQUOTED([PY3_PATH], ["${PY3}"], [Path to Python3])
+		AC_SUBST([PYTHON3], ["${PY3}"])
+		AC_MSG_RESULT([yes ${PY3V}])
+	fi
+else
+	AC_MSG_RESULT([no])
+fi
+
+# if not user supplied, check by calling python3
+if test "$HAVE_PY3" = "no"; then
+	AC_MSG_CHECKING([Python3 using: python3])
+	python3 -c "import sys; sys.exit(sys.version < '3.2')" >/dev/null 2>&1
+
+	if test "$?" != 0; then
+		AC_MSG_RESULT([no])
+		HAVE_PY3=no
+	else
+		HAVE_PY3=yes
+		PY3_PATH=`which python3`
+		PY3V=`$PY3_PATH -c "import sys; print(sys.version)" |${HEAD} -1 |${AWK} '{print $1}' |${CUT} -c1-5`
+		AC_DEFINE([HAVE_PY3], [1])
+		AC_DEFINE_UNQUOTED([PY3_PATH], ["${PY3_PATH}"], [Path to Python3])
+		AC_SUBST([PYTHON3], ["${PY3_PATH}"])
+		AC_MSG_RESULT([yes ${PY3V}])
+	fi
+fi
+
+# if not user supplied, if not by using python3, check by calling python
+if test "$HAVE_PY3" = "no"; then
+
+	AC_MSG_CHECKING([Python3 using: python])
+	python -c "import sys; sys.exit(sys.version < '3.2')" >/dev/null 2>&1
+
+	if test "$?" != 0; then
+		AC_MSG_RESULT([no])
+		HAVE_PY3=no
+	else
+		HAVE_PY3=yes
+		PY3_PATH=`which python`
+		PY3V=`$PY3_PATH -c "import sys; print(sys.version)" |${HEAD} -1 |${AWK} '{print $1}' |${CUT} -c1-5`
+		AC_DEFINE([HAVE_PY3], [1])
+		AC_DEFINE_UNQUOTED([PY3_PATH], ["${PY3_PATH}"], [Path to Python3])
+		AC_SUBST([PYTHON3], ["${PY3_PATH}"])
+		AC_MSG_RESULT([yes ${PY3V}])
+	fi
+fi
+
+])
+m4trace:m4/separate.m4:1: -1- AC_DEFUN([AC_JTSDK_SEPARATE], [
+	AC_ARG_ENABLE([separate],
+		AC_HELP_STRING([--disable-separate], [Disable Sparate Folders by SVN Number]),
+		[ac_cv_separate=yes], [])
+
+if test "x$ac_cv_separate" = "xyes"; then
+	SEPARATE=No
+	AC_MSG_NOTICE([Sparate by SVN Folders is Disabled])
+else
+	SEPARATE=Yes
+	AC_MSG_NOTICE([Sparate by SVN Folders is Enabled])
+fi
+	AC_SUBST([SEPARATE], ["$SEPARATE"])
+
+])
+m4trace:configure.ac:5: -1- m4_pattern_forbid([^_?A[CHUM]_])
+m4trace:configure.ac:5: -1- m4_pattern_forbid([_AC_])
+m4trace:configure.ac:5: -1- m4_pattern_forbid([^LIBOBJS$], [do not use LIBOBJS directly, use AC_LIBOBJ (see section `AC_LIBOBJ vs LIBOBJS'])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^AS_FLAGS$])
+m4trace:configure.ac:5: -1- m4_pattern_forbid([^_?m4_])
+m4trace:configure.ac:5: -1- m4_pattern_forbid([^dnl$])
+m4trace:configure.ac:5: -1- m4_pattern_forbid([^_?AS_])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^SHELL$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PATH_SEPARATOR$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_NAME$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_TARNAME$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_VERSION$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_STRING$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_BUGREPORT$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_URL$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^exec_prefix$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^prefix$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^program_transform_name$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^bindir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^sbindir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^libexecdir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^datarootdir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^datadir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^sysconfdir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^sharedstatedir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^localstatedir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^includedir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^oldincludedir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^docdir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^infodir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^htmldir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^dvidir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^pdfdir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^psdir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^libdir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^localedir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^mandir$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_NAME$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_TARNAME$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_VERSION$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_STRING$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_BUGREPORT$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE_URL$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^DEFS$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^ECHO_C$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^ECHO_N$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^ECHO_T$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^LIBS$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^build_alias$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^host_alias$])
+m4trace:configure.ac:5: -1- m4_pattern_allow([^target_alias$])
+m4trace:configure.ac:11: -1- m4_pattern_allow([^PROGRAM$])
+m4trace:configure.ac:12: -1- m4_pattern_allow([^WEB$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^VERSION$])
+m4trace:configure.ac:14: -1- m4_pattern_allow([^AUTHORS$])
+m4trace:configure.ac:15: -1- m4_pattern_allow([^BUGS$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^COPYRIGHT$])
+m4trace:configure.ac:17: -1- m4_pattern_allow([^LICENSE$])
+m4trace:configure.ac:24: -1- AC_CONFIG_MACRO_DIR([m4])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^build$])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^build_cpu$])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^build_vendor$])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^build_os$])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^host$])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^host_cpu$])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^host_vendor$])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^host_os$])
+m4trace:configure.ac:26: -1- m4_pattern_allow([^_NAME$])
+m4trace:configure.ac:27: -1- m4_pattern_allow([^_CPU$])
+m4trace:configure.ac:28: -1- m4_pattern_allow([^_VENDOR$])
+m4trace:configure.ac:29: -1- m4_pattern_allow([^_OS$])
+m4trace:configure.ac:30: -1- m4_pattern_allow([^HOST_NAME$])
+m4trace:configure.ac:31: -1- m4_pattern_allow([^HOST_OS$])
+m4trace:configure.ac:32: -1- m4_pattern_allow([^HOST_CPU$])
+m4trace:configure.ac:65: -1- m4_pattern_allow([^ASCIIDOC$])
+m4trace:configure.ac:66: -1- m4_pattern_allow([^ASCIIDOCTOR$])
+m4trace:configure.ac:67: -1- m4_pattern_allow([^A2X$])
+m4trace:configure.ac:68: -1- m4_pattern_allow([^AWK$])
+m4trace:configure.ac:69: -1- m4_pattern_allow([^CUT$])
+m4trace:configure.ac:70: -1- m4_pattern_allow([^CHOWN$])
+m4trace:configure.ac:71: -1- m4_pattern_allow([^CHMOD$])
+m4trace:configure.ac:72: -1- m4_pattern_allow([^HEAD$])
+m4trace:configure.ac:73: -1- m4_pattern_allow([^CHMOD$])
+m4trace:configure.ac:74: -1- m4_pattern_allow([^CHOWN$])
+m4trace:configure.ac:75: -1- m4_pattern_allow([^CP$])
+m4trace:configure.ac:76: -1- m4_pattern_allow([^DIALOG$])
+m4trace:configure.ac:77: -1- m4_pattern_allow([^INSTALL$])
+m4trace:configure.ac:78: -1- m4_pattern_allow([^LN$])
+m4trace:configure.ac:79: -1- m4_pattern_allow([^MKDIR$])
+m4trace:configure.ac:80: -1- m4_pattern_allow([^MV$])
+m4trace:configure.ac:81: -1- m4_pattern_allow([^RM$])
+m4trace:configure.ac:82: -1- m4_pattern_allow([^SED$])
+m4trace:configure.ac:83: -1- m4_pattern_allow([^SHELL$])
+m4trace:configure.ac:84: -1- m4_pattern_allow([^SORT$])
+m4trace:configure.ac:85: -1- m4_pattern_allow([^TEST$])
+m4trace:configure.ac:86: -1- m4_pattern_allow([^TR$])
+m4trace:configure.ac:87: -1- m4_pattern_allow([^TOUCH$])
+m4trace:configure.ac:93: -1- AC_JTSDK_PYTHON2
+m4trace:configure.ac:93: -2- _m4_warn([obsolete], [The macro `AC_HELP_STRING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:207: AC_HELP_STRING is expanded from...
+m4/python2.m4:1: AC_JTSDK_PYTHON2 is expanded from...
+configure.ac:93: the top level])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^HAVE_PY2$])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^PY2_PATH$])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^PYTHON2$])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^HAVE_PY2$])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^PY2_PATH$])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^PYTHON2$])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^HAVE_PY2$])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^PY2_PATH$])
+m4trace:configure.ac:93: -1- m4_pattern_allow([^PYTHON2$])
+m4trace:configure.ac:98: -1- AC_JTSDK_PYTHON3
+m4trace:configure.ac:98: -2- _m4_warn([obsolete], [The macro `AC_HELP_STRING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:207: AC_HELP_STRING is expanded from...
+m4/python3.m4:1: AC_JTSDK_PYTHON3 is expanded from...
+configure.ac:98: the top level])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^HAVE_PY3$])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^PY3_PATH$])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^PYTHON3$])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^HAVE_PY3$])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^PY3_PATH$])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^PYTHON3$])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^HAVE_PY3$])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^PY3_PATH$])
+m4trace:configure.ac:98: -1- m4_pattern_allow([^PYTHON3$])
+m4trace:configure.ac:103: -1- AC_JTSDK_F2PY
+m4trace:configure.ac:103: -2- _m4_warn([obsolete], [The macro `AC_HELP_STRING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:207: AC_HELP_STRING is expanded from...
+m4/f2py.m4:1: AC_JTSDK_F2PY is expanded from...
+configure.ac:103: the top level])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^HAVE_F2PY$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^F2PY_PATH$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^F2PY$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^HAVE_F2PY$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^F2PY$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^F2PY$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^HAVE_F2PY$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^F2PY$])
+m4trace:configure.ac:103: -1- m4_pattern_allow([^F2PY$])
+m4trace:configure.ac:108: -1- AC_JTSDK_PARALLEL
+m4trace:configure.ac:108: -2- _m4_warn([obsolete], [The macro `AC_HELP_STRING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:207: AC_HELP_STRING is expanded from...
+m4/parallel.m4:1: AC_JTSDK_PARALLEL is expanded from...
+configure.ac:108: the top level])
+m4trace:configure.ac:108: -1- m4_pattern_allow([^JJJJ$])
+m4trace:configure.ac:113: -1- AC_JTSDK_DOCS
+m4trace:configure.ac:113: -2- _m4_warn([obsolete], [The macro `AC_HELP_STRING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:207: AC_HELP_STRING is expanded from...
+m4/docs.m4:1: AC_JTSDK_DOCS is expanded from...
+configure.ac:113: the top level])
+m4trace:configure.ac:113: -1- m4_pattern_allow([^ASCIIDOCTOR$])
+m4trace:configure.ac:113: -1- m4_pattern_allow([^BDOC$])
+m4trace:configure.ac:118: -1- AC_JTSDK_MANPAGES
+m4trace:configure.ac:118: -2- _m4_warn([obsolete], [The macro `AC_HELP_STRING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:207: AC_HELP_STRING is expanded from...
+m4/manpages.m4:1: AC_JTSDK_MANPAGES is expanded from...
+configure.ac:118: the top level])
+m4trace:configure.ac:118: -1- m4_pattern_allow([^ASCIIDOC$])
+m4trace:configure.ac:118: -1- m4_pattern_allow([^A2X$])
+m4trace:configure.ac:118: -1- m4_pattern_allow([^BMANP$])
+m4trace:configure.ac:123: -1- AC_JTSDK_SEPARATE
+m4trace:configure.ac:123: -2- _m4_warn([obsolete], [The macro `AC_HELP_STRING' is obsolete.
+You should run autoupdate.], [../../lib/autoconf/general.m4:207: AC_HELP_STRING is expanded from...
+m4/separate.m4:1: AC_JTSDK_SEPARATE is expanded from...
+configure.ac:123: the top level])
+m4trace:configure.ac:123: -1- m4_pattern_allow([^SEPARATE$])
+m4trace:configure.ac:130: -1- m4_pattern_allow([^A2X$])
+m4trace:configure.ac:131: -1- m4_pattern_allow([^ASCIIDOC$])
+m4trace:configure.ac:132: -1- m4_pattern_allow([^ASCIIDOCTOR$])
+m4trace:configure.ac:133: -1- m4_pattern_allow([^DIALOG$])
+m4trace:configure.ac:134: -1- m4_pattern_allow([^DATASRC$])
+m4trace:configure.ac:135: -1- m4_pattern_allow([^DISTROV$])
+m4trace:configure.ac:136: -1- m4_pattern_allow([^DISTROC$])
+m4trace:configure.ac:137: -1- m4_pattern_allow([^DESC$])
+m4trace:configure.ac:138: -1- m4_pattern_allow([^DOCSRC$])
+m4trace:configure.ac:139: -1- m4_pattern_allow([^DTDIR$])
+m4trace:configure.ac:140: -1- m4_pattern_allow([^ICOND$])
+m4trace:configure.ac:141: -1- m4_pattern_allow([^LOGNAME$])
+m4trace:configure.ac:142: -1- m4_pattern_allow([^MANSRC$])
+m4trace:configure.ac:143: -1- m4_pattern_allow([^PKGMGR$])
+m4trace:configure.ac:144: -1- m4_pattern_allow([^PREFIX$])
+m4trace:configure.ac:148: -1- m4_pattern_allow([^BINDIR$])
+m4trace:configure.ac:149: -1- m4_pattern_allow([^SHARED$])
+m4trace:configure.ac:150: -1- m4_pattern_allow([^MANDIR$])
+m4trace:configure.ac:151: -1- m4_pattern_allow([^DOCDIR$])
+m4trace:configure.ac:152: -1- m4_pattern_allow([^MENUDIR$])
+m4trace:configure.ac:175: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:175: -1- m4_pattern_allow([^LTLIBOBJS$])

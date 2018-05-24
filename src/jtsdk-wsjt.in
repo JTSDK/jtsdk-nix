@@ -43,8 +43,8 @@ OPTION=$1
 
 # app specific variables
 APP_NAME=wsjt
-APP_SRC="$SRCD/trunk"
-URL="https://svn.code.sf.net/p/wsjt/wsjt/trunk"
+APP_SRC="$SRCD/$APP_NAME"
+URL="https://svn.code.sf.net/p/wsjt/wsjt/wsjt/trunk"
 LOGGRP=$(groups $USER | cut -d ' ' -f 3)
 
 # fixed expansions from JTSDK configure.ac
@@ -98,7 +98,7 @@ case "$SKIPSVN" in
 		if [[ ! -d $APP_SRC/.svn ]] ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $SRCD/$APP_NAME
 		else
 			echo 'JTSDK Option: [ SKIPSVN ] Enabled'
 		fi
@@ -106,13 +106,13 @@ case "$SKIPSVN" in
 	0)
 esac
 
-# check sutosvn
+# check autosvn
 case "$AUTOSVN" in
 	1)
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $SRCD/$APP_NAME
 		elif  [[ $SKIPSVN -eq 1 ]]  ; then 
 			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
@@ -125,7 +125,7 @@ case "$AUTOSVN" in
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $SRCD/$APP_NAME
 		else
 			echo 'JTSDK Option: [ AUTOSVN ] Disabled'
 		fi
