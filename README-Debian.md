@@ -21,7 +21,7 @@ to the Ubuntu Release you are using.
 ### In the terminal
 ```bash
 # command
-cat /etc/debian_versoin
+cat /etc/debian_version
 
 # results: will return something like
 
