@@ -44,7 +44,7 @@ a lot of wrestling around, here is the current Ubuntu LTS information:
 |:---------:|:--------:|------------ |-------------|:----------------:|
 | Trusty    | 14.04    | Jessie/Sid  | 8.x series  | May 2016         |
 | Xenial    | 16.04    | Stretch/Sid | 9.x series  | June 2017        |
-| Bionic    | 18.04    | Stretch/Sid | 10.x series | Not released yet |
+| Bionic    | 18.04    | Buster/Sid | 10.x series | Not released yet |
 
 ## Launchpad PPA Usage on Debian
 To use a Launchpad PPA on Debian, one must add the proper Launchpad repository.
