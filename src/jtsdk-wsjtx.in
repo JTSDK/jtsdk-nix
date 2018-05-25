@@ -338,13 +338,13 @@ case $B_OPT in
 	dev)
 		APP_SRC="$SRCD/$N_OPT"
 		APP_NAME="$N_OPT"
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/$N_OPT"
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/wsjtx/branches/$N_OPT"
 	;;
 
 	gar)
 		APP_SRC="$SRCD/$N_OPT"
 		APP_NAME="$N_OPT"
-		URL="https://svn.code.sf.net/p/wsjt/wsjt/tags/$N_OPT"
+		URL="https://svn.code.sf.net/p/wsjt/wsjt/wsjtx/tags/$N_OPT"
 	;;
 esac
 
