@@ -717,7 +717,7 @@ then
 	fi
 	echo -e "$CHK1 $UTYPE Dev Lists"
 	
-	svn list "$BRANCHES"| grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/dev_list.txt
+	svn list "$BRANCHES"| grep "^wsjtx-[1-2]\.[8-9]" | sed 's:/*$::' | sort -r > "$TMPD"/dev_list.txt
 	echo "Back" >> "$TMPD"/dev_list.txt
 	
 # exclude some branches
@@ -736,7 +736,7 @@ then
 		UTYPE='Updating'
 	fi
 	echo -e "$CHK1 $UTYPE GA and RC List"
-	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]\.[0-9]" | sed 's:/*$::' > "$TMPD"/ga_rc_list.txt
+	svn list "$TAGS" | grep "^wsjtx-[1-2]\.[8-9]" | sed 's:/*$::' | sort -r > "$TMPD"/ga_rc_list.txt
 	echo "Back" >> "$TMPD"/ga_rc_list.txt
 	cp -u "$TMPD"/ga_rc_list.txt $CFG
 
@@ -748,7 +748,7 @@ then
 	fi
 	echo -e "$CHK1 $UTYPE Superbuild Dev List"
 
-	svn list "$BRANCHES" | grep ^wsjtx | sed 's:/*$::' | sort > "$TMPD"/sb_dev_list.txt
+	svn list "$BRANCHES" | grep "^wsjtx-[1-2]\.[8-9]" | sed 's:/*$::' | sort -r > "$TMPD"/sb_dev_list.txt
 	echo "Back" >> "$TMPD"/sb_dev_list.txt
 	
 # exclude some branches
@@ -768,7 +768,7 @@ then
 	fi
 	echo -e "$CHK1 $UTYPE Superbuild GA and RC List"
 
-	svn list "$TAGS" | grep "^wsjtx-[1-9]\.[5-9]" | sed 's:/*$::' > "$TMPD"/sb_ga_rc_list.txt
+	svn list "$TAGS" | grep "^wsjtx-[1-2]\.[8-9]" | sed 's:/*$::' | sort -r > "$TMPD"/sb_ga_rc_list.txt
 	echo "Back" >> "$TMPD"/sb_ga_rc_list.txt
 
 # copy final menu to the config dir
