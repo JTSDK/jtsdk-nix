@@ -1,5 +1,13 @@
 jtsdk (2.0.24-1) unstable; urgency=medium
 
+  * New upstream release 2.0.25
+  * Fix WSJT-X branch and tag urls
+  * Updated Debian packages files including debian watch
+
+ -- Greg Beam <ki7mt@yahoo.com>  Thu, 25 May 2018 21:00:00 -0700
+ 
+jtsdk (2.0.24-1) unstable; urgency=medium
+
   * New upstream release 2.0.24
   * Update WSJT and JTSDK main do to upstream repo url changes
 
