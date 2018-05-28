@@ -1,5 +1,10 @@
 # Debian Lauchpad PPA How-To
 
+Last Update: 28-MAY-2018
+
+> NOTE - Developpment efforts for JTSDK v2 has come to an end. The current development focus for JTSDK-Nix is being combined with the [JTSDK .Net Core](https://github.com/KI7MT/jtsdk-dotnet-core) cross-platform project. This file is being left in the repository for example purposes only. Those wishing to use the new version of JTSDK should follow the [.Net Core Project](https://github.com/KI7MT/jtsdk-dotnet-core)
+
+## Comentary
 There is a lot of confusion about the different package schemas relating to
 Ubuntu and Debian. Put simply, Ubuntu would not exist without Debian, as Ubuntu
 derives its core packaging from Debian:
