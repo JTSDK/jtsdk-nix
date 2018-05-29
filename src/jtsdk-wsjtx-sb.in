@@ -50,7 +50,7 @@ CFG="$HOMEDIR/config"
 # wsjtx-superbuild variables
 APP_NAME=wsjtx-superbuild
 APP_SRC="$SRCD/$APP_NAME"
-URL="https://svn.code.sf.net/p/wsjt/wsjt/branches/wsjtx-superbuild"
+URL="https://svn.code.sf.net/p/wsjt/wsjt/wsjtx-superbuild/trunk"
 
 # general options
 JJ=@JJJJ@
@@ -64,7 +64,7 @@ case $OPT1 in
 	;;
 
 	garc) # for ^/tags location
-		TURL="https://svn.code.sf.net/p/wsjt/wsjt/tags"
+		TURL="https://svn.code.sf.net/p/wsjt/wsjt/wsjtx/tags"
 		CHECK_URL="$TURL/$OPT2"
 		TYPE=tags
 	;;
@@ -158,7 +158,7 @@ case "$AUTOSVN" in
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $APP_NAME 
 		elif  [[ $SKIPSVN -eq 1 ]]  ; then 
 			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
@@ -171,7 +171,7 @@ case "$AUTOSVN" in
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $APP_NAME
 		else
 			echo 'JTSDK Option: [ AUTOSVN ] Disabled'
 		fi

@@ -498,7 +498,7 @@ case "$SKIPSVN" in
 		if [[ ! -d $APP_SRC/.svn ]] ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $APP_NAME
 		else
 			echo 'JTSDK Option: [ SKIPSVN ] Enabled'
 		fi
@@ -512,7 +512,7 @@ case "$AUTOSVN" in
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $APP_NAME
 		elif  [[ $SKIPSVN -eq 1 ]]  ; then 
 			echo 'JTSDK Option: [ AUTOSVN ] Enabled, but skipping'
 		else
@@ -525,7 +525,7 @@ case "$AUTOSVN" in
 		if [[ ! -d $APP_SRC/.svn ]]  ; then 
 			echo "Checking Out New Version of $APP_NAME"
 			cd $SRCD
-			svn co $URL
+			svn co $URL $APP_NAME
 		else
 			echo 'JTSDK Option: [ AUTOSVN ] Disabled'
 		fi
