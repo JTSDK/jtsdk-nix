@@ -22,7 +22,7 @@ Build-Depends: debhelper (>= 9.2.0),
          xsltproc
 Homepage: https://github.com/KI7MT/jtsdk-nix
 Vcs-Git: https://github.com/KI7MT/jtsdk-nix
-Vcs-Browser: https://github.com/KI7MT/jtsdk-nix/tree/jtsdk-nix-2.0.25
+Vcs-Browser: https://github.com/KI7MT/jtsdk-nix/tree/jtsdk-nix-2.0.26
 
 Package: jtsdk
 Architecture: any

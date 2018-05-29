@@ -1,3 +1,12 @@
+jtsdk (2.0.26-1) unstable; urgency=medium
+
+  * Fianl Release 2.0.26
+  * Updated WSJT-X Superbuild Script
+  * Updated WSJT-X Main Build Script
+  * Update Debian Package files
+
+ -- Greg Beam <ki7mt@yahoo.com>  Mon, 28 May 2018 22:00:00 -0700
+
 jtsdk (2.0.25-1) unstable; urgency=medium
 
   * New upstream release 2.0.25

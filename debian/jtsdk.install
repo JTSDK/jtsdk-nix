@@ -7,6 +7,6 @@ src/jtsdk-wspr usr/bin/
 data/jtsdk.xpm usr/share/pixmaps/
 data/jtsdk.desktop usr/share/applications/
 data/jtsdk.menu usr/share/menu/jtsdk
-docs/source/jtsdk-2.0.25.html usr/share/docs/jtsdk/jtsdk-2.0.25.html
+docs/source/jtsdk-2.0.26.html usr/share/docs/jtsdk/jtsdk-2.0.26.html
 README usr/share/doc/jtsdk/
 TO-DO usr/share/doc/jtsdk/
